@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buyer Confidence Dashboard | Prototype</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111831;
+      --card: #151f3f;
+      --text: #e8ecf8;
+      --muted: #b4bfdc;
+      --accent: #58a6ff;
+      --accent2: #7ee787;
+      --warn: #f2cc60;
+      --danger: #ff7b72;
+      --border: #26345f;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%); color:var(--text); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .nav { padding: 18px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+    .brand { font-weight:800; }
+    .section { padding: 28px 0; }
+    .hero { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 22px; }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    .badge { display:inline-block; padding:7px 11px; border-radius:999px; font-size:13px; font-weight:700; }
+    .badge-warn { background: rgba(242,204,96,.12); color: var(--warn); }
+    .badge-ok { background: rgba(126,231,135,.12); color: var(--accent2); }
+    .badge-danger { background: rgba(255,123,114,.12); color: var(--danger); }
+    h1,h2,h3 { margin-top:0; }
+    .muted { color: var(--muted); }
+    ul { padding-left: 18px; }
+    .score { font-size: 52px; font-weight: 800; }
+    .subgrid { display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap nav"><div class="brand">Buyer Confidence Review, Prototype Customer View</div></div>
+
+  <div class="wrap section hero">
+    <div>
+      <h1 style="margin-bottom:8px;">2018 BMW 340i xDrive Review</h1>
+      <div class="muted">Order #BC-1024 • Prototype paid-customer dashboard</div>
+    </div>
+    <div>
+      <span class="badge badge-warn">Verdict: Verify Further</span>
+    </div>
+  </div>
+
+  <div class="wrap section subgrid">
+    <div class="card">
+      <h2>Summary verdict</h2>
+      <p>This vehicle is <strong>worth pursuing only if a few specific concerns are clarified before you pay for a PPI or move forward.</strong> The listing broadly aligns with the car, but there are a few gaps around options, service confidence, and how strongly the price is justified.</p>
+      <ul>
+        <li>Core spec appears plausible</li>
+        <li>Some claimed features need verification</li>
+        <li>Service history appears thin for the asking price</li>
+        <li>Good candidate only if seller gives stronger evidence</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Confidence score</h2>
+      <div class="score">72</div>
+      <p class="muted">Out of 100. Good enough to continue investigating, not strong enough to commit yet.</p>
+      <div class="grid-2">
+        <div><span class="badge badge-ok">Build match: solid</span></div>
+        <div><span class="badge badge-warn">Ownership risk: medium</span></div>
+        <div><span class="badge badge-warn">Price sanity: fair</span></div>
+        <div><span class="badge badge-danger">Seller evidence: incomplete</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap section grid-3">
+    <div class="card">
+      <h3>What likely checks out</h3>
+      <ul>
+        <li>Model/year alignment looks credible</li>
+        <li>Photos generally match the claimed trim level</li>
+        <li>Mileage-to-price range is not obviously broken</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What needs verification</h3>
+      <ul>
+        <li>Specific option/package claims</li>
+        <li>Audio/interior feature confirmation</li>
+        <li>Recent maintenance and known wear items</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Why this matters</h3>
+      <ul>
+        <li>Prevents overpaying for padded claims</li>
+        <li>Reduces wasted PPI and travel costs</li>
+        <li>Helps you negotiate from evidence</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap section grid-2">
+    <div class="card">
+      <h2>Questions to ask the seller next</h2>
+      <ol>
+        <li>Can you send photos that confirm the claimed options and interior features?</li>
+        <li>What major maintenance has been done in the last 20k miles?</li>
+        <li>Do you have receipts or service records for cooling, suspension, brakes, or oil leaks?</li>
+        <li>Can you send cold-start and walkaround video?</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Recommended next step</h2>
+      <p><strong>Continue only if the seller responds clearly.</strong></p>
+      <p class="muted">If the seller can verify the uncertain features and provide stronger service evidence, this becomes a reasonable PPI candidate. If they dodge the questions, move on.</p>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2>Prototype notes</h2>
+      <p class="muted">This is a prototype paid-customer view. Final product would include dynamic case data, status timeline, uploads, downloadable report, and follow-up support.</p>
+    </div>
+  </div>
+</body>
+</html>
