@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Should I Buy This BMW? | BMW Buy/Pass Review</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111831;
+      --card: #151f3f;
+      --text: #e8ecf8;
+      --muted: #b4bfdc;
+      --accent: #58a6ff;
+      --accent2: #7ee787;
+      --danger: #ff7b72;
+      --border: #26345f;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .nav { padding: 18px 0; position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(11,16,32,.7); border-bottom: 1px solid rgba(255,255,255,.06); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .brand { font-weight: 800; letter-spacing:.2px; }
+    .btn { display:inline-block; padding: 14px 20px; border-radius: 12px; font-weight: 700; }
+    .btn-primary { background: var(--accent); color: #07101f; }
+    .btn-secondary { border:1px solid var(--border); background: rgba(255,255,255,.03); }
+    .hero { padding: 72px 0 36px; }
+    .eyebrow { color: var(--accent2); font-weight:700; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
+    h1 { font-size: clamp(36px, 6vw, 64px); line-height:1.02; margin: 12px 0 18px; }
+    .sub { font-size: 20px; color: var(--muted); max-width: 760px; }
+    .hero-grid { display:grid; grid-template-columns: 1.2fr .8fr; gap: 28px; align-items:start; }
+    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 20px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .trust { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:22px; }
+    .trust .card { padding: 16px; border-radius: 16px; }
+    .section { padding: 44px 0; }
+    h2 { font-size: 32px; margin: 0 0 14px; }
+    .muted { color: var(--muted); }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    ul { padding-left: 18px; }
+    .price { font-size: 48px; font-weight: 800; margin: 6px 0; }
+    .faq-item { padding: 18px 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .cta { text-align:center; padding: 56px 0 84px; }
+    .pill { display:inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(126,231,135,.12); color: var(--accent2); font-size: 13px; font-weight:700; }
+    .sample-report { white-space: pre-line; font-size: 14px; color: var(--muted); }
+    footer { padding: 24px 0 60px; color: var(--muted); }
+    @media (max-width: 900px) {
+      .hero-grid, .grid-3, .grid-2, .trust { grid-template-columns: 1fr; }
+      .sub { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand">BMW Buy/Pass Review</div>
+      <a href="#order" class="btn btn-primary">Get My Review</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">BMW buyer confidence</div>
+        <h1>Should I buy this BMW?</h1>
+        <p class="sub">Before you send a deposit, pay for a PPI, or travel for the car, get a BMW-specific buy/pass review that checks whether the listing, options, condition story, and likely ownership risks actually add up.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
+          <a href="#order" class="btn btn-primary">Get a Buy/Pass Review</a>
+          <a href="#sample" class="btn btn-secondary">See sample output</a>
+        </div>
+        <div class="trust">
+          <div class="card"><strong>Avoid expensive mistakes</strong><br><span class="muted">Catch mismatches before you commit.</span></div>
+          <div class="card"><strong>Know what to ask next</strong><br><span class="muted">Get exact seller questions and next steps.</span></div>
+          <div class="card"><strong>Decision, not data dump</strong><br><span class="muted">Pursue, negotiate, verify, or walk away.</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="pill">Most useful before PPI, deposit, or travel</span>
+        <h3>What’s included</h3>
+        <ul>
+          <li>VIN/build authenticity check</li>
+          <li>Seller claim verification</li>
+          <li>Listing and photo red flag review</li>
+          <li>Ownership risk snapshot</li>
+          <li>Questions to ask the seller</li>
+          <li>Clear next-step recommendation</li>
+        </ul>
+        <p class="muted"><strong>Best for:</strong> private party buyers, remote buyers, enthusiasts chasing specific builds, and anyone who wants clarity before spending more money.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>The real problem</h2>
+      <p class="muted">Most buyers are not looking for “VIN data.” They’re trying to avoid the wrong car, the wrong spec, the wrong price, or the wrong future bills. Generic decoder tools don’t answer the actual question: <strong>should I move forward with this BMW?</strong></p>
+      <div class="grid-3">
+        <div class="card"><strong>Financial</strong><p class="muted">Avoid overpaying for misrepresented options, hidden risk, or an overpriced listing.</p></div>
+        <div class="card"><strong>Functional</strong><p class="muted">Cross-check VIN, listing claims, photos, and available evidence for mismatches and uncertainty.</p></div>
+        <div class="card"><strong>Emotional</strong><p class="muted">Reduce anxiety, regret, and the feeling of getting burned on a major purchase.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>What you get</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>BMW Buy/Pass Review</h3>
+          <ul>
+            <li>What the car likely is</li>
+            <li>What matches the seller story</li>
+            <li>What doesn’t match or remains unclear</li>
+            <li>Likely ownership and maintenance risk notes</li>
+            <li>Pricing sanity notes</li>
+            <li>Seller questions to ask next</li>
+            <li>Recommendation: pursue, negotiate, verify further, or walk away</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Good fit if you’re asking:</h3>
+          <ul>
+            <li>“Is this really the spec the seller says it is?”</li>
+            <li>“Am I about to overpay for this car?”</li>
+            <li>“Should I bother paying for a PPI?”</li>
+            <li>“Does this listing have red flags?”</li>
+            <li>“What questions should I ask before I commit?”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <div class="grid-3">
+        <div class="card"><strong>1. Submit the car</strong><p class="muted">Send the VIN, listing URL, asking price, mileage, and anything the seller told you.</p></div>
+        <div class="card"><strong>2. We review it</strong><p class="muted">We check build authenticity, listing coherence, likely risk signals, and what still needs verification.</p></div>
+        <div class="card"><strong>3. You get a verdict</strong><p class="muted">Receive a decision-focused review with next-step questions and a clear recommendation.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sample" class="section">
+    <div class="wrap">
+      <h2>Sample output</h2>
+      <div class="card sample-report">Verdict: VERIFY FURTHER BEFORE PPI
+
+What likely checks out:
+- 2018 BMW 340i xDrive
+- Sport package indicators appear consistent
+- Asking price is within expected range for mileage
+
+What needs attention:
+- Claimed premium audio not clearly supported by available evidence
+- Wheel setup may not match original listing description
+- Service history appears thin for mileage
+
+Questions to ask seller next:
+1. Can you send photos of the option sticker / iDrive vehicle details?
+2. Has the cooling system or major 60k+ maintenance been done?
+3. Can you share cold-start video and closer photos of front bumper / wheels?
+
+Recommendation:
+- Worth pursuing only after seller answers the above and documentation improves.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="card">
+        <h2>Pricing</h2>
+        <div class="price">$79</div>
+        <p class="muted">Manual-first BMW Buy/Pass Review</p>
+        <ul>
+          <li>Decision-focused review</li>
+          <li>VIN/build cross-check</li>
+          <li>Listing truth review</li>
+          <li>Ownership risk notes</li>
+          <li>Seller questions and next steps</li>
+        </ul>
+        <a href="#order" class="btn btn-primary">Start your review</a>
+      </div>
+      <div class="card">
+        <h2>FAQ</h2>
+        <div class="faq-item"><strong>Is this a Carfax replacement?</strong><br><span class="muted">No. This is a BMW-specific decision-support review, not a generic history report clone.</span></div>
+        <div class="faq-item"><strong>Is this before or after a PPI?</strong><br><span class="muted">Best before. The goal is to help you decide whether the car is worth pursuing further.</span></div>
+        <div class="faq-item"><strong>What do I need to submit?</strong><br><span class="muted">VIN, listing URL, asking price, mileage, and any claims or documents you already have.</span></div>
+        <div class="faq-item"><strong>Do you guarantee the car is good?</strong><br><span class="muted">No. We reduce uncertainty and help you make a better decision, but this does not replace inspection, title verification, or legal due diligence.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="order" class="cta wrap">
+    <div class="card">
+      <h2>Get your BMW Buy/Pass Review</h2>
+      <p class="muted">Prototype CTA. Next step is to connect this to intake + checkout.</p>
+      <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:18px;">
+        <a href="mailto:ops@opengoalsoccer.com?subject=BMW%20Buy%2FPass%20Review&body=VIN%3A%0AListing%20URL%3A%0AAsking%20Price%3A%0AMileage%3A%0AWhat%20I%27m%20worried%20about%3A" class="btn btn-primary">Request Review</a>
+        <a href="#" class="btn btn-secondary">Connect Intake Form Next</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">Prototype for venture research and offer validation. Built around buyer confidence, not generic VIN lookup.</div>
+  </footer>
+</body>
+</html>
