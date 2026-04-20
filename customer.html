@@ -34,9 +34,14 @@
     .badge-danger { background: rgba(255,123,114,.12); color: var(--danger); }
     h1,h2,h3 { margin-top:0; }
     .muted { color: var(--muted); }
-    ul { padding-left: 18px; }
+    ul, ol { padding-left: 18px; }
     .score { font-size: 52px; font-weight: 800; }
     .subgrid { display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
+    .scorelist { display:grid; gap:12px; }
+    .scoreitem { padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .finding { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
+    .finding:first-child { border-top:none; padding-top:0; }
+    .pillrow { display:flex; gap:10px; flex-wrap:wrap; }
     @media (max-width: 900px) { .grid-3, .grid-2, .subgrid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -45,87 +50,129 @@
 
   <div class="wrap section hero">
     <div>
-      <h1 style="margin-bottom:8px;">2018 BMW 340i xDrive Review</h1>
-      <div class="muted">Order #BC-1024 • Prototype paid-customer dashboard</div>
+      <h1 id="vehicleTitle" style="margin-bottom:8px;">Vehicle Review</h1>
+      <div class="muted" id="caseMeta">Prototype paid-customer dashboard</div>
     </div>
     <div>
-      <span class="badge badge-warn">Verdict: Verify Further</span>
+      <span class="badge badge-warn" id="verdictBadge">Verdict</span>
     </div>
   </div>
 
   <div class="wrap section subgrid">
     <div class="card">
       <h2>Summary verdict</h2>
-      <p>This vehicle is <strong>worth pursuing only if a few specific concerns are clarified before you pay for a PPI or move forward.</strong> The listing broadly aligns with the car, but there are a few gaps around options, service confidence, and how strongly the price is justified.</p>
-      <ul>
-        <li>Core spec appears plausible</li>
-        <li>Some claimed features need verification</li>
-        <li>Service history appears thin for the asking price</li>
-        <li>Good candidate only if seller gives stronger evidence</li>
-      </ul>
+      <p id="verdictSummary"></p>
+      <p class="muted" id="verdictRationale"></p>
+      <ul id="highlights"></ul>
     </div>
     <div class="card">
       <h2>Confidence score</h2>
-      <div class="score">72</div>
-      <p class="muted">Out of 100. Good enough to continue investigating, not strong enough to commit yet.</p>
-      <div class="grid-2">
-        <div><span class="badge badge-ok">Build match: solid</span></div>
-        <div><span class="badge badge-warn">Ownership risk: medium</span></div>
-        <div><span class="badge badge-warn">Price sanity: fair</span></div>
-        <div><span class="badge badge-danger">Seller evidence: incomplete</span></div>
-      </div>
+      <div class="score" id="overallScore">--</div>
+      <p class="muted" id="overallScoreExplanation"></p>
+      <div class="scorelist" id="scoreList"></div>
     </div>
   </div>
 
-  <div class="wrap section grid-3">
+  <div class="wrap section grid-2">
     <div class="card">
-      <h3>What likely checks out</h3>
-      <ul>
-        <li>Model/year alignment looks credible</li>
-        <li>Photos generally match the claimed trim level</li>
-        <li>Mileage-to-price range is not obviously broken</li>
-      </ul>
+      <h2>Case details</h2>
+      <div class="pillrow" id="casePills"></div>
+      <p class="muted" id="concernText" style="margin-top:16px;"></p>
+      <p><a id="listingLink" href="#" target="_blank" rel="noreferrer">View listing URL</a></p>
     </div>
     <div class="card">
-      <h3>What needs verification</h3>
-      <ul>
-        <li>Specific option/package claims</li>
-        <li>Audio/interior feature confirmation</li>
-        <li>Recent maintenance and known wear items</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Why this matters</h3>
-      <ul>
-        <li>Prevents overpaying for padded claims</li>
-        <li>Reduces wasted PPI and travel costs</li>
-        <li>Helps you negotiate from evidence</li>
-      </ul>
+      <h2>Key findings</h2>
+      <div id="findingsList"></div>
     </div>
   </div>
 
   <div class="wrap section grid-2">
     <div class="card">
       <h2>Questions to ask the seller next</h2>
-      <ol>
-        <li>Can you send photos that confirm the claimed options and interior features?</li>
-        <li>What major maintenance has been done in the last 20k miles?</li>
-        <li>Do you have receipts or service records for cooling, suspension, brakes, or oil leaks?</li>
-        <li>Can you send cold-start and walkaround video?</li>
-      </ol>
+      <ol id="sellerQuestions"></ol>
     </div>
     <div class="card">
       <h2>Recommended next step</h2>
-      <p><strong>Continue only if the seller responds clearly.</strong></p>
-      <p class="muted">If the seller can verify the uncertain features and provide stronger service evidence, this becomes a reasonable PPI candidate. If they dodge the questions, move on.</p>
+      <p id="nextStep"></p>
+      <p class="muted">This is driven by structured case data from the prototype seed dataset.</p>
     </div>
   </div>
 
   <div class="wrap section">
     <div class="card">
       <h2>Prototype notes</h2>
-      <p class="muted">This is a prototype paid-customer view. Final product would include dynamic case data, status timeline, uploads, downloadable report, and follow-up support.</p>
+      <p class="muted">This customer dashboard is now reading from structured prototype data rather than only static copy. Next version can support multiple cases, evidence timelines, downloadable reports, and richer source-backed findings.</p>
     </div>
   </div>
+
+  <script src="/data.js"></script>
+  <script>
+    const data = window.PROTOTYPE_DATA;
+    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+
+    const vehicle = data.case.vehicle;
+    document.getElementById('vehicleTitle').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} Review`;
+    document.getElementById('caseMeta').textContent = `Order #${data.case.case_id.toUpperCase()} • Prototype paid-customer dashboard`;
+    document.getElementById('verdictBadge').textContent = `Verdict: ${data.verdict.verdict_label}`;
+    document.getElementById('verdictSummary').innerHTML = `<strong>${data.verdict.summary}</strong>`;
+    document.getElementById('verdictRationale').textContent = data.verdict.rationale;
+    document.getElementById('concernText').textContent = `Customer concern: ${data.case.customer_primary_concern}`;
+    document.getElementById('listingLink').href = data.case.listing_url;
+
+    const overall = data.scores.find(s => s.score_type === 'overall_confidence_score');
+    document.getElementById('overallScore').textContent = overall ? overall.score_value : '--';
+    document.getElementById('overallScoreExplanation').textContent = overall ? overall.explanation : '';
+
+    const highlights = [
+      `VIN: ${vehicle.vin}`,
+      `Asking price: ${fmtMoney(data.case.asking_price)}`,
+      `Claimed mileage: ${data.case.mileage_claimed.toLocaleString()} mi`,
+      `Seller type: ${data.case.seller_type}`
+    ];
+    const highlightUl = document.getElementById('highlights');
+    highlights.forEach(text => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      highlightUl.appendChild(li);
+    });
+
+    const scoreList = document.getElementById('scoreList');
+    data.scores.filter(s => s.score_type !== 'overall_confidence_score').forEach(score => {
+      const div = document.createElement('div');
+      div.className = 'scoreitem';
+      div.innerHTML = `<strong>${score.score_type.replaceAll('_', ' ')}</strong><br>${score.score_value}/${score.scale_max} • <span class="muted">${score.explanation}</span>`;
+      scoreList.appendChild(div);
+    });
+
+    const casePills = document.getElementById('casePills');
+    [
+      `Status: ${data.case.status}`,
+      `Seller: ${data.case.seller_type}`,
+      `Mileage: ${data.case.mileage_claimed.toLocaleString()} mi`,
+      `Price: ${fmtMoney(data.case.asking_price)}`
+    ].forEach(text => {
+      const span = document.createElement('span');
+      span.className = 'badge badge-ok';
+      span.textContent = text;
+      casePills.appendChild(span);
+    });
+
+    const findingsList = document.getElementById('findingsList');
+    data.findings.forEach(finding => {
+      const div = document.createElement('div');
+      div.className = 'finding';
+      div.innerHTML = `<strong>${finding.title}</strong><br><span class="muted">${finding.explanation}</span><br><span class="badge ${finding.severity === 'medium' ? 'badge-warn' : finding.severity === 'high' ? 'badge-danger' : 'badge-ok'}" style="margin-top:8px;">${finding.severity} severity</span>`;
+      findingsList.appendChild(div);
+    });
+
+    const sellerQuestions = document.getElementById('sellerQuestions');
+    data.seller_questions.forEach(q => {
+      const li = document.createElement('li');
+      li.innerHTML = `${q.question_text}<br><span class="muted">Why it matters: ${q.reason}</span>`;
+      sellerQuestions.appendChild(li);
+    });
+
+    document.getElementById('nextStep').textContent = data.verdict.summary;
+  </script>
 </body>
 </html>
