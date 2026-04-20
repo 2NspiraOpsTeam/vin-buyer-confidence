@@ -72,5 +72,55 @@ window.PROTOTYPE_DATA = {
       question_text: 'Can you send cold-start and walkaround video?',
       reason: 'This helps validate current condition signals remotely.'
     }
+  ],
+  evidence_timeline: [
+    {
+      date: '2024-11-15',
+      type: 'listing_history',
+      title: 'Vehicle appeared in dealer listing history',
+      detail: 'Historical listing record shows asking price around $31,900 with mileage near 69k.',
+      confidence: 'medium'
+    },
+    {
+      date: '2025-01-08',
+      type: 'mileage_signal',
+      title: 'Mileage progression appears plausible',
+      detail: 'Observed mileage progression does not currently show an obvious rollback pattern.',
+      confidence: 'medium'
+    },
+    {
+      date: '2026-04-20',
+      type: 'listing_review',
+      title: 'Current listing reviewed for option and photo consistency',
+      detail: 'Core identity appears plausible, but some higher-value feature claims remain weakly supported.',
+      confidence: 'medium'
+    },
+    {
+      date: '2026-04-20',
+      type: 'service_signal',
+      title: 'Service support judged thinner than ideal',
+      detail: 'Current evidence does not strongly support a low-risk ownership story at this price.',
+      confidence: 'medium'
+    }
+  ],
+  source_summary: [
+    {
+      source: 'VIN identity source',
+      role: 'vehicle identity',
+      status: 'supports core vehicle identity',
+      confidence: 'high'
+    },
+    {
+      source: 'Listing history source',
+      role: 'price and mileage history',
+      status: 'useful but not authoritative for title truth',
+      confidence: 'medium'
+    },
+    {
+      source: 'Seller listing',
+      role: 'feature and condition claims',
+      status: 'helpful but requires verification',
+      confidence: 'low'
+    }
   ]
 };

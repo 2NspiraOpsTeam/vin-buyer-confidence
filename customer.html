@@ -42,6 +42,11 @@
     .finding { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
     .finding:first-child { border-top:none; padding-top:0; }
     .pillrow { display:flex; gap:10px; flex-wrap:wrap; }
+    .timeline { display:grid; gap:14px; }
+    .timeline-item { padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .timeline-date { font-size:13px; color: var(--accent2); font-weight:700; margin-bottom:8px; }
+    .source-item { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
+    .source-item:first-child { border-top:none; padding-top:0; }
     @media (max-width: 900px) { .grid-3, .grid-2, .subgrid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -88,6 +93,17 @@
 
   <div class="wrap section grid-2">
     <div class="card">
+      <h2>Evidence timeline</h2>
+      <div class="timeline" id="timelineList"></div>
+    </div>
+    <div class="card">
+      <h2>Source confidence view</h2>
+      <div id="sourceSummary"></div>
+    </div>
+  </div>
+
+  <div class="wrap section grid-2">
+    <div class="card">
       <h2>Questions to ask the seller next</h2>
       <ol id="sellerQuestions"></ol>
     </div>
@@ -101,7 +117,7 @@
   <div class="wrap section">
     <div class="card">
       <h2>Prototype notes</h2>
-      <p class="muted">This customer dashboard is now reading from structured prototype data rather than only static copy. Next version can support multiple cases, evidence timelines, downloadable reports, and richer source-backed findings.</p>
+      <p class="muted">This customer dashboard now renders structured case data, findings, an evidence timeline, and source-confidence summaries. Next version can support multi-case comparison, downloadable reports, historical images, and richer source-backed event cards.</p>
     </div>
   </div>
 
@@ -109,6 +125,7 @@
   <script>
     const data = window.PROTOTYPE_DATA;
     const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+    const badgeClass = level => level === 'high' ? 'badge-ok' : level === 'medium' ? 'badge-warn' : 'badge-danger';
 
     const vehicle = data.case.vehicle;
     document.getElementById('vehicleTitle').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} Review`;
@@ -163,6 +180,22 @@
       div.className = 'finding';
       div.innerHTML = `<strong>${finding.title}</strong><br><span class="muted">${finding.explanation}</span><br><span class="badge ${finding.severity === 'medium' ? 'badge-warn' : finding.severity === 'high' ? 'badge-danger' : 'badge-ok'}" style="margin-top:8px;">${finding.severity} severity</span>`;
       findingsList.appendChild(div);
+    });
+
+    const timelineList = document.getElementById('timelineList');
+    data.evidence_timeline.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'timeline-item';
+      div.innerHTML = `<div class="timeline-date">${item.date}</div><strong>${item.title}</strong><br><span class="muted">${item.detail}</span><br><span class="badge ${badgeClass(item.confidence)}" style="margin-top:10px;">${item.confidence} confidence</span>`;
+      timelineList.appendChild(div);
+    });
+
+    const sourceSummary = document.getElementById('sourceSummary');
+    data.source_summary.forEach(src => {
+      const div = document.createElement('div');
+      div.className = 'source-item';
+      div.innerHTML = `<strong>${src.source}</strong><br><span class="muted">Role: ${src.role}</span><br><span class="muted">${src.status}</span><br><span class="badge ${badgeClass(src.confidence)}" style="margin-top:8px;">${src.confidence} source confidence</span>`;
+      sourceSummary.appendChild(div);
     });
 
     const sellerQuestions = document.getElementById('sellerQuestions');
