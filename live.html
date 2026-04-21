@@ -48,22 +48,38 @@
 
       <div class="grid">
         <div class="card">
+          <h3>Recall snapshot</h3>
+          <ul id="recalls"></ul>
+        </div>
+        <div class="card">
           <h3>What is live now</h3>
           <ul>
             <li>VIN decode</li>
             <li>Vehicle identity normalization</li>
             <li>Basic safety/equipment fields when available</li>
+            <li>NHTSA recall lookup</li>
             <li>Semi-real report shell</li>
           </ul>
         </div>
+      </div>
+
+      <div class="grid">
         <div class="card">
           <h3>Still to be added</h3>
           <ul>
-            <li>Recalls layer</li>
             <li>Market comps</li>
             <li>Listing history</li>
             <li>Title/accident/history data</li>
             <li>Historical images</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Future paid intelligence layers</h3>
+          <ul>
+            <li>Cross-platform vehicle comps</li>
+            <li>Price and mileage trend history</li>
+            <li>Title, brand, salvage, and accident signals</li>
+            <li>Historical auction/listing images</li>
           </ul>
         </div>
       </div>
@@ -92,9 +108,13 @@
       resultEl.style.display = 'none';
 
       try {
-        const res = await fetch(`/api/decode?vin=${encodeURIComponent(vin)}`);
-        const json = await res.json();
-        if (!res.ok || !json.ok) throw new Error(json.error || 'Lookup failed');
+        const [decodeRes, recallRes] = await Promise.all([
+          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`),
+          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`)
+        ]);
+        const json = await decodeRes.json();
+        const recallsJson = await recallRes.json();
+        if (!decodeRes.ok || !json.ok) throw new Error(json.error || 'Lookup failed');
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
@@ -119,11 +139,22 @@
           `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
           `This free layer is useful for sanity-checking what the vehicle likely is before deeper history or market data is pulled.`,
           `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
-          `The next useful layers for a paid review would be recalls, listing history, comps, title/brand history, and historical imagery.`
+          `The next useful paid layers would be comps, listing history, title/brand history, and historical imagery.`
         ].forEach(x => interpretation.appendChild(li(x)));
 
+        const recalls = document.getElementById('recalls');
+        recalls.innerHTML = '';
+        if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
+          recalls.appendChild(li(`${recallsJson.count} recall record(s) found.`));
+          recallsJson.recalls.slice(0, 3).forEach(r => {
+            recalls.appendChild(li(`${r.recallNumber || 'Recall'} • ${r.component || 'Component not listed'}`));
+          });
+        } else {
+          recalls.appendChild(li('No recall records returned in this free lookup.'));
+        }
+
         resultEl.style.display = 'block';
-        statusEl.textContent = 'VIN decode complete.';
+        statusEl.textContent = 'VIN decode and recall lookup complete.';
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
       }
