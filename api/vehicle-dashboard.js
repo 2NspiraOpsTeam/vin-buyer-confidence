@@ -10,13 +10,14 @@ export default async function handler(req, res) {
   const listingUrl = req.query?.listing_url || '';
   const askingPrice = req.query?.asking_price ? Number(req.query.asking_price) : null;
   const mileage = req.query?.mileage ? Number(req.query.mileage) : null;
+  const condition = req.query?.condition || 'good';
 
   if (!vin || vin.length < 11) {
     return res.status(400).json({ ok: false, error: 'Valid VIN required' });
   }
 
   try {
-    const dashboard = await buildVehicleDashboard({ vin, askingPrice, mileage, listingUrl });
+    const dashboard = await buildVehicleDashboard({ vin, askingPrice, mileage, listingUrl, condition });
     return res.status(200).json({ ok: true, dashboard, integrationStatus: { marketcheck: process.env.MARKETCHECK_API_KEY ? 'configured' : 'not_configured' } });
   } catch (error) {
     return res.status(500).json({ ok: false, error: error.message || 'Dashboard build failed' });
