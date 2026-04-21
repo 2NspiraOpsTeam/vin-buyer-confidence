@@ -24,12 +24,13 @@
     .metric { padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
     .metric span { display:block; color:#b4bfdc; font-size:13px; }
     .metric strong { display:block; margin-top:6px; font-size:20px; }
-    input { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
+    input, select { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
+    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
     button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
     .muted { color:#b4bfdc; }
     .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
-    @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -46,6 +47,38 @@
     <div class="card">
       <label for="vin"><strong>Enter VIN</strong></label>
       <input id="vin" placeholder="Example: WBA8B9G59JNU12345" />
+      <div class="form-grid">
+        <div>
+          <label for="listingUrl" class="muted">Listing URL</label>
+          <input id="listingUrl" placeholder="https://..." />
+        </div>
+        <div>
+          <label for="askingPrice" class="muted">Asking price</label>
+          <input id="askingPrice" type="number" placeholder="28995" />
+        </div>
+        <div>
+          <label for="claimedMileage" class="muted">Claimed mileage</label>
+          <input id="claimedMileage" type="number" placeholder="72105" />
+        </div>
+        <div>
+          <label for="sellerType" class="muted">Seller type</label>
+          <select id="sellerType">
+            <option value="dealer">Dealer</option>
+            <option value="private party">Private party</option>
+            <option value="auction">Auction</option>
+          </select>
+        </div>
+        <div>
+          <label for="vehicleCondition" class="muted">Condition</label>
+          <select id="vehicleCondition">
+            <option value="excellent">Excellent</option>
+            <option value="very good">Very good</option>
+            <option value="good" selected>Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+      </div>
       <button id="runBtn">Run VIN Check</button>
       <p class="muted" id="status"></p>
       <div class="icon-grid">
@@ -125,6 +158,11 @@
   <script>
     const runBtn = document.getElementById('runBtn');
     const vinInput = document.getElementById('vin');
+    const listingUrlInput = document.getElementById('listingUrl');
+    const askingPriceInput = document.getElementById('askingPrice');
+    const claimedMileageInput = document.getElementById('claimedMileage');
+    const sellerTypeInput = document.getElementById('sellerType');
+    const vehicleConditionInput = document.getElementById('vehicleCondition');
     const statusEl = document.getElementById('status');
     const resultEl = document.getElementById('result');
 
@@ -165,7 +203,11 @@
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
         document.getElementById('title').textContent = title || vin;
-        document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. This is an early live layer that helps confirm core identity before deeper paid data is added.`;
+        const askingPrice = askingPriceInput.value ? Number(askingPriceInput.value) : null;
+        const claimedMileage = claimedMileageInput.value ? Number(claimedMileageInput.value) : null;
+        const sellerType = sellerTypeInput.value || 'dealer';
+        const condition = vehicleConditionInput.value || 'good';
+        document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. Shopping context captured: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'ask not entered'}, ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'mileage not entered'}, ${sellerType}, condition ${condition}.`;
 
         const identity = document.getElementById('identity');
         identity.innerHTML = '';
@@ -176,7 +218,11 @@
           `Drive type: ${d.driveType || 'Not available'}`,
           `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
           `Manufacturer: ${d.manufacturer || 'Not available'}`,
-          `Plant country: ${d.plantCountry || 'Not available'}`
+          `Plant country: ${d.plantCountry || 'Not available'}`,
+          `Asking price: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'Not entered'}`,
+          `Claimed mileage: ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'Not entered'}`,
+          `Seller type: ${sellerType}`,
+          `Condition: ${condition}`
         ].forEach(x => identity.appendChild(li(x)));
 
         const interpretation = document.getElementById('interpretation');
