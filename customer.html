@@ -80,8 +80,12 @@
     .history-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .history-event { padding:14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-top:12px; }
     .mini-head { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .market-inputs { display:grid; grid-template-columns: 1fr 1fr auto; gap:12px; margin-top:14px; align-items:end; }
+    .market-inputs label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; }
+    .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
+    .market-btn { padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; cursor:pointer; }
     .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
-    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -254,22 +258,39 @@
     <div id="comps" class="card">
       <h2>Comparable market view</h2>
       <p class="muted">See whether this car is priced low, fair, or stretched relative to the market.</p>
+      <div class="market-inputs">
+        <div>
+          <label for="marketMileage">Mileage</label>
+          <input id="marketMileage" type="number" value="61240" />
+        </div>
+        <div>
+          <label for="marketCondition">Condition</label>
+          <select id="marketCondition">
+            <option value="excellent">Excellent</option>
+            <option value="very good">Very good</option>
+            <option value="good" selected>Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+        <button id="updateMarketView" class="market-btn">Update market view</button>
+      </div>
       <div class="market-range">
         <div class="mini-label">Market price range</div>
         <div class="range-bar">
           <div class="range-marker" style="left: 68%;"></div>
         </div>
         <div class="range-labels">
-          <span>$24.9k</span>
+          <span id="marketLowLabel">$24.9k</span>
           <span>Fair market</span>
-          <span>$31.5k</span>
+          <span id="marketHighLabel">$31.5k</span>
         </div>
       </div>
       <div class="metric-row">
-        <div class="metric"><span class="mini-label">Asking price</span><strong>$28,400</strong></div>
-        <div class="metric"><span class="mini-label">Fair market range</span><strong>$26,900 - $29,900</strong></div>
-        <div class="metric"><span class="mini-label">Negotiation room</span><strong>$900 - $1,800</strong></div>
-        <div class="metric"><span class="mini-label">Best use</span><strong>Seller leverage</strong></div>
+        <div class="metric"><span class="mini-label">Asking price</span><strong id="askingPriceValue">$28,400</strong></div>
+        <div class="metric"><span class="mini-label">Fair market range</span><strong id="marketRangeValue">$26,900 - $29,900</strong></div>
+        <div class="metric"><span class="mini-label">Negotiation room</span><strong id="negotiationRoomValue">$900 - $1,800</strong></div>
+        <div class="metric"><span class="mini-label">Best use</span><strong id="bestUseValue">Seller leverage</strong></div>
       </div>
       <div class="chip-row">
         <span class="soft-chip">Mileage-adjusted estimate</span>
@@ -426,6 +447,35 @@
     });
 
     document.getElementById('nextStep').textContent = data.verdict.summary;
+
+    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+    const askingPrice = 28400;
+    const marketMileageInput = document.getElementById('marketMileage');
+    const marketConditionInput = document.getElementById('marketCondition');
+    const marketLowLabel = document.getElementById('marketLowLabel');
+    const marketHighLabel = document.getElementById('marketHighLabel');
+    const marketRangeValue = document.getElementById('marketRangeValue');
+    const negotiationRoomValue = document.getElementById('negotiationRoomValue');
+    const bestUseValue = document.getElementById('bestUseValue');
+
+    function recalcMarketView() {
+      const mileage = Number(marketMileageInput.value || 0);
+      const condition = marketConditionInput.value;
+      const mileageAdjustment = mileage > 80000 ? -2200 : mileage > 60000 ? -1200 : mileage > 40000 ? -500 : 600;
+      const conditionAdjustmentMap = { 'excellent': 1200, 'very good': 600, 'good': 0, 'fair': -1200, 'poor': -3000 };
+      const conditionAdjustment = conditionAdjustmentMap[condition] ?? 0;
+      const midpoint = askingPrice + mileageAdjustment + conditionAdjustment;
+      const low = midpoint - 1500;
+      const high = midpoint + 1500;
+      const gap = askingPrice - midpoint;
+      marketLowLabel.textContent = fmtMoney(low);
+      marketHighLabel.textContent = fmtMoney(high);
+      marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
+      negotiationRoomValue.textContent = gap > 0 ? `${fmtMoney(Math.max(300, gap - 600))} - ${fmtMoney(gap + 600)}` : 'Minimal';
+      bestUseValue.textContent = gap > 1500 ? 'Push harder on price' : gap < -1500 ? 'Strong value if condition checks out' : 'Seller leverage';
+    }
+
+    document.getElementById('updateMarketView').addEventListener('click', recalcMarketView);
   </script>
 </body>
 </html>
