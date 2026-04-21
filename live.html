@@ -13,19 +13,30 @@
     .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
     .icon-card { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:14px; }
     .icon-big { display:block; font-size:26px; margin-bottom:8px; }
+    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:16px; }
+    .flow-card { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
+    .metric { padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .metric span { display:block; color:#b4bfdc; font-size:13px; }
+    .metric strong { display:block; margin-top:6px; font-size:20px; }
     input { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
     button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
     .muted { color:#b4bfdc; }
     .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
-    @media (max-width: 800px) { .grid, .icon-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
     <h1>Live VIN Check MVP</h1>
-    <p class="muted">This is the first live-data layer. It uses free VIN decode data to generate a semi-real report shell. History, comps, title, accident, and image layers are not live yet.</p>
+    <p class="muted">Start with the live identity check, then move into compare, comps, and a final buy/pass decision. This page is being shaped to feel like the first step in a buyer workspace, not a raw lookup tool.</p>
+    <div class="mini-flow">
+      <div class="flow-card"><strong>1. Check identity</strong><div class="muted">VIN and recall sanity check</div></div>
+      <div class="flow-card"><strong>2. Compare options</strong><div class="muted">Price, mileage, confidence</div></div>
+      <div class="flow-card"><strong>3. Decide next step</strong><div class="muted">Pursue, verify, negotiate, or walk away</div></div>
+    </div>
 
     <div class="card">
       <label for="vin"><strong>Enter VIN</strong></label>
@@ -55,6 +66,10 @@
         <div class="card">
           <h3>Initial buyer-confidence interpretation</h3>
           <ul id="interpretation"></ul>
+          <div class="metric-grid">
+            <div class="metric"><span>Status</span><strong>Identity check</strong></div>
+            <div class="metric"><span>Best next move</span><strong>Compare before deposit</strong></div>
+          </div>
         </div>
       </div>
 
