@@ -1,4 +1,4 @@
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     const vin = (req.query.vin || '').trim().toUpperCase();
     if (!vin || vin.length < 11) {
@@ -41,4 +41,5 @@ module.exports = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Decode failed', detail: String(error) });
   }
-};
+
+}
