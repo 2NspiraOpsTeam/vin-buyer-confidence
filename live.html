@@ -7,6 +7,8 @@
   <style>
     body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
     .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+    .brand { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .brand-logo { height: 40px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 4px 6px; }
     .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:22px; margin-top:18px; }
     input { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
     button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
@@ -18,7 +20,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Live VIN Check MVP</h1>
+    <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /><div><h1 style="margin:0;">Live VIN Check MVP</h1></div></div>
     <p class="muted">This is the first live-data layer. It uses free VIN decode data to generate a semi-real report shell. History, comps, title, accident, and image layers are not live yet.</p>
 
     <div class="card">
