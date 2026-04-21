@@ -53,7 +53,21 @@
     .source-item:first-child { border-top:none; padding-top:0; }
     .action-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
     .action-btn { display:inline-block; padding:12px 14px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--text); }
-    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid { grid-template-columns: 1fr; } }
+    .compare-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin-top:14px; }
+    .compare-card { padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .compare-card.active { border-color: rgba(126,231,135,.45); box-shadow: 0 0 0 1px rgba(126,231,135,.16) inset; }
+    .compare-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+    .mini-label { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .metric-row { display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-top:12px; }
+    .metric { padding:10px 12px; border-radius:12px; background: rgba(11,16,32,.55); border:1px solid rgba(255,255,255,.05); }
+    .metric strong { display:block; font-size:18px; margin-top:4px; }
+    .market-range { margin-top:16px; padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .range-bar { position:relative; height:14px; border-radius:999px; background: linear-gradient(90deg, rgba(126,231,135,.35), rgba(242,204,96,.35), rgba(255,123,114,.35)); margin:14px 0 10px; overflow:hidden; }
+    .range-marker { position:absolute; top:-4px; width:3px; height:22px; background:#eef3ff; border-radius:999px; box-shadow: 0 0 0 2px rgba(11,16,32,.65); }
+    .range-labels { display:flex; justify-content:space-between; color: var(--muted); font-size:13px; }
+    .chip-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -65,6 +79,7 @@
         <a class="nav-link" href="/live">Live VIN Check</a>
         <a class="nav-link" href="#summary">Summary</a>
         <a class="nav-link" href="#timeline">Timeline</a>
+        <a class="nav-link" href="#compare">Compare</a>
         <a class="nav-link" href="#questions">Questions</a>
       </div>
     </div>
@@ -134,19 +149,85 @@
   <div id="compare" class="wrap section grid-2">
     <div class="card">
       <h2>Saved cars / compare</h2>
-      <ul>
-        <li>Current car: 2018 BMW 340i xDrive — Verify Further</li>
-        <li>Next step: add more cars to compare price, mileage, confidence, and risk side by side</li>
-        <li>Bundle plans and unlimited membership are designed to support multi-car shopping</li>
-      </ul>
+      <p class="muted">Compare your shortlist by price, mileage, risk, and confidence before you commit.</p>
+      <div class="compare-grid">
+        <div class="compare-card active">
+          <div class="compare-top">
+            <div>
+              <div class="mini-label">Current pick</div>
+              <strong>2018 BMW 340i xDrive</strong>
+            </div>
+            <span class="badge badge-warn">Verify Further</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><span class="mini-label">Price</span><strong>$28,400</strong></div>
+            <div class="metric"><span class="mini-label">Mileage</span><strong>61,240</strong></div>
+            <div class="metric"><span class="mini-label">Confidence</span><strong>74 / 100</strong></div>
+            <div class="metric"><span class="mini-label">Risk</span><strong>Medium</strong></div>
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="compare-top">
+            <div>
+              <div class="mini-label">Car 2</div>
+              <strong>Add another car</strong>
+            </div>
+            <span class="badge badge-ok">Open slot</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><span class="mini-label">Price</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Mileage</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Confidence</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Risk</span><strong>--</strong></div>
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="compare-top">
+            <div>
+              <div class="mini-label">Car 3</div>
+              <strong>Add another car</strong>
+            </div>
+            <span class="badge badge-ok">Open slot</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><span class="mini-label">Price</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Mileage</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Confidence</span><strong>--</strong></div>
+            <div class="metric"><span class="mini-label">Risk</span><strong>--</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <span class="soft-chip">Shortlist mode</span>
+        <span class="soft-chip">Bundle-friendly workflow</span>
+        <span class="soft-chip">Designed for mobile comparison</span>
+      </div>
     </div>
     <div id="comps" class="card">
       <h2>Comparable market view</h2>
-      <ul>
-        <li>Use comps to decide whether this car is reasonably priced for its year, mileage, and condition story</li>
-        <li>Future comps layer will compare similar cars across platforms</li>
-        <li>Goal: make negotiation and walk-away decisions easier</li>
-      </ul>
+      <p class="muted">See whether this car is priced low, fair, or stretched relative to the market.</p>
+      <div class="market-range">
+        <div class="mini-label">Market price range</div>
+        <div class="range-bar">
+          <div class="range-marker" style="left: 68%;"></div>
+        </div>
+        <div class="range-labels">
+          <span>$24.9k</span>
+          <span>Fair market</span>
+          <span>$31.5k</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric"><span class="mini-label">Asking price</span><strong>$28,400</strong></div>
+        <div class="metric"><span class="mini-label">Comp position</span><strong>Fair / Slightly High</strong></div>
+        <div class="metric"><span class="mini-label">Negotiation room</span><strong>$900 - $1,800</strong></div>
+        <div class="metric"><span class="mini-label">Best use</span><strong>Seller leverage</strong></div>
+      </div>
+      <div class="chip-row">
+        <span class="soft-chip">Use with seller questions</span>
+        <span class="soft-chip">Supports walk-away decisions</span>
+        <span class="soft-chip">Future live comps layer</span>
+      </div>
     </div>
   </div>
 
