@@ -46,7 +46,7 @@
       <div class="card">
         <h2 style="margin-top:0;">Choose your plan</h2>
         <div class="plans">
-          <div class="card plan active">
+          <div class="card plan active" data-plan-card="single">
             <div class="pill">Best first step</div>
             <h3>1 Car Check</h3>
             <div class="price">$14.99</div>
@@ -58,7 +58,7 @@
             </ul>
             <button class="cta" data-plan="single">Continue with 1 Car Check</button>
           </div>
-          <div class="card plan">
+          <div class="card plan" data-plan-card="bundle3">
             <h3>3 Car Compare Pack</h3>
             <div class="price">$34.99</div>
             <div class="muted">Best for active shortlist shopping</div>
@@ -69,7 +69,7 @@
             </ul>
             <button class="cta ghost" data-plan="bundle3">Choose 3 Car Pack</button>
           </div>
-          <div class="card plan">
+          <div class="card plan" data-plan-card="unlimited">
             <div class="pill">Power buyer</div>
             <h3>Unlimited Buyer Pass</h3>
             <div class="price">$99/mo</div>
@@ -82,6 +82,7 @@
             <button class="cta ghost" data-plan="unlimited">Choose Unlimited</button>
           </div>
         </div>
+        <p id="checkoutStatus" class="muted" style="margin-top:14px;"></p>
       </div>
 
       <div class="card">
@@ -104,15 +105,30 @@
   </div>
 
   <script>
-    const routes = {
-      single: '/success.html?plan=single',
-      bundle3: '/success.html?plan=bundle3',
-      unlimited: '/success.html?plan=unlimited'
-    };
+    const statusEl = document.getElementById('checkoutStatus');
+    const cards = document.querySelectorAll('[data-plan-card]');
     document.querySelectorAll('[data-plan]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const plan = btn.getAttribute('data-plan');
-        window.location.href = routes[plan] || '/success.html';
+        cards.forEach(card => card.classList.toggle('active', card.getAttribute('data-plan-card') === plan));
+        statusEl.textContent = 'Starting secure checkout...';
+        try {
+          const res = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan })
+          });
+          const json = await res.json();
+          if (json.ok && json.url) {
+            window.location.href = json.url;
+            return;
+          }
+          statusEl.textContent = json.error || 'Stripe is not configured yet. Opening prototype success state.';
+          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&prototype=1`;
+        } catch (err) {
+          statusEl.textContent = 'Stripe is not configured yet. Opening prototype success state.';
+          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&prototype=1`;
+        }
       });
     });
   </script>

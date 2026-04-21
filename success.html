@@ -25,8 +25,20 @@
         <li>Plan access will determine vehicle check limits</li>
         <li>Saved cars and comparison history will persist here</li>
       </ul>
+      <p class="muted" id="sessionMeta"></p>
       <a class="btn" href="/customer.html">Open buyer dashboard</a>
     </div>
   </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    const plan = params.get('plan');
+    const prototype = params.get('prototype');
+    const meta = document.getElementById('sessionMeta');
+    if (meta) {
+      if (sessionId) meta.textContent = `Checkout session: ${sessionId} • Plan: ${plan || 'selected plan'}`;
+      else if (prototype) meta.textContent = `Prototype fallback path used • Plan: ${plan || 'selected plan'}`;
+    }
+  </script>
 </body>
 </html>

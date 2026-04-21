@@ -20,8 +20,15 @@
       <div class="pill">Checkout canceled</div>
       <h1>Your plan was not activated</h1>
       <p class="muted">This keeps the flow clean if someone exits Stripe before completing payment. In the live version, users should be able to return to checkout or continue with the free live VIN step.</p>
+      <p class="muted" id="cancelMeta"></p>
       <a class="btn" href="/checkout.html">Return to checkout</a>
     </div>
   </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan');
+    const meta = document.getElementById('cancelMeta');
+    if (meta && plan) meta.textContent = `Canceled before activating plan: ${plan}`;
+  </script>
 </body>
 </html>

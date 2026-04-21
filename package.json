@@ -1,0 +1,8 @@
+{
+  "name": "vin-buyer-confidence",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "stripe": "^16.12.0"
+  }
+}
