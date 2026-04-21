@@ -77,8 +77,11 @@
     .comp-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
     .comp-card { padding:12px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
     .comp-photo { width:100%; height:140px; object-fit:cover; border-radius:12px; margin-bottom:10px; }
+    .history-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    .history-event { padding:14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-top:12px; }
+    .mini-head { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
     .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
-    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -91,6 +94,7 @@
         <a class="nav-link" href="#summary">Summary</a>
         <a class="nav-link" href="#timeline">Timeline</a>
         <a class="nav-link" href="#compare">Compare</a>
+        <a class="nav-link" href="#history">History</a>
         <a class="nav-link" href="#questions">Questions</a>
         <a class="nav-link" href="/account.html">Account</a>
       </div>
@@ -143,6 +147,30 @@
     <div class="card">
       <h2>Source confidence view</h2>
       <div id="sourceSummary"></div>
+    </div>
+  </div>
+
+
+  <div id="history" class="wrap section history-grid">
+    <div class="card">
+      <h2>Ownership and registration timeline</h2>
+      <div class="history-event"><div class="mini-head">Owner period 1</div><strong>Personal use, New York</strong><br><span class="muted">Reported in service from 2018 to 2021. Ownership duration and registration history should render here once licensed provider data is connected.</span></div>
+      <div class="history-event"><div class="mini-head">Owner period 2</div><strong>Personal use, New Jersey</strong><br><span class="muted">Transfer dates, owner count, and usage type belong in this section.</span></div>
+    </div>
+    <div class="card">
+      <h2>Title and accident history</h2>
+      <div class="history-event"><div class="mini-head">Title signals</div><strong>No premium history source connected yet</strong><br><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
+      <div class="history-event"><div class="mini-head">Accident / damage signals</div><strong>Provider-dependent section</strong><br><span class="muted">Reported accidents, structural damage, severity clues, and insurance-loss style events belong here.</span></div>
+    </div>
+    <div class="card">
+      <h2>Odometer and service history</h2>
+      <div class="history-event"><div class="mini-head">Mileage timeline</div><strong>Reported odometer readings</strong><br><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
+      <div class="history-event"><div class="mini-head">Service records</div><strong>Maintenance and repair evidence</strong><br><span class="muted">Service and repair records will populate here when supported by the licensed history source.</span></div>
+    </div>
+    <div class="card">
+      <h2>Listing evidence and photos</h2>
+      <div class="history-event"><div class="mini-head">Current listing evidence</div><strong>Photos, seller, listing URL, ask, mileage</strong><br><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
+      <div class="history-event"><div class="mini-head">Historical listing evidence</div><strong>Price changes and prior appearances</strong><br><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
     </div>
   </div>
 
@@ -256,6 +284,16 @@
           <img class="comp-photo" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80" alt="Comparable BMW" />
           <strong>2018 BMW 330i xDrive</strong><br><span class="muted">$29,150 • 51,200 mi • Paramus, NJ</span><br><a href="https://example.com/comp-2" target="_blank" rel="noreferrer">Open listing</a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2>Buyer recommendation engine</h2>
+      <div class="history-grid">
+        <div class="history-event"><div class="mini-head">Verdict</div><strong>Verify Further</strong><br><span class="muted">Final decision state should synthesize history, listing evidence, comps, and unresolved discrepancies.</span></div>
+        <div class="history-event"><div class="mini-head">Discrepancies</div><strong>Seller claim mismatches surface here</strong><br><span class="muted">This is where the product moat becomes visible: identifying what does not line up.</span></div>
       </div>
     </div>
   </div>
