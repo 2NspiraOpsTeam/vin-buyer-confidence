@@ -55,6 +55,10 @@
     ul { padding-left: 18px; }
     .price { font-size: 48px; font-weight: 800; margin: 6px 0; }
     .faq-item { padding: 18px 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .checkout-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:16px; }
+    .checkout-step { padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .checkout-step strong { display:block; margin-top:6px; }
+    .trust-box { margin-top:16px; padding:16px; border-radius:16px; background: rgba(98,176,255,.10); border:1px solid rgba(98,176,255,.20); }
     .cta { text-align:center; padding: 56px 0 84px; }
     .pill { display:inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(126,231,135,.12); color: var(--accent2); font-size: 13px; font-weight:700; }
     .sample-report { white-space: pre-line; font-size: 14px; color: var(--muted); }
@@ -83,7 +87,7 @@
     }
     footer { padding: 24px 0 60px; color: var(--muted); }
     @media (max-width: 900px) {
-      .hero-grid, .grid-3, .grid-2, .trust, .visual-steps, .workspace-grid { grid-template-columns: 1fr; }
+      .hero-grid, .grid-3, .grid-2, .trust, .visual-steps, .workspace-grid, .checkout-flow { grid-template-columns: 1fr; }
       .sub { font-size: 18px; }
     }
   </style>
@@ -300,6 +304,12 @@ Recommendation:
           <strong>Unlimited Buyer Pass</strong><br>
           <span class="muted">$99/month for unlimited vehicle checks during your active buying window.</span>
         </div>
+        <div class="checkout-flow">
+          <div class="checkout-step">①<strong>Choose plan</strong><span class="muted">Single car, bundle, or pass</span></div>
+          <div class="checkout-step">②<strong>Secure checkout</strong><span class="muted">Stripe-hosted payment flow</span></div>
+          <div class="checkout-step">③<strong>Open workspace</strong><span class="muted">Access dashboard, saved cars, and next steps</span></div>
+        </div>
+        <div class="trust-box"><strong>What happens after payment</strong><br><span class="muted">Your review opens inside a customer workspace. Future versions will support billing history, receipts, saved cars, and account access across devices.</span></div>
         <a href="/customer.html" class="btn btn-primary">Enter paid-customer prototype</a>
       </div>
       <div class="card">
@@ -314,10 +324,16 @@ Recommendation:
 
   <section id="order" class="cta wrap">
     <div class="card">
-      <h2>Prototype mode enabled</h2>
-      <p class="muted">Checkout is bypassed for testing. Use the button below to enter the customer view directly.</p>
+      <h2>Checkout and account entry</h2>
+      <p class="muted">The prototype still bypasses live checkout, but the intended flow is now clearer: pay securely, open your buyer workspace, and continue comparing cars from one place.</p>
+      <div class="checkout-flow" style="text-align:left; margin-top:22px;">
+        <div class="checkout-step">🧾<strong>Receipt + billing</strong><span class="muted">Future account area for invoices, receipts, and active plans</span></div>
+        <div class="checkout-step">🚗<strong>Saved cars</strong><span class="muted">Return to your shortlist and comparison workspace</span></div>
+        <div class="checkout-step">🔐<strong>Account access</strong><span class="muted">Google, Apple, or email magic link in future version</span></div>
+      </div>
       <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:18px;">
         <a href="/customer.html" class="btn btn-primary">Bypass to customer dashboard</a>
+        <a href="/live.html" class="btn btn-secondary">Start with live VIN check</a>
       </div>
     </div>
   </section>
