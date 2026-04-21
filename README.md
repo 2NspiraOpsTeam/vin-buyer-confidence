@@ -24,3 +24,21 @@ Then open:
 - connect payment flow
 - add sample report page
 - migrate to app stack when validated
+
+
+## Stripe environment variables
+
+Set these in Vercel before live checkout can work:
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PRICE_SINGLE`
+- `STRIPE_PRICE_BUNDLE3`
+- `STRIPE_PRICE_UNLIMITED`
+- `STRIPE_WEBHOOK_SECRET`
+- `APP_BASE_URL`
+
+Current status:
+- checkout session creation is scaffolded
+- Stripe redirect flow is scaffolded
+- webhook fulfillment endpoint is scaffolded
+- entitlement persistence is not implemented yet
