@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Payment cancellation state for Car Buyer Confidence Check checkout." />
+  <title>Checkout Canceled | Car Buyer Confidence Check</title>
+  <style>
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+    .card { background:#151f3f; border:1px solid #26345f; border-radius:20px; padding:24px; }
+    .pill { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(242,204,96,.12); color:#f2cc60; font-size:13px; font-weight:700; }
+    .btn { display:inline-block; margin-top:14px; padding:14px 18px; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:800; text-decoration:none; }
+    .muted { color:#b4bfdc; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="pill">Checkout canceled</div>
+      <h1>Your plan was not activated</h1>
+      <p class="muted">This keeps the flow clean if someone exits Stripe before completing payment. In the live version, users should be able to return to checkout or continue with the free live VIN step.</p>
+      <a class="btn" href="/checkout.html">Return to checkout</a>
+    </div>
+  </div>
+</body>
+</html>

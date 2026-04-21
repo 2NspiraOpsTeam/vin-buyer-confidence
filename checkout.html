@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Secure checkout for Car Buyer Confidence Check plans and bundles." />
+  <meta property="og:title" content="Checkout | Car Buyer Confidence Check" />
+  <meta property="og:description" content="Choose a plan and continue to secure checkout for your buyer workspace." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Checkout | Car Buyer Confidence Check</title>
+  <style>
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 70px; }
+    .brand { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .brand img { height:36px; width:auto; border-radius:8px; background:rgba(255,255,255,.92); padding:3px 6px; }
+    .hero { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; margin-bottom:24px; }
+    .muted { color:#b4bfdc; }
+    .grid { display:grid; grid-template-columns: 1.15fr .85fr; gap:18px; }
+    .plans { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; }
+    .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:20px; }
+    .plan.active { border-color: rgba(98,176,255,.55); box-shadow: 0 0 0 1px rgba(98,176,255,.15) inset; }
+    .price { font-size:34px; font-weight:800; margin:10px 0 4px; }
+    .pill { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
+    ul { padding-left:18px; }
+    .cta { width:100%; margin-top:14px; padding:14px 16px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:800; cursor:pointer; }
+    .ghost { background:rgba(255,255,255,.04); color:#eef3ff; border:1px solid rgba(255,255,255,.07); }
+    .flow { display:grid; gap:12px; margin-top:14px; }
+    .flow-item { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .small { font-size:13px; }
+    @media (max-width: 900px) { .grid, .plans { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" /></div>
+    <div class="hero">
+      <div>
+        <h1 style="margin:0 0 8px;">Secure checkout</h1>
+        <p class="muted" style="max-width:700px;">Choose the right plan for your buying window. The live Stripe flow will sit here, then unlock your buyer workspace after payment success.</p>
+      </div>
+      <a href="/" class="pill" style="text-decoration:none;">Back to home</a>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin-top:0;">Choose your plan</h2>
+        <div class="plans">
+          <div class="card plan active">
+            <div class="pill">Best first step</div>
+            <h3>1 Car Check</h3>
+            <div class="price">$14.99</div>
+            <div class="muted">Low-friction single review</div>
+            <ul>
+              <li>1 vehicle workspace</li>
+              <li>Identity + recall review</li>
+              <li>Decision-focused output</li>
+            </ul>
+            <button class="cta" data-plan="single">Continue with 1 Car Check</button>
+          </div>
+          <div class="card plan">
+            <h3>3 Car Compare Pack</h3>
+            <div class="price">$34.99</div>
+            <div class="muted">Best for active shortlist shopping</div>
+            <ul>
+              <li>3 vehicle workspaces</li>
+              <li>Compare workflow</li>
+              <li>More room for negotiation decisions</li>
+            </ul>
+            <button class="cta ghost" data-plan="bundle3">Choose 3 Car Pack</button>
+          </div>
+          <div class="card plan">
+            <div class="pill">Power buyer</div>
+            <h3>Unlimited Buyer Pass</h3>
+            <div class="price">$99/mo</div>
+            <div class="muted">For a live buying window</div>
+            <ul>
+              <li>Unlimited checks while active</li>
+              <li>Shortlist and compare workflow</li>
+              <li>Best for high-volume shopping</li>
+            </ul>
+            <button class="cta ghost" data-plan="unlimited">Choose Unlimited</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">What happens next</h2>
+        <div class="flow">
+          <div class="flow-item">① <strong>Secure payment</strong><br><span class="muted">Stripe-hosted checkout with a clean success/cancel flow.</span></div>
+          <div class="flow-item">② <strong>Workspace opens</strong><br><span class="muted">Your vehicle review appears inside the buyer dashboard.</span></div>
+          <div class="flow-item">③ <strong>Account layer grows</strong><br><span class="muted">Receipts, billing history, saved cars, and future login methods plug in here.</span></div>
+        </div>
+        <div class="card" style="margin-top:16px; background:rgba(255,255,255,.03);">
+          <strong>Current prototype status</strong>
+          <p class="muted small">This page is ready for Stripe wiring. Until keys and products are connected, buttons route to the prototype success experience.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="/success.html" class="pill" style="text-decoration:none;">Preview success state</a>
+            <a href="/cancel.html" class="pill" style="text-decoration:none;">Preview cancel state</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const routes = {
+      single: '/success.html?plan=single',
+      bundle3: '/success.html?plan=bundle3',
+      unlimited: '/success.html?plan=unlimited'
+    };
+    document.querySelectorAll('[data-plan]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const plan = btn.getAttribute('data-plan');
+        window.location.href = routes[plan] || '/success.html';
+      });
+    });
+  </script>
+</body>
+</html>
