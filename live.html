@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live VIN Check | Buy/Pass Review MVP</title>
+  <style>
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+    .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:22px; margin-top:18px; }
+    input { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
+    button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
+    .muted { color:#b4bfdc; }
+    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Live VIN Check MVP</h1>
+    <p class="muted">This is the first live-data layer. It uses free VIN decode data to generate a semi-real report shell. History, comps, title, accident, and image layers are not live yet.</p>
+
+    <div class="card">
+      <label for="vin"><strong>Enter VIN</strong></label>
+      <input id="vin" placeholder="Example: WBA8B9G59JNU12345" />
+      <button id="runBtn">Run VIN Check</button>
+      <p class="muted" id="status"></p>
+    </div>
+
+    <div id="result" style="display:none;">
+      <div class="card">
+        <span class="badge">Live free-data result</span>
+        <h2 id="title"></h2>
+        <p id="summary"></p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Decoded vehicle identity</h3>
+          <ul id="identity"></ul>
+        </div>
+        <div class="card">
+          <h3>Initial buyer-confidence interpretation</h3>
+          <ul id="interpretation"></ul>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>What is live now</h3>
+          <ul>
+            <li>VIN decode</li>
+            <li>Vehicle identity normalization</li>
+            <li>Basic safety/equipment fields when available</li>
+            <li>Semi-real report shell</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Still to be added</h3>
+          <ul>
+            <li>Recalls layer</li>
+            <li>Market comps</li>
+            <li>Listing history</li>
+            <li>Title/accident/history data</li>
+            <li>Historical images</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const vinInput = document.getElementById('vin');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
+
+    function li(text) {
+      const el = document.createElement('li');
+      el.textContent = text;
+      return el;
+    }
+
+    runBtn.addEventListener('click', async () => {
+      const vin = vinInput.value.trim().toUpperCase();
+      if (!vin) {
+        statusEl.textContent = 'Enter a VIN first.';
+        return;
+      }
+      statusEl.textContent = 'Running free VIN decode...';
+      resultEl.style.display = 'none';
+
+      try {
+        const res = await fetch(`/api/decode?vin=${encodeURIComponent(vin)}`);
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'Lookup failed');
+
+        const d = json.decoded;
+        const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
+        document.getElementById('title').textContent = title || vin;
+        document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. This is an early live layer that helps confirm core identity before deeper paid data is added.`;
+
+        const identity = document.getElementById('identity');
+        identity.innerHTML = '';
+        [
+          `VIN: ${d.vin}`,
+          `Vehicle type: ${d.vehicleType || 'Not available'}`,
+          `Body class: ${d.bodyClass || 'Not available'}`,
+          `Drive type: ${d.driveType || 'Not available'}`,
+          `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
+          `Manufacturer: ${d.manufacturer || 'Not available'}`,
+          `Plant country: ${d.plantCountry || 'Not available'}`
+        ].forEach(x => identity.appendChild(li(x)));
+
+        const interpretation = document.getElementById('interpretation');
+        interpretation.innerHTML = '';
+        [
+          `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
+          `This free layer is useful for sanity-checking what the vehicle likely is before deeper history or market data is pulled.`,
+          `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
+          `The next useful layers for a paid review would be recalls, listing history, comps, title/brand history, and historical imagery.`
+        ].forEach(x => interpretation.appendChild(li(x)));
+
+        resultEl.style.display = 'block';
+        statusEl.textContent = 'VIN decode complete.';
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
