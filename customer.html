@@ -105,7 +105,7 @@
   <div id="summary" class="wrap section hero">
     <div>
       <h1 id="vehicleTitle" style="margin-bottom:8px;">Vehicle Review</h1>
-      <div class="muted" id="caseMeta">Prototype paid-customer dashboard</div>
+      <div class="muted" id="caseMeta">Paid customer dashboard</div>
     </div>
     <div>
       <span class="badge badge-warn" id="verdictBadge">Verdict</span>
@@ -336,8 +336,8 @@
 
   <div class="wrap section">
     <div class="card">
-      <h2>Prototype notes</h2>
-      <p class="muted">This customer dashboard now renders structured case data, findings, an evidence timeline, and source-confidence summaries. Next version can support multi-case comparison, downloadable reports, historical images, and richer source-backed event cards.</p>
+      <h2>Platform notes</h2>
+      <p class="muted">This customer dashboard renders structured case data, findings, evidence timelines, and source-confidence summaries. Future releases can support multi-case comparison, downloadable reports, historical images, and richer source-backed event cards.</p>
     </div>
   </div>
 
@@ -349,7 +349,7 @@
 
     const vehicle = data.case.vehicle;
     document.getElementById('vehicleTitle').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} Review`;
-    document.getElementById('caseMeta').textContent = `Order #${data.case.case_id.toUpperCase()} • Prototype paid-customer dashboard`;
+    document.getElementById('caseMeta').textContent = `Order #${data.case.case_id.toUpperCase()} • Paid customer dashboard`;
     document.getElementById('verdictBadge').textContent = `Verdict: ${data.verdict.verdict_label}`;
     document.getElementById('verdictSummary').innerHTML = `<strong>${data.verdict.summary}</strong>`;
     document.getElementById('verdictRationale').textContent = data.verdict.rationale;

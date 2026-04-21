@@ -42,7 +42,7 @@
     const status = document.getElementById('sessionStatus');
     if (meta) {
       if (sessionId) meta.textContent = `Checkout session: ${sessionId} • Plan: ${plan || 'selected plan'}`;
-      else if (prototype) meta.textContent = `Prototype fallback path used • Plan: ${plan || 'selected plan'}`;
+      else if (prototype) meta.textContent = `Fallback path used • Plan: ${plan || 'selected plan'}`;
     }
     if (sessionId && status) {
       status.textContent = 'Checking activation status...';
@@ -53,7 +53,7 @@
             const record = json.record;
             status.textContent = `Plan activated: ${record.plan} • Payment status: ${record.paymentStatus || 'paid'}${record.customerEmail ? ` • ${record.customerEmail}` : ''}`;
           } else {
-            status.textContent = 'Payment completed, but persisted activation is not available yet in this prototype state.';
+            status.textContent = 'Payment completed, but persisted activation is not available yet in the current state.';
           }
         })
         .catch(() => {

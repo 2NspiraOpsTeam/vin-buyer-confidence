@@ -44,7 +44,7 @@
     <div class="card">
       <div class="pill">Account</div>
       <h1>Your plan and workspace access</h1>
-      <p class="muted">This is the first account surface. It is designed to become the home for billing, receipts, saved cars, and access state after payment.</p>
+      <p class="muted">This is the first account surface in the product. It is designed to become the home for billing, receipts, saved cars, and access state after payment.</p>
       <div class="stat-grid">
         <div class="stat"><span>Active plan</span><strong id="planName">Prototype</strong></div>
         <div class="stat"><span>Payment status</span><strong id="paymentStatus">Not loaded</strong></div>
@@ -108,8 +108,8 @@
           paymentStatus.textContent = 'Unavailable';
         });
     } else {
-      paymentStatus.textContent = 'Prototype mode';
-      billingText.textContent = 'Open this page with a session_id to preview post-payment account state.';
+      paymentStatus.textContent = 'Preview mode';
+      billingText.textContent = 'Open this page with a session_id to view post-payment account state.';
     }
   </script>
   <script type="module">
