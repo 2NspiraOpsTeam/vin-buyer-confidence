@@ -51,6 +51,8 @@
     .timeline-date { font-size:13px; color: var(--accent2); font-weight:700; margin-bottom:8px; }
     .source-item { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
     .source-item:first-child { border-top:none; padding-top:0; }
+    .action-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .action-btn { display:inline-block; padding:12px 14px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--text); }
     @media (max-width: 900px) { .grid-3, .grid-2, .subgrid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -114,6 +116,37 @@
     <div class="card">
       <h2>Source confidence view</h2>
       <div id="sourceSummary"></div>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2>Buyer workspace actions</h2>
+      <div class="action-row">
+        <a class="action-btn" href="/live">Add Another Car</a>
+        <a class="action-btn" href="#compare">Compare My Cars</a>
+        <a class="action-btn" href="#comps">Review Market Comps</a>
+        <a class="action-btn" href="#questions">Use Seller Questions</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="compare" class="wrap section grid-2">
+    <div class="card">
+      <h2>Saved cars / compare</h2>
+      <ul>
+        <li>Current car: 2018 BMW 340i xDrive — Verify Further</li>
+        <li>Next step: add more cars to compare price, mileage, confidence, and risk side by side</li>
+        <li>Bundle plans and unlimited membership are designed to support multi-car shopping</li>
+      </ul>
+    </div>
+    <div id="comps" class="card">
+      <h2>Comparable market view</h2>
+      <ul>
+        <li>Use comps to decide whether this car is reasonably priced for its year, mileage, and condition story</li>
+        <li>Future comps layer will compare similar cars across platforms</li>
+        <li>Goal: make negotiation and walk-away decisions easier</li>
+      </ul>
     </div>
   </div>
 
