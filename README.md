@@ -42,3 +42,8 @@ Current status:
 - Stripe redirect flow is scaffolded
 - webhook fulfillment endpoint is scaffolded
 - entitlement persistence is not implemented yet
+
+Persistence note:
+- prototype uses in-memory purchase state only
+- `/api/session-status` can read purchase activation by `session_id` during a warm runtime
+- no durable database is connected yet

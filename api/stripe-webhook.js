@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { savePurchase } from '../lib/purchase-state.js';
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
@@ -45,13 +46,23 @@ export default async function handler(req, res) {
       const plan = session.metadata?.plan || 'unknown';
       const entitlement = getPlanAccess(plan);
 
+      const saved = savePurchase({
+        sessionId: session.id,
+        customerEmail: session.customer_details?.email || null,
+        customerId: session.customer || null,
+        plan,
+        entitlement,
+        paymentStatus: session.payment_status || null
+      });
+
       console.log(JSON.stringify({
         type: 'checkout.session.completed',
         sessionId: session.id,
         customerEmail: session.customer_details?.email || null,
         customerId: session.customer || null,
         plan,
-        entitlement
+        entitlement,
+        saved
       }));
     }
 
