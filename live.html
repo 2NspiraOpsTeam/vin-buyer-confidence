@@ -134,6 +134,15 @@
       return el;
     }
 
+    async function readJsonSafe(response, label) {
+      const text = await response.text();
+      try {
+        return JSON.parse(text);
+      } catch (err) {
+        throw new Error(`${label} returned a non-JSON response. This usually means the live API route failed on the server.`);
+      }
+    }
+
     runBtn.addEventListener('click', async () => {
       const vin = vinInput.value.trim().toUpperCase();
       if (!vin) {
@@ -148,9 +157,10 @@
           fetch(`/api/decode?vin=${encodeURIComponent(vin)}`),
           fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`)
         ]);
-        const json = await decodeRes.json();
-        const recallsJson = await recallRes.json();
-        if (!decodeRes.ok || !json.ok) throw new Error(json.error || 'Lookup failed');
+        const json = await readJsonSafe(decodeRes, 'Decode API');
+        const recallsJson = await readJsonSafe(recallRes, 'Recall API');
+        if (!decodeRes.ok || !json.ok) throw new Error(json.error || json.detail || 'Lookup failed');
+        if (!recallRes.ok || (recallsJson && recallsJson.error)) throw new Error(recallsJson.error || recallsJson.detail || 'Recall lookup failed');
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
