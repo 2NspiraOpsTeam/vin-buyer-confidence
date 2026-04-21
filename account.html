@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Account dashboard for Car Buyer Confidence Check plans, billing, and saved buyer workspace access." />
+  <meta property="og:title" content="Account | Car Buyer Confidence Check" />
+  <meta property="og:description" content="View your plan, billing status, and buyer workspace access in the Car Buyer Confidence Check account area." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Account | Car Buyer Confidence Check</title>
+  <style>
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 70px; }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+    .brand img { height:36px; width:auto; border-radius:8px; background:rgba(255,255,255,.92); padding:3px 6px; }
+    .muted { color:#b4bfdc; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:20px; }
+    .pill { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(98,176,255,.12); color:#62b0ff; font-size:13px; font-weight:700; }
+    .stat-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
+    .stat { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .stat span { display:block; color:#b4bfdc; font-size:13px; }
+    .stat strong { display:block; margin-top:6px; font-size:20px; }
+    .link-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .btn { display:inline-block; padding:12px 14px; border-radius:12px; text-decoration:none; font-weight:700; }
+    .btn-primary { background:#62b0ff; color:#07101f; }
+    .btn-secondary { background:rgba(255,255,255,.04); color:#eef3ff; border:1px solid rgba(255,255,255,.07); }
+    ul { padding-left:18px; }
+    @media (max-width: 900px) { .grid, .stat-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" /></div>
+      <div class="link-row" style="margin-top:0;">
+        <a class="btn btn-secondary" href="/">Home</a>
+        <a class="btn btn-secondary" href="/customer.html">Buyer Workspace</a>
+        <a class="btn btn-secondary" href="/checkout.html">Checkout</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="pill">Account</div>
+      <h1>Your plan and workspace access</h1>
+      <p class="muted">This is the first account surface. It is designed to become the home for billing, receipts, saved cars, and access state after payment.</p>
+      <div class="stat-grid">
+        <div class="stat"><span>Active plan</span><strong id="planName">Prototype</strong></div>
+        <div class="stat"><span>Payment status</span><strong id="paymentStatus">Not loaded</strong></div>
+        <div class="stat"><span>Checks available</span><strong id="checksAvailable">--</strong></div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px;">
+      <div class="card">
+        <h2 style="margin-top:0;">Billing and receipts</h2>
+        <p class="muted" id="billingText">Receipt history and invoice access will live here as the account system matures.</p>
+        <ul>
+          <li>Payment confirmation</li>
+          <li>Plan history</li>
+          <li>Future invoice / receipt access</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2 style="margin-top:0;">Workspace access</h2>
+        <p class="muted" id="accessText">Saved cars, shortlist comparison, and future login continuity will live here.</p>
+        <ul>
+          <li>Buyer workspace entry</li>
+          <li>Saved cars and history</li>
+          <li>Future Google / Apple / email sign-in</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    const planName = document.getElementById('planName');
+    const paymentStatus = document.getElementById('paymentStatus');
+    const checksAvailable = document.getElementById('checksAvailable');
+    const billingText = document.getElementById('billingText');
+    const accessText = document.getElementById('accessText');
+
+    if (sessionId) {
+      fetch(`/api/session-status?session_id=${encodeURIComponent(sessionId)}`)
+        .then(r => r.json())
+        .then(json => {
+          if (json.ok && json.found && json.record) {
+            const record = json.record;
+            planName.textContent = record.plan || 'Active';
+            paymentStatus.textContent = record.paymentStatus || 'paid';
+            checksAvailable.textContent = record.entitlement?.checks === null ? 'Unlimited' : (record.entitlement?.checks ?? '--');
+            billingText.textContent = record.customerEmail ? `Latest paid account email: ${record.customerEmail}` : 'Payment captured. Receipt and billing history can be added next.';
+            accessText.textContent = 'Plan activation found. Next step is durable account persistence and workspace history.';
+          } else {
+            paymentStatus.textContent = 'Not found';
+            accessText.textContent = 'No persisted session state was found in the current runtime.';
+          }
+        })
+        .catch(() => {
+          paymentStatus.textContent = 'Unavailable';
+        });
+    } else {
+      paymentStatus.textContent = 'Prototype mode';
+      billingText.textContent = 'Open this page with a session_id to preview post-payment account state.';
+    }
+  </script>
+</body>
+</html>
