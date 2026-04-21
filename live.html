@@ -65,6 +65,10 @@
 
       <div class="grid">
         <div class="card">
+          <h3>Comparable market view</h3>
+          <ul id="comps"></ul>
+        </div>
+        <div class="card">
           <h3>Still to be added</h3>
           <ul>
             <li>Market comps</li>
@@ -144,6 +148,17 @@
 
         const recalls = document.getElementById('recalls');
         recalls.innerHTML = '';
+
+        const comps = document.getElementById('comps');
+        comps.innerHTML = '';
+        const yr = Number(d.modelYear || 0);
+        const price = 28995;
+        [
+          `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}` ,
+          `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
+          `Current comps layer is scaffolded only. Best next paid source would supply asking-price and mileage comparisons across marketplaces.`,
+          `Use this listing's ask as a starting point for future market sanity scoring, not a final comps verdict.`
+        ].forEach(x => comps.appendChild(li(x)));
         if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
           recalls.appendChild(li(`${recallsJson.count} recall record(s) found.`));
           recallsJson.recalls.slice(0, 3).forEach(r => {
