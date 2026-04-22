@@ -85,10 +85,13 @@
     .sample-visual {
       min-height: 220px;
       border-radius: 18px;
-      background:
-        linear-gradient(rgba(10,20,37,.18), rgba(10,20,37,.45)),
-        url('/vin-photo.jpg') center/cover no-repeat;
       border:1px solid var(--border);
+      overflow:hidden;
+      background: rgba(255,255,255,.03);
+    }
+    .sample-visual img {
+      width:100%; height:100%; min-height:220px; object-fit:cover; display:block;
+      filter: saturate(1.02) contrast(1.02) brightness(.92);
     }
     footer { padding: 24px 0 60px; color: var(--muted); }
     @media (max-width: 900px) {
@@ -266,7 +269,7 @@
 
   <section id="sample" class="section">
     <div class="wrap grid-2">
-      <div class="sample-visual"></div>
+      <div class="sample-visual"><img src="/vin-photo.jpg" alt="Vehicle VIN location and listing evidence" /></div>
       <div class="card sample-report">Verdict: VERIFY FURTHER BEFORE PPI
 
 What likely checks out:
