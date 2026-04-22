@@ -91,12 +91,17 @@
     .timeline-node:before { content:''; position:absolute; left:-1px; top:6px; width:14px; height:14px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(88,166,255,.15); }
     .timeline-node strong { display:block; margin-bottom:4px; }
     .state-chip { display:inline-block; margin-top:8px; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:12px; }
+    .section-badge { display:inline-block; padding:6px 10px; border-radius:999px; background: rgba(98,176,255,.10); color: var(--accent); font-size:12px; font-weight:700; margin-bottom:10px; }
+    .photo-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
+    .photo-card { position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.03); }
+    .photo-card img { width:100%; height:150px; object-fit:cover; display:block; }
+    .photo-caption { padding:10px 12px; color: var(--muted); font-size:13px; }
     .market-inputs { display:grid; grid-template-columns: 1fr 1fr auto; gap:12px; margin-top:14px; align-items:end; }
     .market-inputs label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; }
     .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
     .market-btn { padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; cursor:pointer; }
     .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
-    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs, .photo-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -169,6 +174,7 @@
 
   <div id="history" class="wrap section history-grid">
     <div class="card">
+      <div class="section-badge">History</div>
       <h2>Ownership and registration timeline</h2>
       <div class="timeline-rail">
         <div class="timeline-node"><div class="mini-head">2018</div><strong>Owner period 1 begins</strong><span class="muted">Personal use starts. Registration and transfer details should lock in here once history-provider data is live.</span><div class="state-chip">New York</div></div>
@@ -177,6 +183,7 @@
       </div>
     </div>
     <div class="card">
+      <div class="section-badge">Risk</div>
       <h2>Title and accident history</h2>
       <div class="timeline-rail">
         <div class="timeline-node"><div class="mini-head">Title status</div><strong>No premium history source connected yet</strong><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
@@ -184,6 +191,7 @@
       </div>
     </div>
     <div class="card">
+      <div class="section-badge">Usage</div>
       <h2>Odometer and service history</h2>
       <div class="timeline-rail">
         <div class="timeline-node"><div class="mini-head">Mileage history</div><strong>Reported odometer readings</strong><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
@@ -191,7 +199,13 @@
       </div>
     </div>
     <div class="card">
+      <div class="section-badge">Evidence</div>
       <h2>Listing evidence and photos</h2>
+      <div class="photo-grid">
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80" alt="Current listing photo" /><div class="photo-caption">Current listing photo set, seller media, condition clues</div></div>
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80" alt="Exterior detail" /><div class="photo-caption">Exterior condition, trim/equipment verification</div></div>
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80" alt="Interior detail" /><div class="photo-caption">Interior wear, mileage coherence, seller quality</div></div>
+      </div>
       <div class="timeline-rail">
         <div class="timeline-node"><div class="mini-head">Current listing</div><strong>Photos, seller, listing URL, ask, mileage</strong><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
         <div class="timeline-node"><div class="mini-head">Listing history</div><strong>Price changes and prior appearances</strong><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
@@ -341,16 +355,19 @@
 
   <div id="safety" class="wrap section history-grid">
     <div class="card">
+      <div class="section-badge">Safety</div>
       <h2>Safety snapshot</h2>
       <div class="history-event"><div class="mini-head">Crash ratings</div><strong>NHTSA safety ratings module</strong><br><span class="muted">Overall, frontal, side, and rollover ratings should render here after model/variant matching is connected.</span></div>
       <div class="history-event"><div class="mini-head">Safety equipment</div><strong>ABS, ESC, airbags, active-safety context</strong><br><span class="muted">VIN-derived safety equipment and future safety-tech context belong here.</span></div>
     </div>
     <div class="card">
+      <div class="section-badge">Recalls</div>
       <h2>Recall center</h2>
       <div class="history-event"><div class="mini-head">Open recalls</div><strong>NHTSA-backed recall signals</strong><br><span class="muted">Open recall count, affected systems, consequence, and remedy should appear here.</span></div>
       <div class="history-event"><div class="mini-head">Affected systems</div><strong>Brakes, airbags, fuel, electrical, steering</strong><br><span class="muted">Recall grouping should become visual and system-based, not just text rows.</span></div>
     </div>
     <div class="card" style="grid-column: 1 / -1;">
+      <div class="section-badge">Reviews</div>
       <h2>Expert and owner reviews</h2>
       <div class="history-grid">
         <div class="history-event"><div class="mini-head">Expert summary</div><strong>What reviewers say about this model/year</strong><br><span class="muted">This section should summarize praise, complaints, and buyer watchouts once licensed review input is connected.</span></div>
