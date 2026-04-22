@@ -41,3 +41,22 @@ Needed for:
 - accident/damage
 - odometer timeline
 - service history
+
+
+## Auto.dev confirmed official endpoints
+Confirmed from official Auto.dev docs:
+- Listings by VIN: `GET https://api.auto.dev/listings/{vin}`
+- Search listings: `GET https://api.auto.dev/listings`
+- Photos by VIN: `GET https://api.auto.dev/photos/{vin}`
+- Specs by VIN: `GET https://api.auto.dev/specs/{vin}`
+- Auth: `Authorization: Bearer YOUR_API_KEY`
+
+Source docs:
+- https://docs.auto.dev/v2/products/vehicle-listings
+- https://docs.auto.dev/v2/products/vehicle-photos
+- https://docs.auto.dev/v2/products/specifications
+- https://docs.auto.dev/
+
+Implementation note:
+- current code is now aligned to the documented base URL `https://api.auto.dev`
+- next live step is to install `AUTODEV_API_KEY` and test the exact response shape against our account tier
