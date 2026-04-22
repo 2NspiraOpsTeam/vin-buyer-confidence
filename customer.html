@@ -80,6 +80,12 @@
     .history-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .history-event { padding:14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-top:12px; }
     .mini-head { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .timeline-rail { position:relative; margin-top:14px; padding-left:20px; }
+    .timeline-rail:before { content:''; position:absolute; left:7px; top:4px; bottom:4px; width:2px; background: linear-gradient(180deg, rgba(88,166,255,.7), rgba(126,231,135,.35)); }
+    .timeline-node { position:relative; padding:0 0 16px 18px; }
+    .timeline-node:before { content:''; position:absolute; left:-1px; top:6px; width:14px; height:14px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(88,166,255,.15); }
+    .timeline-node strong { display:block; margin-bottom:4px; }
+    .state-chip { display:inline-block; margin-top:8px; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:12px; }
     .market-inputs { display:grid; grid-template-columns: 1fr 1fr auto; gap:12px; margin-top:14px; align-items:end; }
     .market-inputs label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; }
     .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
@@ -159,23 +165,32 @@
   <div id="history" class="wrap section history-grid">
     <div class="card">
       <h2>Ownership and registration timeline</h2>
-      <div class="history-event"><div class="mini-head">Owner period 1</div><strong>Personal use, New York</strong><br><span class="muted">Reported in service from 2018 to 2021. Ownership duration and registration history should render here once licensed provider data is connected.</span></div>
-      <div class="history-event"><div class="mini-head">Owner period 2</div><strong>Personal use, New Jersey</strong><br><span class="muted">Transfer dates, owner count, and usage type belong in this section.</span></div>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">2018</div><strong>Owner period 1 begins</strong><span class="muted">Personal use starts. Registration and transfer details should lock in here once history-provider data is live.</span><div class="state-chip">New York</div></div>
+        <div class="timeline-node"><div class="mini-head">2021</div><strong>Ownership transfer</strong><span class="muted">Short hold/transfer events, usage type changes, and title handoffs should appear as discrete timeline markers.</span><div class="state-chip">Transfer recorded</div></div>
+        <div class="timeline-node"><div class="mini-head">2021 to present</div><strong>Owner period 2</strong><span class="muted">Current registration state, duration, and ownership context belong here.</span><div class="state-chip">New Jersey</div></div>
+      </div>
     </div>
     <div class="card">
       <h2>Title and accident history</h2>
-      <div class="history-event"><div class="mini-head">Title signals</div><strong>No premium history source connected yet</strong><br><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
-      <div class="history-event"><div class="mini-head">Accident / damage signals</div><strong>Provider-dependent section</strong><br><span class="muted">Reported accidents, structural damage, severity clues, and insurance-loss style events belong here.</span></div>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Title status</div><strong>No premium history source connected yet</strong><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
+        <div class="timeline-node"><div class="mini-head">Damage history</div><strong>Provider-dependent section</strong><span class="muted">Reported accidents, structural damage, severity clues, and insurance-loss style events belong here.</span></div>
+      </div>
     </div>
     <div class="card">
       <h2>Odometer and service history</h2>
-      <div class="history-event"><div class="mini-head">Mileage timeline</div><strong>Reported odometer readings</strong><br><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
-      <div class="history-event"><div class="mini-head">Service records</div><strong>Maintenance and repair evidence</strong><br><span class="muted">Service and repair records will populate here when supported by the licensed history source.</span></div>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Mileage history</div><strong>Reported odometer readings</strong><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
+        <div class="timeline-node"><div class="mini-head">Service history</div><strong>Maintenance and repair evidence</strong><span class="muted">Service and repair records will populate here when supported by the licensed history source.</span></div>
+      </div>
     </div>
     <div class="card">
       <h2>Listing evidence and photos</h2>
-      <div class="history-event"><div class="mini-head">Current listing evidence</div><strong>Photos, seller, listing URL, ask, mileage</strong><br><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
-      <div class="history-event"><div class="mini-head">Historical listing evidence</div><strong>Price changes and prior appearances</strong><br><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Current listing</div><strong>Photos, seller, listing URL, ask, mileage</strong><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
+        <div class="timeline-node"><div class="mini-head">Listing history</div><strong>Price changes and prior appearances</strong><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
+      </div>
     </div>
   </div>
 
