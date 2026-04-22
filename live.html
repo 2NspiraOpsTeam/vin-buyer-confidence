@@ -165,6 +165,7 @@
     const vehicleConditionInput = document.getElementById('vehicleCondition');
     const statusEl = document.getElementById('status');
     const resultEl = document.getElementById('result');
+    const seeded = window.PROTOTYPE_DATA || null;
 
     function li(text) {
       const el = document.createElement('li');
@@ -202,6 +203,7 @@
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
+        const seededCase = seeded?.case || null;
         document.getElementById('title').textContent = title || vin;
         const askingPrice = askingPriceInput.value ? Number(askingPriceInput.value) : null;
         const claimedMileage = claimedMileageInput.value ? Number(claimedMileageInput.value) : null;
@@ -229,9 +231,9 @@
         interpretation.innerHTML = '';
         [
           `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
-          `This free layer is useful for sanity-checking what the vehicle likely is before deeper history or market data is pulled.`,
+          `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
           `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
-          `The next useful paid layers would be comps, listing history, title/brand history, and historical imagery.`
+          `The next useful premium layers are comps, listing history, title/brand history, and historical imagery.`
         ].forEach(x => interpretation.appendChild(li(x)));
 
         const recalls = document.getElementById('recalls');
@@ -240,13 +242,31 @@
         const comps = document.getElementById('comps');
         comps.innerHTML = '';
         const yr = Number(d.modelYear || 0);
-        const price = 28995;
-        [
-          `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}` ,
-          `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
-          `Current comps layer is scaffolded only. Best next paid source would supply asking-price and mileage comparisons across marketplaces.`,
-          `Use this listing's ask as a starting point for future market sanity scoring, not a final comps verdict.`
-        ].forEach(x => comps.appendChild(li(x)));
+        const inputPrice = askingPrice || seededCase?.asking_price || null;
+        const inputMileage = claimedMileage || seededCase?.mileage_claimed || null;
+        const sampleComps = [
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Metro European Cars', url: 'https://example.com/comp-1' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'North Jersey Imports', url: 'https://example.com/comp-2' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Hudson Auto Group', url: 'https://example.com/comp-3' }
+        ];
+        if (inputPrice || inputMileage) {
+          const avgPrice = Math.round(sampleComps.reduce((a, c) => a + c.price, 0) / sampleComps.length);
+          const avgMileage = Math.round(sampleComps.reduce((a, c) => a + c.mileage, 0) / sampleComps.length);
+          [
+            `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
+            `Current ask entered: ${inputPrice ? '$' + inputPrice.toLocaleString() : 'not entered'}`,
+            `Current mileage entered: ${inputMileage ? inputMileage.toLocaleString() + ' mi' : 'not entered'}`,
+            `Sample comp average: $${avgPrice.toLocaleString()} at ${avgMileage.toLocaleString()} mi`,
+            ...sampleComps.map(c => `${c.title} • $${c.price.toLocaleString()} • ${c.mileage.toLocaleString()} mi • ${c.dealer} • ${c.url}`)
+          ].forEach(x => comps.appendChild(li(x)));
+        } else {
+          [
+            `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}` ,
+            `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
+            `Enter asking price and mileage above to make the market view more useful.`,
+            `Provider-fed cross-market comps will replace these placeholders once connected.`
+          ].forEach(x => comps.appendChild(li(x)));
+        }
         if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
           recalls.appendChild(li(`${recallsJson.count} recall record(s) found.`));
           recallsJson.recalls.slice(0, 3).forEach(r => {
@@ -257,11 +277,12 @@
         }
 
         resultEl.style.display = 'block';
-        statusEl.textContent = 'VIN decode and recall lookup complete.';
+        statusEl.textContent = 'VIN decode and recall lookup complete. Intake context applied to the market view.';
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
       }
     });
   </script>
+  <script src="/data.js"></script>
 </body>
 </html>
