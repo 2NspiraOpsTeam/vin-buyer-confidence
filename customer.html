@@ -73,6 +73,11 @@
     .range-bar { position:relative; height:14px; border-radius:999px; background: linear-gradient(90deg, rgba(126,231,135,.35), rgba(242,204,96,.35), rgba(255,123,114,.35)); margin:14px 0 10px; overflow:hidden; }
     .range-marker { position:absolute; top:-4px; width:3px; height:22px; background:#eef3ff; border-radius:999px; box-shadow: 0 0 0 2px rgba(11,16,32,.65); }
     .range-labels { display:flex; justify-content:space-between; color: var(--muted); font-size:13px; }
+    .market-verdict { margin-top:14px; padding:14px; border-radius:14px; background: rgba(98,176,255,.08); border:1px solid rgba(98,176,255,.18); }
+    .price-badge { display:inline-block; padding:7px 11px; border-radius:999px; font-size:13px; font-weight:700; margin-top:10px; }
+    .price-badge.high { background: rgba(255,123,114,.12); color: var(--danger); }
+    .price-badge.fair { background: rgba(242,204,96,.12); color: var(--warn); }
+    .price-badge.value { background: rgba(126,231,135,.12); color: var(--accent2); }
     .chip-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
     .comp-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
     .comp-card { padding:12px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
@@ -301,6 +306,12 @@
           <span id="marketHighLabel">$31.5k</span>
         </div>
       </div>
+      <div class="market-verdict">
+        <div class="mini-head">Market take</div>
+        <strong id="marketTakeTitle">Fair, with room to negotiate</strong><br>
+        <span class="muted" id="marketTakeBody">Mileage and current ask suggest the car is still within a reasonable band, but there is room to push the price lower.</span><br>
+        <span id="marketPositionBadge" class="price-badge fair">Fair / slightly high</span>
+      </div>
       <div class="metric-row">
         <div class="metric"><span class="mini-label">Asking price</span><strong id="askingPriceValue">$28,400</strong></div>
         <div class="metric"><span class="mini-label">Fair market range</span><strong id="marketRangeValue">$26,900 - $29,900</strong></div>
@@ -472,6 +483,9 @@
     const marketRangeValue = document.getElementById('marketRangeValue');
     const negotiationRoomValue = document.getElementById('negotiationRoomValue');
     const bestUseValue = document.getElementById('bestUseValue');
+    const marketTakeTitle = document.getElementById('marketTakeTitle');
+    const marketTakeBody = document.getElementById('marketTakeBody');
+    const marketPositionBadge = document.getElementById('marketPositionBadge');
 
     function recalcMarketView() {
       const mileage = Number(marketMileageInput.value || 0);
@@ -488,6 +502,22 @@
       marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
       negotiationRoomValue.textContent = gap > 0 ? `${fmtMoney(Math.max(300, gap - 600))} - ${fmtMoney(gap + 600)}` : 'Minimal';
       bestUseValue.textContent = gap > 1500 ? 'Push harder on price' : gap < -1500 ? 'Strong value if condition checks out' : 'Seller leverage';
+      if (gap > 1500) {
+        marketTakeTitle.textContent = 'Priced high for the current inputs';
+        marketTakeBody.textContent = 'The current asking price looks stretched relative to the mileage and condition entered. Use comps and seller questions to negotiate down.';
+        marketPositionBadge.textContent = 'High';
+        marketPositionBadge.className = 'price-badge high';
+      } else if (gap < -1500) {
+        marketTakeTitle.textContent = 'Potential value if condition checks out';
+        marketTakeBody.textContent = 'The asking price is coming in below the estimated range for the mileage and condition entered. Verify history and condition carefully.';
+        marketPositionBadge.textContent = 'Below market';
+        marketPositionBadge.className = 'price-badge value';
+      } else {
+        marketTakeTitle.textContent = 'Fair, with room to negotiate';
+        marketTakeBody.textContent = 'Mileage and current ask suggest the car is still within a reasonable band, but there is room to push the price lower.';
+        marketPositionBadge.textContent = 'Fair / slightly high';
+        marketPositionBadge.className = 'price-badge fair';
+      }
     }
 
     document.getElementById('updateMarketView').addEventListener('click', recalcMarketView);

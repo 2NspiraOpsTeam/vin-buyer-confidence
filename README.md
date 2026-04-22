@@ -47,3 +47,14 @@ Persistence note:
 - prototype uses in-memory purchase state only
 - `/api/session-status` can read purchase activation by `session_id` during a warm runtime
 - no durable database is connected yet
+
+
+## Unified vehicle dashboard endpoint
+
+Current endpoint:
+- `GET /api/vehicle-dashboard?vin=...&asking_price=...&mileage=...&listing_url=...&condition=...`
+
+Current status:
+- NHTSA identity/recalls connected
+- MarketCheck/Auto.dev/Monroney scaffolds present
+- premium dashboard contract expanded for history, valuation, safety, recalls, reviews, comps
