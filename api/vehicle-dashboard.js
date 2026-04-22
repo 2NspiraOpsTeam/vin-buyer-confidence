@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
   try {
     const dashboard = await buildVehicleDashboard({ vin, askingPrice, mileage, listingUrl, condition });
-    return res.status(200).json({ ok: true, dashboard, integrationStatus: { marketcheck: process.env.MARKETCHECK_API_KEY ? 'configured' : 'not_configured' } });
+    return res.status(200).json({ ok: true, dashboard, integrationStatus: { marketcheck: process.env.MARKETCHECK_API_KEY ? 'configured' : 'not_configured', autodev: process.env.AUTODEV_API_KEY ? 'configured' : 'not_configured' } });
   } catch (error) {
     return res.status(500).json({ ok: false, error: error.message || 'Dashboard build failed' });
   }
