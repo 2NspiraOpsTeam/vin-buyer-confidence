@@ -19,7 +19,7 @@
     <div class="card">
       <div class="pill">Payment success</div>
       <h1>Your buyer workspace is ready</h1>
-      <p class="muted">This is the prototype success state. In the live version, Stripe success will unlock the paid workspace, attach the plan to the customer record, and open the correct dashboard context.</p>
+      <p class="muted">This success state represents the paid workspace unlock flow. In the live version, Stripe success will attach the correct plan to the customer record and open the right dashboard context.</p>
       <ul>
         <li>Receipt and billing history will live in Account</li>
         <li>Plan access will determine vehicle check limits</li>
@@ -37,12 +37,12 @@
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');
     const plan = params.get('plan');
-    const prototype = params.get('prototype');
+    const fallback = params.get('fallback');
     const meta = document.getElementById('sessionMeta');
     const status = document.getElementById('sessionStatus');
     if (meta) {
       if (sessionId) meta.textContent = `Checkout session: ${sessionId} • Plan: ${plan || 'selected plan'}`;
-      else if (prototype) meta.textContent = `Fallback path used • Plan: ${plan || 'selected plan'}`;
+      else if (fallback) meta.textContent = `Fallback path used • Plan: ${plan || 'selected plan'}`;
     }
     if (sessionId && status) {
       status.textContent = 'Checking activation status...';

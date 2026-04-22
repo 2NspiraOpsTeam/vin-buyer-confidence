@@ -96,8 +96,8 @@
           <strong>Current system status</strong>
           <p class="muted small">This page is ready for Stripe wiring. Until keys and products are connected, buttons route to the current success experience.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="/success.html" class="pill" style="text-decoration:none;">Preview success state</a>
-            <a href="/cancel.html" class="pill" style="text-decoration:none;">Preview cancel state</a>
+            <a href="/success.html" class="pill" style="text-decoration:none;">Open success state</a>
+            <a href="/cancel.html" class="pill" style="text-decoration:none;">Open cancel state</a>
           </div>
         </div>
       </div>
@@ -123,11 +123,11 @@
             window.location.href = json.url;
             return;
           }
-          statusEl.textContent = json.error || 'Stripe is not configured yet. Opening prototype success state.';
-          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&prototype=1`;
+          statusEl.textContent = json.error || 'Stripe is not configured yet. Opening success state.';
+          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&fallback=1`;
         } catch (err) {
-          statusEl.textContent = 'Stripe is not configured yet. Opening prototype success state.';
-          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&prototype=1`;
+          statusEl.textContent = 'Stripe is not configured yet. Opening success state.';
+          window.location.href = `/success.html?plan=${encodeURIComponent(plan)}&fallback=1`;
         }
       });
     });
