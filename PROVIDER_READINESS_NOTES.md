@@ -32,7 +32,10 @@ Next implementation steps:
 
 ## History provider
 Status:
-- not yet selected
+- provider boundary scaffolded
+- API endpoint added: `GET /api/history?vin=...`
+- generic env names reserved: `VEHICLE_HISTORY_API_URL`, `VEHICLE_HISTORY_API_KEY`
+- no live licensed provider connected yet
 
 Needed for:
 - owner count
@@ -41,6 +44,16 @@ Needed for:
 - accident/damage
 - odometer timeline
 - service history
+
+Important data boundary:
+- Do not display prior owner names, addresses, or other DMV personal information in buyer-facing reports.
+- Display owner count, ownership periods, usage type, title/registration states, odometer readings, title brands, accident/damage events, and service records when a licensed provider returns them.
+- NMVTIS-style data is strongest for title, brand, theft, salvage/total-loss, and odometer/title records. Oil-change and maintenance records require a commercial vehicle-history or service-record provider and may still be incomplete.
+
+Candidate provider categories:
+1. NMVTIS/API distributor for title, brand, salvage/total-loss, theft, and odometer events.
+2. Commercial history provider for ownership count, accident/damage, service, inspection, registration, and listing-history enrichment.
+3. Seller-uploaded records for receipts, PPI, maintenance invoices, and photos that provider networks may miss.
 
 
 ## Auto.dev confirmed official endpoints

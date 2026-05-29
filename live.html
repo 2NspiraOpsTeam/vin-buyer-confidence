@@ -147,6 +147,17 @@
 
       <div class="grid">
         <div class="card">
+          <h3>Ownership, title, and mileage history</h3>
+          <ul id="historySignals"></ul>
+        </div>
+        <div class="card">
+          <h3>Service and oil-change records</h3>
+          <ul id="serviceSignals"></ul>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
           <h3>Comparable market view</h3>
           <ul id="comps"></ul>
         </div>
@@ -262,6 +273,64 @@
         : '';
     }
 
+    function formatMileage(value) {
+      return value == null ? 'mileage not listed' : `${Number(value).toLocaleString()} mi`;
+    }
+
+    function formatHistoryEvent(event) {
+      const parts = [
+        event.date || 'date not listed',
+        event.state || '',
+        event.type || 'history record',
+        formatMileage(event.mileage),
+        event.description || event.source || ''
+      ].filter(Boolean);
+      return parts.join(' • ');
+    }
+
+    function renderHistory(historyJson) {
+      const history = historyJson?.history || {};
+      const historySignals = document.getElementById('historySignals');
+      const serviceSignals = document.getElementById('serviceSignals');
+      const ownerCount = history.ownershipSummary?.ownerCount;
+      const historyStatus = history.status || 'not_configured';
+      const odometerEvents = Array.isArray(history.odometerTimeline) ? history.odometerTimeline : [];
+      const registrationEvents = Array.isArray(history.registrationTimeline) ? history.registrationTimeline : [];
+      const ownershipEvents = Array.isArray(history.ownershipTimeline) ? history.ownershipTimeline : [];
+      const titleEvents = Array.isArray(history.titleHistory) ? history.titleHistory : [];
+      const damageEvents = Array.isArray(history.accidentDamageHistory) ? history.accidentDamageHistory : [];
+      const serviceEvents = Array.isArray(history.serviceHistory) ? history.serviceHistory : [];
+
+      historySignals.innerHTML = '';
+      serviceSignals.innerHTML = '';
+
+      if (historyStatus !== 'live') {
+        [
+          'Licensed vehicle history provider: not connected yet.',
+          'Prior owner names and addresses are not available in buyer-facing reports.',
+          'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.',
+          'NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'
+        ].forEach(x => historySignals.appendChild(li(x)));
+      } else {
+        historySignals.appendChild(li(`Owner count: ${ownerCount ?? 'not reported by provider'}`));
+        [...ownershipEvents, ...registrationEvents, ...titleEvents, ...damageEvents, ...odometerEvents]
+          .slice(0, 12)
+          .forEach(event => historySignals.appendChild(li(formatHistoryEvent(event))));
+      }
+
+      if (historyStatus !== 'live') {
+        [
+          'Service and oil-change records are provider-dependent and may be incomplete even in paid reports.',
+          'The best buyer workflow is to combine provider service records with seller receipts and a pre-purchase inspection.',
+          'Once connected, dated service events and mileage-at-service readings will render here.'
+        ].forEach(x => serviceSignals.appendChild(li(x)));
+      } else if (serviceEvents.length) {
+        serviceEvents.slice(0, 12).forEach(event => serviceSignals.appendChild(li(formatHistoryEvent(event))));
+      } else {
+        serviceSignals.appendChild(li('No service or oil-change records were returned by the connected provider.'));
+      }
+    }
+
     async function readJsonSafe(response, label) {
       const text = await response.text();
       try {
@@ -281,14 +350,17 @@
       resultEl.style.display = 'none';
 
       try {
-        const [decodeRes, recallRes] = await Promise.all([
+        const [decodeRes, recallRes, historyRes] = await Promise.all([
           fetch(`/api/decode?vin=${encodeURIComponent(vin)}`),
-          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`)
+          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`),
+          fetch(`/api/history?vin=${encodeURIComponent(vin)}`)
         ]);
         const json = await readJsonSafe(decodeRes, 'Decode API');
         const recallsJson = await readJsonSafe(recallRes, 'Recall API');
+        const historyJson = await readJsonSafe(historyRes, 'History API');
         if (!decodeRes.ok || !json.ok) throw new Error(json.error || json.detail || 'Lookup failed');
         if (!recallRes.ok || (recallsJson && recallsJson.error)) throw new Error(recallsJson.error || recallsJson.detail || 'Recall lookup failed');
+        if (!historyRes.ok || (historyJson && historyJson.error)) throw new Error(historyJson.error || historyJson.detail || 'History lookup failed');
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
@@ -376,9 +448,10 @@
         } else {
           recalls.appendChild(li('No recall records returned in this free lookup.'));
         }
+        renderHistory(historyJson);
 
         resultEl.style.display = 'block';
-        statusEl.textContent = 'VIN decode and recall lookup complete. Intake context applied to the market view.';
+        statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
       }
