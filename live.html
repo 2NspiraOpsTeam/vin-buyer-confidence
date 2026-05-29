@@ -151,6 +151,13 @@
           <ul id="historySignals"></ul>
         </div>
         <div class="card">
+          <h3>Insurance claims and damage photos</h3>
+          <ul id="claimSignals"></ul>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
           <h3>Service and oil-change records</h3>
           <ul id="serviceSignals"></ul>
         </div>
@@ -291,6 +298,7 @@
     function renderHistory(historyJson) {
       const history = historyJson?.history || {};
       const historySignals = document.getElementById('historySignals');
+      const claimSignals = document.getElementById('claimSignals');
       const serviceSignals = document.getElementById('serviceSignals');
       const ownerCount = history.ownershipSummary?.ownerCount;
       const historyStatus = history.status || 'not_configured';
@@ -299,9 +307,12 @@
       const ownershipEvents = Array.isArray(history.ownershipTimeline) ? history.ownershipTimeline : [];
       const titleEvents = Array.isArray(history.titleHistory) ? history.titleHistory : [];
       const damageEvents = Array.isArray(history.accidentDamageHistory) ? history.accidentDamageHistory : [];
+      const claimEvents = Array.isArray(history.insuranceClaims) ? history.insuranceClaims : [];
+      const photoEvents = Array.isArray(history.damagePhotoEvidence) ? history.damagePhotoEvidence : [];
       const serviceEvents = Array.isArray(history.serviceHistory) ? history.serviceHistory : [];
 
       historySignals.innerHTML = '';
+      claimSignals.innerHTML = '';
       serviceSignals.innerHTML = '';
 
       if (historyStatus !== 'live') {
@@ -316,6 +327,28 @@
         [...ownershipEvents, ...registrationEvents, ...titleEvents, ...damageEvents, ...odometerEvents]
           .slice(0, 12)
           .forEach(event => historySignals.appendChild(li(formatHistoryEvent(event))));
+      }
+
+      if (historyStatus !== 'live') {
+        [
+          'Insurance claims, total-loss records, salvage-auction appearances, and crash/repair photos require a licensed history, claims, salvage, or auction-photo provider.',
+          'A public web search did not find indexed crash or salvage-auction photo records for this demo VIN, but that is not proof the claim history is clean.',
+          'When connected, this section can show claim date, loss type, damage severity, title/salvage status, auction photo links, and repair evidence when returned by the provider.'
+        ].forEach(x => claimSignals.appendChild(li(x)));
+      } else if (claimEvents.length || photoEvents.length) {
+        claimEvents.slice(0, 8).forEach(event => claimSignals.appendChild(li(formatHistoryEvent(event))));
+        photoEvents.slice(0, 8).forEach(event => {
+          const parts = [
+            event.date || 'date not listed',
+            event.source || 'damage photo source',
+            event.damageType || event.type || 'damage photo',
+            event.titleType || '',
+            event.url || ''
+          ].filter(Boolean);
+          claimSignals.appendChild(li(parts.join(' • ')));
+        });
+      } else {
+        claimSignals.appendChild(li('No insurance claim or damage-photo records were returned by the connected provider.'));
       }
 
       if (historyStatus !== 'live') {

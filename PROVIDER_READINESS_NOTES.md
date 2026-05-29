@@ -42,6 +42,8 @@ Needed for:
 - registration states/dates
 - title brands
 - accident/damage
+- insurance claim and total-loss signals
+- salvage/auction photo evidence
 - odometer timeline
 - service history
 
@@ -49,11 +51,13 @@ Important data boundary:
 - Do not display prior owner names, addresses, or other DMV personal information in buyer-facing reports.
 - Display owner count, ownership periods, usage type, title/registration states, odometer readings, title brands, accident/damage events, and service records when a licensed provider returns them.
 - NMVTIS-style data is strongest for title, brand, theft, salvage/total-loss, and odometer/title records. Oil-change and maintenance records require a commercial vehicle-history or service-record provider and may still be incomplete.
+- Crash/repair photos usually come from salvage auction, insurance total-loss, dealer history, or commercial vehicle-history photo archives. They are not available from NHTSA VIN decode.
 
 Candidate provider categories:
 1. NMVTIS/API distributor for title, brand, salvage/total-loss, theft, and odometer events.
-2. Commercial history provider for ownership count, accident/damage, service, inspection, registration, and listing-history enrichment.
-3. Seller-uploaded records for receipts, PPI, maintenance invoices, and photos that provider networks may miss.
+2. Salvage/auction-photo provider for Copart/IAA-style photo evidence, loss type, title type, auction date, odometer, and seller/insurance indicators.
+3. Commercial history provider for ownership count, accident/damage, service, inspection, registration, and listing-history enrichment.
+4. Seller-uploaded records for receipts, PPI, maintenance invoices, and photos that provider networks may miss.
 
 
 ## Auto.dev confirmed official endpoints
