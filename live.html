@@ -30,14 +30,17 @@
     .muted { color:#b4bfdc; }
     .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
+    .badge-warning { background:rgba(255,193,7,.14); color:#ffd36a; }
+    .warning-card { border-color:rgba(255,193,7,.45); background:rgba(255,193,7,.08); }
+    .success-card { border-color:rgba(126,231,135,.35); background:rgba(126,231,135,.07); }
     @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
-    <h1>Live VIN Check MVP</h1>
-    <p class="muted">Start with the live identity check, then move into compare, comps, and a final buy/pass decision. This page is being shaped to feel like the first step in a buyer workspace, not a raw lookup tool.</p>
+    <h1>Live VIN Check</h1>
+    <p class="muted">Start with the live identity check, then move into compare, comps, and a final buy/pass decision. This is the free trial entry point for the buyer workspace.</p>
     <div class="mini-flow">
       <div class="flow-card"><strong>1. Check identity</strong><div class="muted">VIN and recall sanity check</div></div>
       <div class="flow-card"><strong>2. Compare options</strong><div class="muted">Price, mileage, confidence</div></div>
@@ -46,7 +49,7 @@
 
     <div class="card">
       <label for="vin"><strong>Enter VIN</strong></label>
-      <input id="vin" placeholder="Example: WBA8B9G59JNU12345" />
+      <input id="vin" autofocus placeholder="Example: WBA8B9G59JNU12345" />
       <div class="form-grid">
         <div>
           <label for="listingUrl" class="muted">Listing URL</label>
@@ -90,10 +93,23 @@
     </div>
 
     <div id="result" style="display:none;">
+      <div class="card warning-card" id="vinWarningCard" style="display:none;">
+        <span class="badge badge-warning">Needs VIN verification</span>
+        <h3 id="vinWarningTitle">VIN warning</h3>
+        <p id="vinWarningMessage"></p>
+      </div>
+
       <div class="card">
         <span class="badge">Live free-data result</span>
         <h2 id="title"></h2>
         <p id="summary"></p>
+      </div>
+
+      <div class="card" id="confidenceCard">
+        <span class="badge" id="confidenceBadge">Identity confidence</span>
+        <h3 id="confidenceTitle"></h3>
+        <p class="muted" id="confidenceMessage"></p>
+        <ul id="confidenceDetails"></ul>
       </div>
 
       <div class="grid">
@@ -105,8 +121,8 @@
           <h3>Initial buyer-confidence interpretation</h3>
           <ul id="interpretation"></ul>
           <div class="metric-grid">
-            <div class="metric"><span>Status</span><strong>Identity check</strong></div>
-            <div class="metric"><span>Best next move</span><strong>Compare before deposit</strong></div>
+            <div class="metric"><span>Status</span><strong id="identityStatus">Identity check</strong></div>
+            <div class="metric"><span>Best next move</span><strong id="nextMove">Compare before deposit</strong></div>
           </div>
         </div>
       </div>
@@ -121,9 +137,10 @@
           <ul>
             <li>VIN decode</li>
             <li>Vehicle identity normalization</li>
-            <li>Basic safety/equipment fields when available</li>
+            <li>Body, drivetrain, plant, engine, safety, and base MSRP fields when available</li>
             <li>NHTSA recall lookup</li>
-            <li>Semi-real report shell</li>
+            <li>NHTSA decode warning state</li>
+            <li>Structured free report shell</li>
           </ul>
         </div>
       </div>
@@ -173,6 +190,78 @@
       return el;
     }
 
+    function getNhtsaConfidence(decoded) {
+      const raw = decoded?.raw || {};
+      const nhtsa = decoded?.nhtsa || {};
+      const errorCode = String(nhtsa.errorCode || raw.ErrorCode || '').trim();
+      const errorText = String(nhtsa.errorText || raw.ErrorText || '').trim();
+      const warnings = Array.isArray(nhtsa.warnings) && nhtsa.warnings.length
+        ? nhtsa.warnings
+        : errorText && errorCode !== '0'
+          ? errorText.split(';').map(item => item.trim().replace(/^\d+\s*-\s*/, '')).filter(Boolean)
+          : [];
+      const hasIdentity = Boolean(decoded?.make && decoded?.model && decoded?.modelYear);
+
+      if (errorCode && errorCode !== '0') {
+        return {
+          level: 'warning',
+          badge: 'Needs VIN verification',
+          title: 'VIN warning',
+          message: 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, seller listing, and vehicle photos before relying on this result.',
+          details: warnings.length ? warnings : [`NHTSA ErrorCode ${errorCode}`],
+          status: 'VIN warning',
+          nextMove: 'Verify VIN first'
+        };
+      }
+
+      if (errorCode === '0' && hasIdentity) {
+        return {
+          level: 'clean',
+          badge: 'High identity confidence',
+          title: 'VIN decoded clean',
+          message: 'VIN decoded clean. Check digit is valid. Core identity appears well-formed.',
+          details: [errorText || 'NHTSA ErrorCode 0 - VIN decoded clean. Check digit is valid.'],
+          status: 'Clean VIN decode',
+          nextMove: 'Compare before deposit'
+        };
+      }
+
+      return {
+        level: 'limited',
+        badge: 'Limited identity confidence',
+        title: 'VIN decoded with limited identity data',
+        message: 'Some identity fields are missing. Verify seller claims and request supporting documentation before moving forward.',
+        details: ['NHTSA returned partial vehicle identity data.'],
+        status: 'Partial decode',
+        nextMove: 'Verify details'
+      };
+    }
+
+    function renderConfidence(confidence) {
+      const card = document.getElementById('confidenceCard');
+      const badge = document.getElementById('confidenceBadge');
+      const title = document.getElementById('confidenceTitle');
+      const message = document.getElementById('confidenceMessage');
+      const details = document.getElementById('confidenceDetails');
+      const warningCard = document.getElementById('vinWarningCard');
+      const warningMessage = document.getElementById('vinWarningMessage');
+
+      card.classList.toggle('warning-card', confidence.level === 'warning');
+      card.classList.toggle('success-card', confidence.level === 'clean');
+      badge.classList.toggle('badge-warning', confidence.level === 'warning');
+      badge.textContent = confidence.badge;
+      title.textContent = confidence.title;
+      message.textContent = confidence.message;
+      details.innerHTML = '';
+      confidence.details.forEach(item => details.appendChild(li(item)));
+      document.getElementById('identityStatus').textContent = confidence.status;
+      document.getElementById('nextMove').textContent = confidence.nextMove;
+      warningCard.style.display = confidence.level === 'warning' ? 'block' : 'none';
+      warningMessage.textContent = confidence.level === 'warning'
+        ? `VIN warning: ${confidence.details[0] || 'NHTSA returned a decode warning.'}`
+        : '';
+    }
+
     async function readJsonSafe(response, label) {
       const text = await response.text();
       try {
@@ -203,6 +292,7 @@
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
+        const confidence = getNhtsaConfidence(d);
         const seededCase = seeded?.case || null;
         document.getElementById('title').textContent = title || vin;
         const askingPrice = askingPriceInput.value ? Number(askingPriceInput.value) : null;
@@ -210,6 +300,7 @@
         const sellerType = sellerTypeInput.value || 'dealer';
         const condition = vehicleConditionInput.value || 'good';
         document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. Shopping context captured: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'ask not entered'}, ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'mileage not entered'}, ${sellerType}, condition ${condition}.`;
+        renderConfidence(confidence);
 
         const identity = document.getElementById('identity');
         identity.innerHTML = '';
@@ -219,8 +310,15 @@
           `Body class: ${d.bodyClass || 'Not available'}`,
           `Drive type: ${d.driveType || 'Not available'}`,
           `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
+          `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
+          `Safety equipment: ABS ${d.abs || 'not available'}, ESC ${d.esc || 'not available'}`,
+          `Airbags: front ${d.airbags?.front || 'not available'}, side ${d.airbags?.side || 'not available'}, curtain ${d.airbags?.curtain || 'not available'}`,
+          `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
           `Manufacturer: ${d.manufacturer || 'Not available'}`,
           `Plant country: ${d.plantCountry || 'Not available'}`,
+          `NHTSA decode status: ${confidence.badge}`,
+          `NHTSA ErrorCode: ${d.nhtsa?.errorCode || d.raw?.ErrorCode || 'Not available'}`,
+          `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`,
           `Asking price: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'Not entered'}`,
           `Claimed mileage: ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'Not entered'}`,
           `Seller type: ${sellerType}`,
@@ -230,10 +328,13 @@
         const interpretation = document.getElementById('interpretation');
         interpretation.innerHTML = '';
         [
-          `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
+          confidence.level === 'warning'
+            ? 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, and seller listing before relying on this result.'
+            : `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
           `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
           `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
-          `The next useful premium layers are comps, listing history, title/brand history, and historical imagery.`
+          `Market comps are currently demo placeholders until a live market listing provider is connected.`,
+          `The next useful premium layers are live comps, listing history, title/brand history, and historical imagery.`
         ].forEach(x => interpretation.appendChild(li(x)));
 
         const recalls = document.getElementById('recalls');
@@ -244,27 +345,27 @@
         const yr = Number(d.modelYear || 0);
         const inputPrice = askingPrice || seededCase?.asking_price || null;
         const inputMileage = claimedMileage || seededCase?.mileage_claimed || null;
-        const sampleComps = [
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Metro European Cars', url: 'https://example.com/comp-1' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'North Jersey Imports', url: 'https://example.com/comp-2' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Hudson Auto Group', url: 'https://example.com/comp-3' }
+        const demoComps = [
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Demo European Cars' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'Demo Imports' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Demo Auto Group' }
         ];
         if (inputPrice || inputMileage) {
-          const avgPrice = Math.round(sampleComps.reduce((a, c) => a + c.price, 0) / sampleComps.length);
-          const avgMileage = Math.round(sampleComps.reduce((a, c) => a + c.mileage, 0) / sampleComps.length);
           [
             `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
             `Current ask entered: ${inputPrice ? '$' + inputPrice.toLocaleString() : 'not entered'}`,
             `Current mileage entered: ${inputMileage ? inputMileage.toLocaleString() + ' mi' : 'not entered'}`,
-            `Sample comp average: $${avgPrice.toLocaleString()} at ${avgMileage.toLocaleString()} mi`,
-            ...sampleComps.map(c => `${c.title} • $${c.price.toLocaleString()} • ${c.mileage.toLocaleString()} mi • ${c.dealer} • ${c.url}`)
+            `Live market comps: not connected yet`,
+            `Demo market comps - not live market listings yet.`,
+            `Do not use the demo comps below to calculate market value or sample comp average.`,
+            ...demoComps.map(c => `Demo only: ${c.title} • $${c.price.toLocaleString()} • ${c.mileage.toLocaleString()} mi • ${c.dealer}`)
           ].forEach(x => comps.appendChild(li(x)));
         } else {
           [
             `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}` ,
             `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
             `Enter asking price and mileage above to make the market view more useful.`,
-            `Provider-fed cross-market comps will replace these placeholders once connected.`
+            `Provider-fed cross-market comps will replace demo placeholders once connected.`
           ].forEach(x => comps.appendChild(li(x)));
         }
         if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
@@ -282,6 +383,28 @@
         statusEl.textContent = `Error: ${err.message}`;
       }
     });
+
+    function setFieldValue(input, value) {
+      input.value = value;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('trial') === '1') {
+      statusEl.textContent = 'Free trial ready. Enter a VIN and shopping details to run your first buyer-confidence check.';
+      vinInput.focus();
+    }
+    if (params.get('demo') === '1') {
+      setFieldValue(vinInput, 'WBA8B9G59JNU12345');
+      setFieldValue(listingUrlInput, 'https://example.com/listing/340i-demo');
+      setFieldValue(askingPriceInput, '28995');
+      setFieldValue(claimedMileageInput, '72105');
+      setFieldValue(sellerTypeInput, 'dealer');
+      setFieldValue(vehicleConditionInput, 'good');
+      statusEl.textContent = 'Demo loaded. Running the sample VIN check...';
+      window.setTimeout(() => runBtn.click(), 300);
+    }
   </script>
   <script src="/data.js"></script>
 </body>

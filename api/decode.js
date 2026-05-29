@@ -10,6 +10,11 @@ export default async function handler(req, res) {
     const response = await fetch(url);
     const data = await response.json();
     const row = data?.Results?.[0] || {};
+    const nhtsaErrorCode = String(row.ErrorCode || '').trim();
+    const nhtsaErrorText = String(row.ErrorText || '').trim();
+    const nhtsaWarnings = nhtsaErrorText && nhtsaErrorCode !== '0'
+      ? nhtsaErrorText.split(';').map(item => item.trim().replace(/^\d+\s*-\s*/, '')).filter(Boolean)
+      : [];
 
     const decoded = {
       vin,
@@ -24,6 +29,7 @@ export default async function handler(req, res) {
       displacementL: row.DisplacementL || '',
       driveType: row.DriveType || '',
       fuelTypePrimary: row.FuelTypePrimary || '',
+      baseMsrp: row.BasePrice || '',
       plantCountry: row.PlantCountry || '',
       manufacturer: row.Manufacturer || '',
       abs: row.ABS || '',
@@ -32,6 +38,13 @@ export default async function handler(req, res) {
         front: row.AirBagLocFront || '',
         side: row.AirBagLocSide || '',
         curtain: row.AirBagLocCurtain || ''
+      },
+      nhtsa: {
+        errorCode: nhtsaErrorCode,
+        errorText: nhtsaErrorText,
+        isClean: nhtsaErrorCode === '0',
+        warnings: nhtsaWarnings,
+        source: 'NHTSA VPIC DecodeVinValues'
       },
       raw: row
     };
