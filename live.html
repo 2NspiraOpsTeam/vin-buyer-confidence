@@ -112,6 +112,12 @@
         <ul id="confidenceDetails"></ul>
       </div>
 
+      <div class="card warning-card" id="auctionAlertCard" style="display:none;">
+        <span class="badge badge-warning">Insurance auction evidence</span>
+        <h3>Insurance auction collision record found</h3>
+        <ul id="auctionAlertDetails"></ul>
+      </div>
+
       <div class="grid">
         <div class="card">
           <h3>Decoded vehicle identity</h3>
@@ -295,6 +301,23 @@
       return parts.join(' • ');
     }
 
+    function money(value) {
+      return value == null ? 'not listed' : `$${Number(value).toLocaleString()}`;
+    }
+
+    function formatAuctionEvent(event) {
+      const parts = [
+        event.date || 'auction date not listed',
+        event.platform || 'auction source',
+        event.seller ? `seller ${event.seller}` : '',
+        event.lossType || '',
+        event.primaryDamage ? `damage ${event.primaryDamage}` : '',
+        event.odometer == null ? '' : `${Number(event.odometer).toLocaleString()} mi`,
+        event.saleDocument || ''
+      ].filter(Boolean);
+      return parts.join(' • ');
+    }
+
     function renderHistory(historyJson) {
       const history = historyJson?.history || {};
       const historySignals = document.getElementById('historySignals');
@@ -309,17 +332,34 @@
       const damageEvents = Array.isArray(history.accidentDamageHistory) ? history.accidentDamageHistory : [];
       const claimEvents = Array.isArray(history.insuranceClaims) ? history.insuranceClaims : [];
       const photoEvents = Array.isArray(history.damagePhotoEvidence) ? history.damagePhotoEvidence : [];
+      const auctionEvents = Array.isArray(history.auctionEvidence) ? history.auctionEvidence : [];
       const serviceEvents = Array.isArray(history.serviceHistory) ? history.serviceHistory : [];
+      const auctionAlertCard = document.getElementById('auctionAlertCard');
+      const auctionAlertDetails = document.getElementById('auctionAlertDetails');
 
       historySignals.innerHTML = '';
       claimSignals.innerHTML = '';
       serviceSignals.innerHTML = '';
+      auctionAlertDetails.innerHTML = '';
+
+      auctionAlertCard.style.display = auctionEvents.length ? 'block' : 'none';
+      auctionEvents.slice(0, 2).forEach(event => {
+        [
+          formatAuctionEvent(event),
+          `Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`,
+          event.photoCount ? `${event.photoCount} auction photo(s) reported` : '',
+          event.photoEvidenceUrl ? `Photo/evidence source: ${event.photoEvidenceUrl}` : '',
+          event.note || ''
+        ].filter(Boolean).forEach(item => auctionAlertDetails.appendChild(li(item)));
+      });
 
       if (historyStatus !== 'live') {
         [
           'Licensed vehicle history provider: not connected yet.',
           'Prior owner names and addresses are not available in buyer-facing reports.',
-          'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.',
+          auctionEvents.length
+            ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.'
+            : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.',
           'NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'
         ].forEach(x => historySignals.appendChild(li(x)));
       } else {
@@ -329,7 +369,17 @@
           .forEach(event => historySignals.appendChild(li(formatHistoryEvent(event))));
       }
 
-      if (historyStatus !== 'live') {
+      if (auctionEvents.length) {
+        auctionEvents.slice(0, 8).forEach(event => {
+          [
+            formatAuctionEvent(event),
+            `Lot ${event.lotId || 'not listed'} • ${event.location || 'location not listed'} • run condition ${event.runCondition || 'not listed'}`,
+            `Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`,
+            event.photoCount ? `${event.photoCount} auction photo(s) reported` : '',
+            event.photoEvidenceUrl ? `Photos/source: ${event.photoEvidenceUrl}` : ''
+          ].filter(Boolean).forEach(item => claimSignals.appendChild(li(item)));
+        });
+      } else if (historyStatus !== 'live') {
         [
           'Insurance claims, total-loss records, salvage-auction appearances, and crash/repair photos require a licensed history, claims, salvage, or auction-photo provider.',
           'A public web search did not find indexed crash or salvage-auction photo records for this demo VIN, but that is not proof the claim history is clean.',

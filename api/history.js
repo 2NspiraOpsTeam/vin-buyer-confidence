@@ -21,7 +21,8 @@ export default async function handler(req, res) {
       integrationStatus: {
         vehicleHistory: process.env.VEHICLE_HISTORY_API_URL && process.env.VEHICLE_HISTORY_API_KEY
           ? history.status
-          : 'not_configured'
+          : 'not_configured',
+        auctionEvidence: history.auctionEvidenceSource?.status || 'not_configured'
       }
     });
   } catch (error) {

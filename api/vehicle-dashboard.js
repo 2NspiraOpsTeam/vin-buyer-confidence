@@ -26,7 +26,8 @@ export default async function handler(req, res) {
         autodev: process.env.AUTODEV_API_KEY ? 'configured' : 'not_configured',
         vehicleHistory: process.env.VEHICLE_HISTORY_API_URL && process.env.VEHICLE_HISTORY_API_KEY
           ? dashboard.historySource?.status || 'configured'
-          : 'not_configured'
+          : 'not_configured',
+        auctionEvidence: dashboard.provenance?.find(item => item.source === 'auction-evidence')?.status || 'not_configured'
       }
     });
   } catch (error) {

@@ -59,6 +59,29 @@ Candidate provider categories:
 3. Commercial history provider for ownership count, accident/damage, service, inspection, registration, and listing-history enrichment.
 4. Seller-uploaded records for receipts, PPI, maintenance invoices, and photos that provider networks may miss.
 
+## Auction evidence provider
+Status:
+- provider boundary scaffolded
+- generic env names reserved: `AUCTION_EVIDENCE_API_URL`, `AUCTION_EVIDENCE_API_KEY`
+- public indexed fixture added for `WBAJA7C57JWA72863` to validate UI and red-flag logic
+
+Fields normalized:
+- auction platform
+- lot ID
+- seller / insurance source
+- auction date and location
+- sale document/title type
+- loss type
+- primary and secondary damage
+- odometer
+- run condition and keys
+- ACV and estimated repair cost
+- photo count and evidence URL
+
+Important implementation note:
+- Public indexed archive evidence should be shown as a useful lead, not an authoritative licensed report.
+- A production provider should verify the archive record, return image URLs, and provide license terms for displaying auction/crash photos.
+
 
 ## Auto.dev confirmed official endpoints
 Confirmed from official Auto.dev docs:
