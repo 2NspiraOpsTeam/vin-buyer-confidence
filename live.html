@@ -33,7 +33,15 @@
     .badge-warning { background:rgba(255,193,7,.14); color:#ffd36a; }
     .warning-card { border-color:rgba(255,193,7,.45); background:rgba(255,193,7,.08); }
     .success-card { border-color:rgba(126,231,135,.35); background:rgba(126,231,135,.07); }
+    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; margin-top:14px; }
+    .photo-card { display:block; min-height:118px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#eef3ff; text-decoration:none; position:relative; }
+    .photo-card img { width:100%; height:118px; object-fit:cover; display:block; background:#0f1730; }
+    .photo-card span { display:block; padding:7px 9px; color:#b4bfdc; font-size:12px; }
+    .photo-card.image-missing img { display:none; }
+    .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:10px; }
+    .source-button { display:inline-block; margin-top:12px; padding:10px 12px; border-radius:10px; background:#62b0ff; color:#07101f; font-weight:700; text-decoration:none; }
     @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
 </head>
 <body>
@@ -116,6 +124,8 @@
         <span class="badge badge-warning">Insurance auction evidence</span>
         <h3>Insurance auction collision record found</h3>
         <ul id="auctionAlertDetails"></ul>
+        <div id="auctionPhotoGallery" class="photo-grid"></div>
+        <a id="auctionPhotoSource" class="source-button" href="#" target="_blank" rel="noopener" style="display:none;">Open full sale photo archive</a>
       </div>
 
       <div class="grid">
@@ -159,6 +169,7 @@
         <div class="card">
           <h3>Insurance claims and damage photos</h3>
           <ul id="claimSignals"></ul>
+          <div id="claimPhotoGallery" class="photo-grid"></div>
         </div>
       </div>
 
@@ -212,6 +223,39 @@
       const el = document.createElement('li');
       el.textContent = text;
       return el;
+    }
+
+    function flattenPhotoUrls(events) {
+      return events
+        .flatMap(event => Array.isArray(event.photoUrls) ? event.photoUrls : [])
+        .filter(Boolean);
+    }
+
+    function renderPhotoGallery(container, urls, labelPrefix) {
+      container.innerHTML = '';
+      urls.slice(0, 16).forEach((url, index) => {
+        const link = document.createElement('a');
+        link.className = 'photo-card';
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.alt = `${labelPrefix} ${index + 1}`;
+        img.src = url;
+        img.onerror = () => {
+          link.classList.add('image-missing');
+          img.remove();
+        };
+
+        const caption = document.createElement('span');
+        caption.textContent = `${labelPrefix} ${index + 1}`;
+
+        link.appendChild(img);
+        link.appendChild(caption);
+        container.appendChild(link);
+      });
     }
 
     function getNhtsaConfidence(decoded) {
@@ -336,11 +380,18 @@
       const serviceEvents = Array.isArray(history.serviceHistory) ? history.serviceHistory : [];
       const auctionAlertCard = document.getElementById('auctionAlertCard');
       const auctionAlertDetails = document.getElementById('auctionAlertDetails');
+      const auctionPhotoGallery = document.getElementById('auctionPhotoGallery');
+      const auctionPhotoSource = document.getElementById('auctionPhotoSource');
+      const claimPhotoGallery = document.getElementById('claimPhotoGallery');
+      const auctionPhotoUrls = flattenPhotoUrls(auctionEvents);
 
       historySignals.innerHTML = '';
       claimSignals.innerHTML = '';
       serviceSignals.innerHTML = '';
       auctionAlertDetails.innerHTML = '';
+      auctionPhotoGallery.innerHTML = '';
+      claimPhotoGallery.innerHTML = '';
+      auctionPhotoSource.style.display = 'none';
 
       auctionAlertCard.style.display = auctionEvents.length ? 'block' : 'none';
       auctionEvents.slice(0, 2).forEach(event => {
@@ -352,6 +403,11 @@
           event.note || ''
         ].filter(Boolean).forEach(item => auctionAlertDetails.appendChild(li(item)));
       });
+      renderPhotoGallery(auctionPhotoGallery, auctionPhotoUrls, 'Sale photo');
+      if (auctionEvents[0]?.photoEvidenceUrl) {
+        auctionPhotoSource.href = auctionEvents[0].photoEvidenceUrl;
+        auctionPhotoSource.style.display = 'inline-block';
+      }
 
       if (historyStatus !== 'live') {
         [
@@ -379,6 +435,7 @@
             event.photoEvidenceUrl ? `Photos/source: ${event.photoEvidenceUrl}` : ''
           ].filter(Boolean).forEach(item => claimSignals.appendChild(li(item)));
         });
+        renderPhotoGallery(claimPhotoGallery, auctionPhotoUrls, 'Auction image');
       } else if (historyStatus !== 'live') {
         [
           'Insurance claims, total-loss records, salvage-auction appearances, and crash/repair photos require a licensed history, claims, salvage, or auction-photo provider.',
