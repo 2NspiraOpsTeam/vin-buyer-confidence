@@ -1,8 +1,13 @@
 export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  }
+
   try {
-    const vin = (req.query.vin || '').trim().toUpperCase();
+    const vin = (req.query?.vin || '').trim().toUpperCase();
     if (!vin || vin.length < 11) {
-      res.status(400).json({ error: 'Valid VIN required' });
+      res.status(400).json({ ok: false, error: 'Valid VIN required' });
       return;
     }
 
@@ -26,7 +31,7 @@ export default async function handler(req, res) {
       }))
     });
   } catch (error) {
-    res.status(500).json({ error: 'Recall lookup failed', detail: String(error) });
+    res.status(500).json({ ok: false, error: 'Recall lookup failed', detail: String(error) });
   }
 
 }

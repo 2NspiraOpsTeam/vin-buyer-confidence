@@ -1,5 +1,6 @@
 import { getVehicleHistorySnapshot } from '../lib/providers/history.js';
 import { normalizeHistorySnapshot } from '../lib/normalize/history.js';
+import { getProviderConfigStatus } from '../lib/provider-readiness.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -15,14 +16,18 @@ export default async function handler(req, res) {
   try {
     const snapshot = await getVehicleHistorySnapshot({ vin });
     const history = normalizeHistorySnapshot(snapshot);
+    const vehicleHistoryConfigStatus = getProviderConfigStatus('vehicleHistory');
+    const auctionEvidenceConfigStatus = getProviderConfigStatus('auctionEvidence');
     return res.status(200).json({
       ok: true,
       history,
       integrationStatus: {
-        vehicleHistory: process.env.VEHICLE_HISTORY_API_URL && process.env.VEHICLE_HISTORY_API_KEY
+        vehicleHistory: vehicleHistoryConfigStatus === 'configured'
           ? history.status
-          : 'not_configured',
-        auctionEvidence: history.auctionEvidenceSource?.status || 'not_configured'
+          : vehicleHistoryConfigStatus,
+        auctionEvidence: auctionEvidenceConfigStatus === 'partial' || auctionEvidenceConfigStatus === 'invalid_config'
+          ? auctionEvidenceConfigStatus
+          : history.auctionEvidenceSource?.status || auctionEvidenceConfigStatus
       }
     });
   } catch (error) {

@@ -30,7 +30,8 @@
       </div>
       <p class="muted" id="sessionMeta"></p>
       <p class="muted" id="sessionStatus"></p>
-      <a class="btn" href="/customer.html">Open buyer dashboard</a>
+      <a class="btn" id="workspaceLink" href="/customer.html">Open buyer dashboard</a>
+      <a class="btn" id="accountLink" href="/account.html" style="background:rgba(255,255,255,.04); color:#eef3ff; border:1px solid rgba(255,255,255,.07); margin-left:8px;">View account</a>
     </div>
   </div>
   <script>
@@ -40,9 +41,13 @@
     const fallback = params.get('fallback');
     const meta = document.getElementById('sessionMeta');
     const status = document.getElementById('sessionStatus');
+    const accountLink = document.getElementById('accountLink');
     if (meta) {
       if (sessionId) meta.textContent = `Checkout session: ${sessionId} • Plan: ${plan || 'selected plan'}`;
       else if (fallback) meta.textContent = `Fallback path used • Plan: ${plan || 'selected plan'}`;
+    }
+    if (sessionId && accountLink) {
+      accountLink.href = `/account.html?session_id=${encodeURIComponent(sessionId)}`;
     }
     if (sessionId && status) {
       status.textContent = 'Checking activation status...';

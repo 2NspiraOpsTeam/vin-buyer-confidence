@@ -1,15 +1,11 @@
 import Stripe from 'stripe';
+import { getPlanAccess, normalizePlanKey, shouldFulfillPlan } from '../lib/plans.js';
 import { savePurchase } from '../lib/purchase-state.js';
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
-function getPlanAccess(plan) {
-  if (plan === 'single') return { plan, checks: 1, subscription: false };
-  if (plan === 'bundle3') return { plan, checks: 3, subscription: false };
-  if (plan === 'unlimited') return { plan, checks: null, subscription: true };
-  return { plan: 'unknown', checks: 0, subscription: false };
-}
+export { getPlanAccess, normalizePlanKey, shouldFulfillPlan };
 
 export const config = {
   api: {
@@ -43,8 +39,17 @@ export default async function handler(req, res) {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const plan = session.metadata?.plan || 'unknown';
+      const plan = normalizePlanKey(session.metadata?.plan);
       const entitlement = getPlanAccess(plan);
+      if (!shouldFulfillPlan(plan)) {
+        console.warn(JSON.stringify({
+          type: 'checkout.session.completed',
+          sessionId: session.id,
+          plan,
+          skipped: 'unknown_plan'
+        }));
+        return res.status(200).json({ ok: true, received: true, fulfilled: false });
+      }
 
       const saved = savePurchase({
         sessionId: session.id,

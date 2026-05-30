@@ -2,6 +2,13 @@
   "name": "vin-buyer-confidence",
   "private": true,
   "type": "module",
+  "scripts": {
+    "check:readiness": "node scripts/check-readiness.mjs",
+    "test": "npm run test:readiness && npm run test:smoke",
+    "test:readiness": "node scripts/test-readiness.mjs",
+    "test:smoke": "node scripts/smoke-api.mjs",
+    "verify": "npm test && npm audit --audit-level=moderate"
+  },
   "dependencies": {
     "stripe": "^16.12.0"
   }

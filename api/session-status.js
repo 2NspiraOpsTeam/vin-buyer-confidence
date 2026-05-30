@@ -6,7 +6,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
-  const sessionId = req.query?.session_id;
+  const rawSessionId = req.query?.session_id;
+  const sessionId = typeof rawSessionId === 'string' ? rawSessionId.trim() : '';
   if (!sessionId) {
     return res.status(400).json({ ok: false, error: 'session_id is required' });
   }

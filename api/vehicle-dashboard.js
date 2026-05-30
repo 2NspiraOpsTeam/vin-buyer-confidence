@@ -1,4 +1,13 @@
 import { buildVehicleDashboard } from '../lib/services/build-dashboard.js';
+import { getProviderConfigStatus } from '../lib/provider-readiness.js';
+
+function parseOptionalNonNegativeNumber(value) {
+  if (value == null || value === '') return { ok: true, value: null };
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0
+    ? { ok: true, value: parsed }
+    : { ok: false, value: null };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -8,26 +17,49 @@ export default async function handler(req, res) {
 
   const vin = (req.query?.vin || '').trim().toUpperCase();
   const listingUrl = req.query?.listing_url || '';
-  const askingPrice = req.query?.asking_price ? Number(req.query.asking_price) : null;
-  const mileage = req.query?.mileage ? Number(req.query.mileage) : null;
+  const askingPrice = parseOptionalNonNegativeNumber(req.query?.asking_price);
+  const mileage = parseOptionalNonNegativeNumber(req.query?.mileage);
   const condition = req.query?.condition || 'good';
 
   if (!vin || vin.length < 11) {
     return res.status(400).json({ ok: false, error: 'Valid VIN required' });
   }
 
+  if (!askingPrice.ok) {
+    return res.status(400).json({ ok: false, error: 'asking_price must be a non-negative number' });
+  }
+
+  if (!mileage.ok) {
+    return res.status(400).json({ ok: false, error: 'mileage must be a non-negative number' });
+  }
+
   try {
-    const dashboard = await buildVehicleDashboard({ vin, askingPrice, mileage, listingUrl, condition });
+    const dashboard = await buildVehicleDashboard({
+      vin,
+      askingPrice: askingPrice.value,
+      mileage: mileage.value,
+      listingUrl,
+      condition
+    });
+    const marketcheckConfigStatus = getProviderConfigStatus('marketcheck');
+    const autodevConfigStatus = getProviderConfigStatus('autodev');
+    const vehicleHistoryConfigStatus = getProviderConfigStatus('vehicleHistory');
+    const auctionEvidenceConfigStatus = getProviderConfigStatus('auctionEvidence');
+    const auctionEvidenceStatus = dashboard.provenance?.find(item => item.source === 'auction-evidence')?.status;
     return res.status(200).json({
       ok: true,
       dashboard,
       integrationStatus: {
-        marketcheck: process.env.MARKETCHECK_API_KEY ? 'configured' : 'not_configured',
-        autodev: process.env.AUTODEV_API_KEY ? 'configured' : 'not_configured',
-        vehicleHistory: process.env.VEHICLE_HISTORY_API_URL && process.env.VEHICLE_HISTORY_API_KEY
+        marketcheck: marketcheckConfigStatus,
+        autodev: autodevConfigStatus,
+        vehicleHistory: vehicleHistoryConfigStatus === 'configured'
           ? dashboard.historySource?.status || 'configured'
-          : 'not_configured',
-        auctionEvidence: dashboard.provenance?.find(item => item.source === 'auction-evidence')?.status || 'not_configured'
+          : vehicleHistoryConfigStatus,
+        auctionEvidence: auctionEvidenceConfigStatus === 'configured'
+          ? auctionEvidenceStatus || 'configured'
+          : auctionEvidenceConfigStatus === 'partial' || auctionEvidenceConfigStatus === 'invalid_config'
+            ? auctionEvidenceConfigStatus
+            : auctionEvidenceStatus || 'not_configured'
       }
     });
   } catch (error) {

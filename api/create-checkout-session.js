@@ -1,25 +1,17 @@
 import Stripe from 'stripe';
+import { isValidAppBaseUrl } from '../lib/env-validation.js';
+import { getPlanDefinition, normalizePlanKey } from '../lib/plans.js';
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const APP_BASE_URL = process.env.APP_BASE_URL || 'https://vin-buyer-confidence.vercel.app';
+const APP_BASE_URL = process.env.APP_BASE_URL;
 
-const PLAN_MAP = {
-  single: {
-    mode: 'payment',
-    price: process.env.STRIPE_PRICE_SINGLE || '',
-    name: '1 Car Check'
-  },
-  bundle3: {
-    mode: 'payment',
-    price: process.env.STRIPE_PRICE_BUNDLE3 || '',
-    name: '3 Car Compare Pack'
-  },
-  unlimited: {
-    mode: 'subscription',
-    price: process.env.STRIPE_PRICE_UNLIMITED || '',
-    name: 'Unlimited Buyer Pass'
-  }
-};
+export function buildCheckoutRedirectUrls(appBaseUrl, plan) {
+  const encodedPlan = encodeURIComponent(normalizePlanKey(plan));
+  return {
+    successUrl: `${appBaseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}&plan=${encodedPlan}`,
+    cancelUrl: `${appBaseUrl}/cancel.html?plan=${encodedPlan}`
+  };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -27,23 +19,34 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
+  const rawPlan = req.body?.plan || 'single';
+  const plan = normalizePlanKey(rawPlan);
+  const selected = getPlanDefinition(plan);
+  const price = selected ? process.env[selected.priceEnv] || '' : '';
+  if (!selected || !price) {
+    return res.status(400).json({ ok: false, error: 'Plan is not configured' });
+  }
+
   if (!STRIPE_SECRET_KEY) {
     return res.status(500).json({ ok: false, error: 'Stripe is not configured' });
   }
 
-  const { plan = 'single' } = req.body || {};
-  const selected = PLAN_MAP[plan];
-  if (!selected || !selected.price) {
-    return res.status(400).json({ ok: false, error: 'Plan is not configured' });
+  if (!APP_BASE_URL) {
+    return res.status(500).json({ ok: false, error: 'App base URL is not configured' });
+  }
+
+  if (!isValidAppBaseUrl(APP_BASE_URL)) {
+    return res.status(500).json({ ok: false, error: 'App base URL is invalid' });
   }
 
   try {
     const stripe = new Stripe(STRIPE_SECRET_KEY);
+    const { successUrl, cancelUrl } = buildCheckoutRedirectUrls(APP_BASE_URL, plan);
     const session = await stripe.checkout.sessions.create({
       mode: selected.mode,
-      line_items: [{ price: selected.price, quantity: 1 }],
-      success_url: `${APP_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&plan=${encodeURIComponent(plan)}`,
-      cancel_url: `${APP_BASE_URL}/cancel?plan=${encodeURIComponent(plan)}`,
+      line_items: [{ price, quantity: 1 }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         plan,
         product_name: selected.name
