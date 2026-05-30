@@ -46,6 +46,22 @@ for (const priceEnv of Object.keys(PLAN_PRICE_ENV)) {
   assert(missingBody.payment.missing.includes(priceEnv), `Missing-env readiness should list ${priceEnv}.`);
 }
 
+const whitespacePayment = runCheck({
+  ...REQUIRED_PAYMENT_ENV,
+  STRIPE_SECRET_KEY: '   '
+});
+const whitespacePaymentBody = parseOutput(whitespacePayment);
+assert(whitespacePayment.status === 1, 'Readiness should exit 1 when required payment env is whitespace only.');
+assert(whitespacePaymentBody.ok === false, 'Whitespace payment readiness should return ok=false.');
+assert(
+  whitespacePaymentBody.payment.missing.includes('STRIPE_SECRET_KEY'),
+  'Whitespace payment env should be treated as missing.'
+);
+assert(
+  !whitespacePaymentBody.payment.invalidFormat.includes('STRIPE_SECRET_KEY'),
+  'Whitespace payment env should not be reported as an invalid format.'
+);
+
 const invalid = runCheck({
   ...REQUIRED_PAYMENT_ENV,
   STRIPE_SECRET_KEY: 'placeholder',
@@ -163,6 +179,7 @@ console.log(JSON.stringify({
   ok: true,
   checks: [
     'missing_payment_env_fails',
+    'whitespace_payment_env_counts_missing',
     'invalid_payment_env_fails',
     'invalid_price_env_fails',
     'configured_payment_env_passes',

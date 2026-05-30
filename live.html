@@ -120,6 +120,13 @@
         <ul id="confidenceDetails"></ul>
       </div>
 
+      <div class="card">
+        <span class="badge">Listing photos</span>
+        <h3>Photos found for this lookup</h3>
+        <p class="muted" id="listingPhotoStatus">Provide a listing URL to look for seller/listing images.</p>
+        <div id="listingPhotoGallery" class="photo-grid"></div>
+      </div>
+
       <div class="card warning-card" id="auctionAlertCard" style="display:none;">
         <span class="badge badge-warning">Insurance auction evidence</span>
         <h3>Insurance auction collision record found</h3>
@@ -256,6 +263,25 @@
         link.appendChild(caption);
         container.appendChild(link);
       });
+    }
+
+    function renderListingPhotos(dashboardJson) {
+      const listingPhotoStatus = document.getElementById('listingPhotoStatus');
+      const listingPhotoGallery = document.getElementById('listingPhotoGallery');
+      const listingEvidence = dashboardJson?.dashboard?.listingEvidence || {};
+      const photos = Array.isArray(listingEvidence.photos) ? listingEvidence.photos : [];
+      const photoStatus = listingEvidence.photoStatus || dashboardJson?.integrationStatus?.listingPage || 'not_available';
+
+      listingPhotoGallery.innerHTML = '';
+      if (photos.length) {
+        listingPhotoStatus.textContent = `${photos.length} image(s) found from ${listingEvidence.photoSource || 'listing/provider'} data. Verify they match the VIN and current seller listing.`;
+        renderPhotoGallery(listingPhotoGallery, photos, 'Listing photo');
+        return;
+      }
+
+      listingPhotoStatus.textContent = listingUrlInput.value.trim()
+        ? `No readable listing photos found from the provided URL yet (${photoStatus}). Connect Auto.dev/MarketCheck or try a public listing URL with visible image metadata.`
+        : 'No listing URL provided. NHTSA does not return vehicle photos; add a public seller listing URL or connect Auto.dev/MarketCheck for VIN-specific photos.';
     }
 
     function getNhtsaConfidence(decoded) {
@@ -490,17 +516,26 @@
       resultEl.style.display = 'none';
 
       try {
-        const [decodeRes, recallRes, historyRes] = await Promise.all([
+        const dashboardParams = new URLSearchParams({ vin });
+        if (listingUrlInput.value.trim()) dashboardParams.set('listing_url', listingUrlInput.value.trim());
+        if (askingPriceInput.value) dashboardParams.set('asking_price', askingPriceInput.value);
+        if (claimedMileageInput.value) dashboardParams.set('mileage', claimedMileageInput.value);
+        if (vehicleConditionInput.value) dashboardParams.set('condition', vehicleConditionInput.value);
+
+        const [decodeRes, recallRes, historyRes, dashboardRes] = await Promise.all([
           fetch(`/api/decode?vin=${encodeURIComponent(vin)}`),
           fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`),
-          fetch(`/api/history?vin=${encodeURIComponent(vin)}`)
+          fetch(`/api/history?vin=${encodeURIComponent(vin)}`),
+          fetch(`/api/vehicle-dashboard?${dashboardParams.toString()}`)
         ]);
         const json = await readJsonSafe(decodeRes, 'Decode API');
         const recallsJson = await readJsonSafe(recallRes, 'Recall API');
         const historyJson = await readJsonSafe(historyRes, 'History API');
+        const dashboardJson = await readJsonSafe(dashboardRes, 'Vehicle dashboard API');
         if (!decodeRes.ok || !json.ok) throw new Error(json.error || json.detail || 'Lookup failed');
         if (!recallRes.ok || (recallsJson && recallsJson.error)) throw new Error(recallsJson.error || recallsJson.detail || 'Recall lookup failed');
         if (!historyRes.ok || (historyJson && historyJson.error)) throw new Error(historyJson.error || historyJson.detail || 'History lookup failed');
+        if (!dashboardRes.ok || (dashboardJson && dashboardJson.error)) throw new Error(dashboardJson.error || dashboardJson.detail || 'Dashboard lookup failed');
 
         const d = json.decoded;
         const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
@@ -513,6 +548,7 @@
         const condition = vehicleConditionInput.value || 'good';
         document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. Shopping context captured: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'ask not entered'}, ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'mileage not entered'}, ${sellerType}, condition ${condition}.`;
         renderConfidence(confidence);
+        renderListingPhotos(dashboardJson);
 
         const identity = document.getElementById('identity');
         identity.innerHTML = '';

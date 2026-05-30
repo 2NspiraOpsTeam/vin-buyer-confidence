@@ -10,6 +10,7 @@ import sessionStatusHandler from '../api/session-status.js';
 import stripeWebhookHandler, { getPlanAccess, shouldFulfillPlan } from '../api/stripe-webhook.js';
 import dashboardHandler from '../api/vehicle-dashboard.js';
 import { PLAN_CATALOG } from '../lib/plans.js';
+import { extractListingImagesFromHtml } from '../lib/providers/listing-page.js';
 import { savePurchase } from '../lib/purchase-state.js';
 
 const originalFetch = globalThis.fetch;
@@ -47,6 +48,25 @@ globalThis.fetch = async url => {
 
   if (target.includes('api.nhtsa.gov/recalls/recallsByVehicle')) {
     return Response.json({ results: [] });
+  }
+
+  if (target === 'https://dealer.example/listing/bmw-530i') {
+    return new Response(`
+      <!doctype html>
+      <html>
+        <head>
+          <meta property="og:image" content="/images/bmw-front.jpg" />
+          <meta name="twitter:image" content="https://cdn.dealer.example/bmw-side.jpg" />
+          <script type="application/ld+json">
+            { "image": ["https://cdn.dealer.example/bmw-interior.jpg"] }
+          </script>
+        </head>
+        <body><img class="vehicle-gallery" src="/images/bmw-rear.jpg" /></body>
+      </html>
+    `, {
+      status: 200,
+      headers: { 'content-type': 'text/html; charset=utf-8' }
+    });
   }
 
   return originalFetch(url);
@@ -708,6 +728,38 @@ assert(dashboard.body?.dashboard?.vehicleIdentity?.make === 'BMW', 'Fixture VIN 
 assert(dashboard.body?.dashboard?.buyerRecommendation?.verdict === 'verify_further', 'Fixture should require verification.');
 assert(dashboard.body?.integrationStatus?.auctionEvidence === 'public_indexed_match', 'Fixture should include public auction evidence.');
 
+const extractedListingImages = extractListingImagesFromHtml(`
+  <meta property="og:image" content="/photo-one.jpg" />
+  <script type="application/ld+json">{ "image": ["https://dealer.example/photo-two.jpg"] }</script>
+  <img class="vehicle-gallery" src="/photo-three.jpg" />
+`, 'https://dealer.example/cars/example');
+assert(extractedListingImages.includes('https://dealer.example/photo-one.jpg'), 'Listing image parser should resolve og:image.');
+assert(extractedListingImages.includes('https://dealer.example/photo-two.jpg'), 'Listing image parser should resolve JSON-LD images.');
+assert(extractedListingImages.includes('https://dealer.example/photo-three.jpg'), 'Listing image parser should resolve likely vehicle gallery images.');
+
+const dashboardWithListingPhotos = await callHandler(dashboardHandler, {
+  method: 'GET',
+  query: {
+    vin: 'WBAJA7C57JWA72863',
+    asking_price: '24900',
+    mileage: '72000',
+    listing_url: 'https://dealer.example/listing/bmw-530i'
+  }
+});
+assert(dashboardWithListingPhotos.statusCode === 200, 'Vehicle dashboard should return 200 when a listing URL is provided.');
+assert(
+  dashboardWithListingPhotos.body?.integrationStatus?.listingPage === 'listing_images_found',
+  'Vehicle dashboard should surface listing-page image extraction status.'
+);
+assert(
+  dashboardWithListingPhotos.body?.dashboard?.listingEvidence?.photos?.includes('https://dealer.example/images/bmw-front.jpg'),
+  'Vehicle dashboard should include seller/listing page photos when readable.'
+);
+assert(
+  dashboardWithListingPhotos.body?.dashboard?.listingEvidence?.photoSource === 'listing-page',
+  'Vehicle dashboard should mark listing-page as the photo source when listing images are found.'
+);
+
 console.log(JSON.stringify({
   ok: true,
   checks: [
@@ -756,6 +808,8 @@ console.log(JSON.stringify({
     'history_invalid_history_provider_status',
     'vehicle_dashboard_invalid_auction_provider_status',
     'history_invalid_auction_provider_status',
+    'listing_image_parser',
+    'vehicle_dashboard_listing_page_photos',
     'vehicle_dashboard_fixture'
   ],
   fixture: {

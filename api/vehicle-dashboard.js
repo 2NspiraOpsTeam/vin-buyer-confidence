@@ -46,12 +46,14 @@ export default async function handler(req, res) {
     const vehicleHistoryConfigStatus = getProviderConfigStatus('vehicleHistory');
     const auctionEvidenceConfigStatus = getProviderConfigStatus('auctionEvidence');
     const auctionEvidenceStatus = dashboard.provenance?.find(item => item.source === 'auction-evidence')?.status;
+    const listingPageStatus = dashboard.provenance?.find(item => item.source === 'listing-page')?.status || 'not_provided';
     return res.status(200).json({
       ok: true,
       dashboard,
       integrationStatus: {
         marketcheck: marketcheckConfigStatus,
         autodev: autodevConfigStatus,
+        listingPage: listingPageStatus,
         vehicleHistory: vehicleHistoryConfigStatus === 'configured'
           ? dashboard.historySource?.status || 'configured'
           : vehicleHistoryConfigStatus,

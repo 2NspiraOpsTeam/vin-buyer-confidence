@@ -41,7 +41,7 @@ function invalidPaymentEnv(names) {
   return names.filter(name => {
     const value = process.env[name];
     const rule = PAYMENT_FORMAT_RULES[name];
-    return value && rule && !rule(value);
+    return present(name) && rule && !rule(value);
   });
 }
 
