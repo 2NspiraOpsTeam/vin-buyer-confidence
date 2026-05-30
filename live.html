@@ -40,6 +40,9 @@
     .photo-card.image-missing img { display:none; }
     .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:10px; }
     .source-button { display:inline-block; margin-top:12px; padding:10px 12px; border-radius:10px; background:#62b0ff; color:#07101f; font-weight:700; text-decoration:none; }
+    .link-list { display:grid; gap:10px; margin-top:12px; }
+    .lead-link { display:block; padding:12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); color:#eef3ff; text-decoration:none; }
+    .lead-link span { display:block; color:#b4bfdc; font-size:13px; margin-top:4px; }
     @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
     @media (max-width: 800px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
@@ -125,6 +128,14 @@
         <h3>Photos found for this lookup</h3>
         <p class="muted" id="listingPhotoStatus">Provide a listing URL to look for seller/listing images.</p>
         <div id="listingPhotoGallery" class="photo-grid"></div>
+      </div>
+
+      <div class="card">
+        <span class="badge">Web photo leads</span>
+        <h3>Search the public web for this VIN</h3>
+        <p class="muted" id="webPhotoStatus">Run a VIN check to create public web photo search leads.</p>
+        <div id="webPhotoGallery" class="photo-grid"></div>
+        <div id="webPhotoLinks" class="link-list"></div>
       </div>
 
       <div class="card warning-card" id="auctionAlertCard" style="display:none;">
@@ -282,6 +293,34 @@
       listingPhotoStatus.textContent = listingUrlInput.value.trim()
         ? `No readable listing photos found from the provided URL yet (${photoStatus}). Connect Auto.dev/MarketCheck or try a public listing URL with visible image metadata.`
         : 'No listing URL provided. NHTSA does not return vehicle photos; add a public seller listing URL or connect Auto.dev/MarketCheck for VIN-specific photos.';
+    }
+
+    function renderWebPhotoLeads(webJson) {
+      const webPhotoStatus = document.getElementById('webPhotoStatus');
+      const webPhotoGallery = document.getElementById('webPhotoGallery');
+      const webPhotoLinks = document.getElementById('webPhotoLinks');
+      const photos = Array.isArray(webJson?.photos) ? webJson.photos : [];
+      const links = Array.isArray(webJson?.searchLinks) ? webJson.searchLinks : [];
+
+      webPhotoGallery.innerHTML = '';
+      webPhotoLinks.innerHTML = '';
+
+      if (photos.length) {
+        webPhotoStatus.textContent = `${photos.length} web image candidate(s) found. Verify source pages before treating images as evidence.`;
+        renderPhotoGallery(webPhotoGallery, photos.map(photo => photo.thumbnailUrl || photo.imageUrl), 'Web photo');
+      } else {
+        webPhotoStatus.textContent = webJson?.note || 'No automatic web photo results are configured yet. Use the source links below for manual review.';
+      }
+
+      links.forEach(link => {
+        const a = document.createElement('a');
+        a.className = 'lead-link';
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerHTML = `${link.label}<span>${link.note || 'Open and verify source before relying on photos.'}</span>`;
+        webPhotoLinks.appendChild(a);
+      });
     }
 
     function getNhtsaConfidence(decoded) {
@@ -549,6 +588,16 @@
         document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. Shopping context captured: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'ask not entered'}, ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'mileage not entered'}, ${sellerType}, condition ${condition}.`;
         renderConfidence(confidence);
         renderListingPhotos(dashboardJson);
+        const webPhotoParams = new URLSearchParams({
+          vin,
+          year: d.modelYear || '',
+          make: d.make || '',
+          model: d.model || ''
+        });
+        const webPhotoRes = await fetch(`/api/web-photo-search?${webPhotoParams.toString()}`);
+        const webPhotoJson = await readJsonSafe(webPhotoRes, 'Web photo search API');
+        if (!webPhotoRes.ok || !webPhotoJson.ok) throw new Error(webPhotoJson.error || 'Web photo search failed');
+        renderWebPhotoLeads(webPhotoJson);
 
         const identity = document.getElementById('identity');
         identity.innerHTML = '';

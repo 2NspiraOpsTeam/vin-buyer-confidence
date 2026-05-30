@@ -2,8 +2,10 @@ import Stripe from 'stripe';
 import { isValidAppBaseUrl } from '../lib/env-validation.js';
 import { getPlanDefinition, normalizePlanKey } from '../lib/plans.js';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const APP_BASE_URL = process.env.APP_BASE_URL;
+function getEnv(name) {
+  const value = process.env[name];
+  return typeof value === 'string' ? value.trim() : '';
+}
 
 export function buildCheckoutRedirectUrls(appBaseUrl, plan) {
   const encodedPlan = encodeURIComponent(normalizePlanKey(plan));
@@ -22,26 +24,28 @@ export default async function handler(req, res) {
   const rawPlan = req.body?.plan || 'single';
   const plan = normalizePlanKey(rawPlan);
   const selected = getPlanDefinition(plan);
-  const price = selected ? process.env[selected.priceEnv] || '' : '';
+  const price = selected ? getEnv(selected.priceEnv) : '';
   if (!selected || !price) {
     return res.status(400).json({ ok: false, error: 'Plan is not configured' });
   }
 
-  if (!STRIPE_SECRET_KEY) {
+  const stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
+  if (!stripeSecretKey) {
     return res.status(500).json({ ok: false, error: 'Stripe is not configured' });
   }
 
-  if (!APP_BASE_URL) {
+  const appBaseUrl = getEnv('APP_BASE_URL');
+  if (!appBaseUrl) {
     return res.status(500).json({ ok: false, error: 'App base URL is not configured' });
   }
 
-  if (!isValidAppBaseUrl(APP_BASE_URL)) {
+  if (!isValidAppBaseUrl(appBaseUrl)) {
     return res.status(500).json({ ok: false, error: 'App base URL is invalid' });
   }
 
   try {
-    const stripe = new Stripe(STRIPE_SECRET_KEY);
-    const { successUrl, cancelUrl } = buildCheckoutRedirectUrls(APP_BASE_URL, plan);
+    const stripe = new Stripe(stripeSecretKey);
+    const { successUrl, cancelUrl } = buildCheckoutRedirectUrls(appBaseUrl, plan);
     const session = await stripe.checkout.sessions.create({
       mode: selected.mode,
       line_items: [{ price, quantity: 1 }],

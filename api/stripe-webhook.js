@@ -2,9 +2,6 @@ import Stripe from 'stripe';
 import { getPlanAccess, normalizePlanKey, shouldFulfillPlan } from '../lib/plans.js';
 import { savePurchase } from '../lib/purchase-state.js';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-
 export { getPlanAccess, normalizePlanKey, shouldFulfillPlan };
 
 export const config = {
@@ -21,21 +18,28 @@ async function readBuffer(readable) {
   return Buffer.concat(chunks);
 }
 
+function getEnv(name) {
+  const value = process.env[name];
+  return typeof value === 'string' ? value.trim() : '';
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
-  if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
+  const stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
+  const stripeWebhookSecret = getEnv('STRIPE_WEBHOOK_SECRET');
+  if (!stripeSecretKey || !stripeWebhookSecret) {
     return res.status(500).json({ ok: false, error: 'Stripe webhook is not configured' });
   }
 
   try {
-    const stripe = new Stripe(STRIPE_SECRET_KEY);
+    const stripe = new Stripe(stripeSecretKey);
     const rawBody = await readBuffer(req);
     const signature = req.headers['stripe-signature'];
-    const event = stripe.webhooks.constructEvent(rawBody, signature, STRIPE_WEBHOOK_SECRET);
+    const event = stripe.webhooks.constructEvent(rawBody, signature, stripeWebhookSecret);
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;

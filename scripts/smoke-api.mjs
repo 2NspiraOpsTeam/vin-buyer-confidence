@@ -9,8 +9,10 @@ import recallsHandler from '../api/recalls.js';
 import sessionStatusHandler from '../api/session-status.js';
 import stripeWebhookHandler, { getPlanAccess, shouldFulfillPlan } from '../api/stripe-webhook.js';
 import dashboardHandler from '../api/vehicle-dashboard.js';
+import webPhotoSearchHandler from '../api/web-photo-search.js';
 import { PLAN_CATALOG } from '../lib/plans.js';
 import { extractListingImagesFromHtml } from '../lib/providers/listing-page.js';
+import { buildWebPhotoSearchLinks } from '../lib/providers/web-photo-search.js';
 import { savePurchase } from '../lib/purchase-state.js';
 
 const originalFetch = globalThis.fetch;
@@ -66,6 +68,19 @@ globalThis.fetch = async url => {
     `, {
       status: 200,
       headers: { 'content-type': 'text/html; charset=utf-8' }
+    });
+  }
+
+  if (target.startsWith('https://search.example/images')) {
+    return Response.json({
+      photos: [
+        {
+          imageUrl: 'https://cdn.search.example/vin-front.jpg',
+          thumbnailUrl: 'https://cdn.search.example/vin-front-thumb.jpg',
+          sourceUrl: 'https://auction.example/vin-record',
+          title: 'VIN auction photo'
+        }
+      ]
     });
   }
 
@@ -159,6 +174,36 @@ function runConfiguredCheckoutNormalizedPlanCheck() {
   return JSON.parse(result.stdout);
 }
 
+function runWhitespaceCheckoutPriceCheck() {
+  const script = `
+    import checkoutHandler from './api/create-checkout-session.js';
+    const res = {
+      statusCode: 200,
+      body: undefined,
+      headers: {},
+      setHeader(name, value) { this.headers[name] = value; },
+      status(code) { this.statusCode = code; return this; },
+      json(payload) { this.body = payload; return this; }
+    };
+    await checkoutHandler({ method: 'POST', body: { plan: 'single' } }, res);
+    console.log(JSON.stringify({ statusCode: res.statusCode, body: res.body }));
+  `;
+
+  const result = spawnSync(process.execPath, ['--input-type=module', '--eval', script], {
+    cwd: process.cwd(),
+    env: {
+      PATH: process.env.PATH,
+      STRIPE_SECRET_KEY: 'sk_test_placeholder',
+      STRIPE_PRICE_SINGLE: '   ',
+      APP_BASE_URL: 'https://buyer.example'
+    },
+    encoding: 'utf8'
+  });
+
+  assert(result.status === 0, `Whitespace checkout price check failed: ${result.stderr || result.stdout}`);
+  return JSON.parse(result.stdout);
+}
+
 function runConfiguredCheckoutCatalogPlanCheck(planKey, priceEnv) {
   const script = `
     import checkoutHandler from './api/create-checkout-session.js';
@@ -246,6 +291,36 @@ function runInvalidAppBaseUrlWithStripeCheck() {
   return JSON.parse(result.stdout);
 }
 
+function runWhitespaceAppBaseUrlWithStripeCheck() {
+  const script = `
+    import checkoutHandler from './api/create-checkout-session.js';
+    const res = {
+      statusCode: 200,
+      body: undefined,
+      headers: {},
+      setHeader(name, value) { this.headers[name] = value; },
+      status(code) { this.statusCode = code; return this; },
+      json(payload) { this.body = payload; return this; }
+    };
+    await checkoutHandler({ method: 'POST', body: { plan: 'single' } }, res);
+    console.log(JSON.stringify({ statusCode: res.statusCode, body: res.body }));
+  `;
+
+  const result = spawnSync(process.execPath, ['--input-type=module', '--eval', script], {
+    cwd: process.cwd(),
+    env: {
+      PATH: process.env.PATH,
+      STRIPE_SECRET_KEY: 'sk_test_placeholder',
+      STRIPE_PRICE_SINGLE: 'price_single_placeholder',
+      APP_BASE_URL: '   '
+    },
+    encoding: 'utf8'
+  });
+
+  assert(result.status === 0, `Whitespace app base URL checkout check failed: ${result.stderr || result.stdout}`);
+  return JSON.parse(result.stdout);
+}
+
 function runMissingStripeWithConfiguredPriceCheck() {
   const script = `
     import checkoutHandler from './api/create-checkout-session.js';
@@ -274,6 +349,36 @@ function runMissingStripeWithConfiguredPriceCheck() {
   return JSON.parse(result.stdout);
 }
 
+function runWhitespaceStripeWithConfiguredPriceCheck() {
+  const script = `
+    import checkoutHandler from './api/create-checkout-session.js';
+    const res = {
+      statusCode: 200,
+      body: undefined,
+      headers: {},
+      setHeader(name, value) { this.headers[name] = value; },
+      status(code) { this.statusCode = code; return this; },
+      json(payload) { this.body = payload; return this; }
+    };
+    await checkoutHandler({ method: 'POST', body: { plan: 'single' } }, res);
+    console.log(JSON.stringify({ statusCode: res.statusCode, body: res.body }));
+  `;
+
+  const result = spawnSync(process.execPath, ['--input-type=module', '--eval', script], {
+    cwd: process.cwd(),
+    env: {
+      PATH: process.env.PATH,
+      STRIPE_SECRET_KEY: '   ',
+      STRIPE_PRICE_SINGLE: 'price_single_placeholder',
+      APP_BASE_URL: 'https://buyer.example'
+    },
+    encoding: 'utf8'
+  });
+
+  assert(result.status === 0, `Whitespace Stripe checkout check failed: ${result.stderr || result.stdout}`);
+  return JSON.parse(result.stdout);
+}
+
 const checkout = await callHandler(checkoutHandler, {
   method: 'POST',
   body: { plan: 'single' }
@@ -284,6 +389,10 @@ assert(checkout.body?.error === 'Plan is not configured', 'Checkout should repor
 const checkoutMissingStripe = runMissingStripeWithConfiguredPriceCheck();
 assert(checkoutMissingStripe.statusCode === 500, 'Checkout should fail safely without Stripe secret when price env is configured.');
 assert(checkoutMissingStripe.body?.error === 'Stripe is not configured', 'Checkout should report missing Stripe secret after plan config passes.');
+
+const checkoutWhitespaceStripe = runWhitespaceStripeWithConfiguredPriceCheck();
+assert(checkoutWhitespaceStripe.statusCode === 500, 'Checkout should fail safely with whitespace-only Stripe secret.');
+assert(checkoutWhitespaceStripe.body?.error === 'Stripe is not configured', 'Checkout should treat whitespace-only Stripe secret as missing.');
 
 const checkoutWrongMethod = await callHandler(checkoutHandler, {
   method: 'GET',
@@ -307,6 +416,10 @@ const configuredCheckoutNormalizedPlan = runConfiguredCheckoutNormalizedPlanChec
 assert(configuredCheckoutNormalizedPlan.statusCode === 500, 'Checkout should normalize configured plan keys before Stripe config checks.');
 assert(configuredCheckoutNormalizedPlan.body?.error === 'Stripe is not configured', 'Checkout should reach Stripe config after normalizing plan keys.');
 
+const whitespaceCheckoutPrice = runWhitespaceCheckoutPriceCheck();
+assert(whitespaceCheckoutPrice.statusCode === 400, 'Checkout should reject whitespace-only Stripe price IDs.');
+assert(whitespaceCheckoutPrice.body?.error === 'Plan is not configured', 'Checkout should treat whitespace-only Stripe price IDs as missing.');
+
 for (const [planKey, plan] of Object.entries(PLAN_CATALOG)) {
   const configuredCheckoutPlan = runConfiguredCheckoutCatalogPlanCheck(planKey, plan.priceEnv);
   assert(configuredCheckoutPlan.statusCode === 500, `Checkout should reach Stripe config for configured ${planKey} plan.`);
@@ -320,6 +433,10 @@ assert(checkoutMissingAppBaseUrl.body?.error === 'App base URL is not configured
 const checkoutInvalidAppBaseUrl = runInvalidAppBaseUrlWithStripeCheck();
 assert(checkoutInvalidAppBaseUrl.statusCode === 500, 'Checkout should fail safely with invalid APP_BASE_URL.');
 assert(checkoutInvalidAppBaseUrl.body?.error === 'App base URL is invalid', 'Checkout should report invalid APP_BASE_URL.');
+
+const checkoutWhitespaceAppBaseUrl = runWhitespaceAppBaseUrlWithStripeCheck();
+assert(checkoutWhitespaceAppBaseUrl.statusCode === 500, 'Checkout should fail safely with whitespace-only APP_BASE_URL.');
+assert(checkoutWhitespaceAppBaseUrl.body?.error === 'App base URL is not configured', 'Checkout should treat whitespace-only APP_BASE_URL as missing.');
 
 const redirectUrls = buildCheckoutRedirectUrls('https://example.com', ' Bundle3 ');
 assert(
@@ -339,15 +456,49 @@ const webhookWrongMethod = await callHandler(stripeWebhookHandler, {
 assert(webhookWrongMethod.statusCode === 405, 'Stripe webhook should reject non-POST requests.');
 assert(webhookWrongMethod.headers.Allow === 'POST', 'Stripe webhook should return Allow: POST for wrong method.');
 
-const webhookMissingConfig = await callHandler(stripeWebhookHandler, {
-  method: 'POST',
-  headers: {},
-  [Symbol.asyncIterator]: async function* () {
-    yield Buffer.from('{}');
+const originalStripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const originalStripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+try {
+  delete process.env.STRIPE_SECRET_KEY;
+  delete process.env.STRIPE_WEBHOOK_SECRET;
+
+  const webhookMissingConfig = await callHandler(stripeWebhookHandler, {
+    method: 'POST',
+    headers: {},
+    [Symbol.asyncIterator]: async function* () {
+      yield Buffer.from('{}');
+    }
+  });
+  assert(webhookMissingConfig.statusCode === 500, 'Stripe webhook should fail safely without webhook env.');
+  assert(webhookMissingConfig.body?.error === 'Stripe webhook is not configured', 'Stripe webhook should report missing webhook config.');
+
+  process.env.STRIPE_SECRET_KEY = '   ';
+  process.env.STRIPE_WEBHOOK_SECRET = 'whsec_placeholder';
+
+  const webhookWhitespaceConfig = await callHandler(stripeWebhookHandler, {
+    method: 'POST',
+    headers: {},
+    [Symbol.asyncIterator]: async function* () {
+      yield Buffer.from('{}');
+    }
+  });
+  assert(webhookWhitespaceConfig.statusCode === 500, 'Stripe webhook should fail safely with whitespace-only Stripe secret.');
+  assert(
+    webhookWhitespaceConfig.body?.error === 'Stripe webhook is not configured',
+    'Stripe webhook should treat whitespace-only Stripe secret as missing.'
+  );
+} finally {
+  if (originalStripeSecretKey == null) {
+    delete process.env.STRIPE_SECRET_KEY;
+  } else {
+    process.env.STRIPE_SECRET_KEY = originalStripeSecretKey;
   }
-});
-assert(webhookMissingConfig.statusCode === 500, 'Stripe webhook should fail safely without webhook env.');
-assert(webhookMissingConfig.body?.error === 'Stripe webhook is not configured', 'Stripe webhook should report missing webhook config.');
+  if (originalStripeWebhookSecret == null) {
+    delete process.env.STRIPE_WEBHOOK_SECRET;
+  } else {
+    process.env.STRIPE_WEBHOOK_SECRET = originalStripeWebhookSecret;
+  }
+}
 
 const normalizedWebhookPlan = getPlanAccess(' Bundle3 ');
 assert(normalizedWebhookPlan.plan === 'bundle3', 'Stripe webhook should normalize plan metadata before entitlement mapping.');
@@ -760,21 +911,97 @@ assert(
   'Vehicle dashboard should mark listing-page as the photo source when listing images are found.'
 );
 
+const webPhotoWrongMethod = await callHandler(webPhotoSearchHandler, {
+  method: 'POST',
+  query: { vin: 'WBAJA7C57JWA72863' }
+});
+assert(webPhotoWrongMethod.statusCode === 405, 'Web photo search should reject non-GET requests.');
+assert(webPhotoWrongMethod.headers.Allow === 'GET', 'Web photo search should return Allow: GET for wrong method.');
+
+const webPhotoInvalidVin = await callHandler(webPhotoSearchHandler, {
+  method: 'GET',
+  query: { vin: 'SHORT' }
+});
+assert(webPhotoInvalidVin.statusCode === 400, 'Web photo search should require a valid VIN.');
+assert(webPhotoInvalidVin.body?.error === 'Valid 17-character VIN required', 'Web photo search should report invalid VIN.');
+
+const webPhotoLinks = buildWebPhotoSearchLinks({
+  vin: 'WBAJA7C57JWA72863',
+  year: '2018',
+  make: 'BMW',
+  model: '530i'
+});
+assert(webPhotoLinks.length >= 4, 'Web photo search should provide manual source links without a provider key.');
+assert(
+  webPhotoLinks.some(link => link.url.includes('WBAJA7C57JWA72863')),
+  'Web photo search links should include the VIN in public search URLs.'
+);
+
+const webPhotoFallback = await callHandler(webPhotoSearchHandler, {
+  method: 'GET',
+  query: {
+    vin: 'WBAJA7C57JWA72863',
+    year: '2018',
+    make: 'BMW',
+    model: '530i'
+  }
+});
+assert(webPhotoFallback.statusCode === 200, 'Web photo search should return 200 with search-link fallback.');
+assert(webPhotoFallback.body?.status === 'search_links_available', 'Web photo search should expose search links when no image-search API is configured.');
+assert(webPhotoFallback.body?.searchLinks?.length >= 4, 'Web photo search fallback should include public search links.');
+
+const originalWebImageSearchApiUrl = process.env.WEB_IMAGE_SEARCH_API_URL;
+const originalWebImageSearchApiKey = process.env.WEB_IMAGE_SEARCH_API_KEY;
+try {
+  process.env.WEB_IMAGE_SEARCH_API_URL = 'https://search.example/images';
+  process.env.WEB_IMAGE_SEARCH_API_KEY = 'web_search_key_placeholder';
+  const webPhotoConfigured = await callHandler(webPhotoSearchHandler, {
+    method: 'GET',
+    query: {
+      vin: 'WBAJA7C57JWA72863',
+      year: '2018',
+      make: 'BMW',
+      model: '530i'
+    }
+  });
+  assert(webPhotoConfigured.statusCode === 200, 'Web photo search should return 200 with configured image-search API.');
+  assert(webPhotoConfigured.body?.status === 'web_images_found', 'Web photo search should report configured image candidates.');
+  assert(
+    webPhotoConfigured.body?.photos?.[0]?.imageUrl === 'https://cdn.search.example/vin-front.jpg',
+    'Web photo search should normalize configured image-search results.'
+  );
+} finally {
+  if (originalWebImageSearchApiUrl == null) {
+    delete process.env.WEB_IMAGE_SEARCH_API_URL;
+  } else {
+    process.env.WEB_IMAGE_SEARCH_API_URL = originalWebImageSearchApiUrl;
+  }
+  if (originalWebImageSearchApiKey == null) {
+    delete process.env.WEB_IMAGE_SEARCH_API_KEY;
+  } else {
+    process.env.WEB_IMAGE_SEARCH_API_KEY = originalWebImageSearchApiKey;
+  }
+}
+
 console.log(JSON.stringify({
   ok: true,
   checks: [
     'checkout_missing_price_env',
     'checkout_missing_stripe_env_after_price_config',
+    'checkout_whitespace_stripe_env_after_price_config',
     'checkout_wrong_method',
     'checkout_missing_price_without_stripe_env',
     'checkout_missing_price_with_stripe_env',
     'checkout_normalized_plan_key',
+    'checkout_whitespace_price_env',
     'checkout_catalog_plan_price_envs',
     'checkout_missing_app_base_url',
     'checkout_invalid_app_base_url',
+    'checkout_whitespace_app_base_url',
     'checkout_static_redirect_urls',
     'stripe_webhook_wrong_method',
     'stripe_webhook_missing_config',
+    'stripe_webhook_whitespace_config',
     'stripe_webhook_plan_normalization',
     'stripe_webhook_catalog_entitlements',
     'stripe_webhook_unknown_plan_not_fulfilled',
@@ -810,6 +1037,10 @@ console.log(JSON.stringify({
     'history_invalid_auction_provider_status',
     'listing_image_parser',
     'vehicle_dashboard_listing_page_photos',
+    'web_photo_search_wrong_method',
+    'web_photo_search_invalid_vin',
+    'web_photo_search_manual_links',
+    'web_photo_search_configured_results',
     'vehicle_dashboard_fixture'
   ],
   fixture: {

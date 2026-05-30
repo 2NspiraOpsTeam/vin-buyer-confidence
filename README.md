@@ -62,6 +62,7 @@ Expected behavior:
 - reports optional vehicle-data provider status, including ready providers, partial URL/key pairs, and the next live-evidence action
 - treats malformed optional provider URLs as not ready for live evidence
 - treats whitespace-only environment variable values as missing
+- exposes web photo search links by VIN by default, with optional automatic image-search candidates when `WEB_IMAGE_SEARCH_API_URL` and `WEB_IMAGE_SEARCH_API_KEY` are configured
 
 Run the no-secret verification suite before deployment changes:
 
@@ -90,8 +91,8 @@ npm run test:smoke
 The smoke check stubs NHTSA responses so it is deterministic and does not depend on external API availability. It verifies:
 
 - safe checkout failure when price or Stripe environment variables are missing
-- checkout method, unconfigured-plan, normalized-plan, catalog price-env, missing-`APP_BASE_URL`, and invalid-`APP_BASE_URL` guards
-- webhook method, missing-config, plan-normalization, catalog entitlement, and unknown-plan fulfillment guards
+- checkout method, unconfigured-plan, normalized-plan, catalog price-env, whitespace price-env, missing-`APP_BASE_URL`, invalid-`APP_BASE_URL`, and whitespace config guards
+- webhook method, missing-config, whitespace-config, plan-normalization, catalog entitlement, and unknown-plan fulfillment guards
 - empty, invalid, and saved session lookup behavior
 - paid session entitlement shape for the account/success pages
 - direct NHTSA decode and recalls method/VIN/missing-query/fixture guards
