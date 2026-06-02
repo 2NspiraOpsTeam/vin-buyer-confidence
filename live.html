@@ -440,46 +440,50 @@
       specsList.innerHTML = '';
 
       const specs = [
-        { label: 'Make', value: decoded.make || 'Not available' },
-        { label: 'Model', value: decoded.model || 'Not available' },
-        { label: 'Year', value: decoded.modelYear || 'Not available' },
-        { label: 'Trim', value: decoded.trim || decoded.series || 'Not available' },
-        { label: 'Body Class', value: decoded.bodyClass || 'Not available' },
-        { label: 'Drive Type', value: decoded.driveType || 'Not available' },
-        { label: 'Fuel Type', value: decoded.fuelTypePrimary || 'Not available' },
-        { label: 'Engine', value: decoded.engineCylinders ? `${decoded.engineCylinders} cylinders${decoded.displacementL ? `, ${decoded.displacementL}L` : ''}` : 'Not available' },
-        { label: 'Transmission', value: decoded.transmissionType || 'Not available' },
-        { label: 'Base MSRP', value: decoded.baseMsrp ? `$${Number(decoded.baseMsrp).toLocaleString()}` : 'Not available' },
-        { label: 'Manufacturer', value: decoded.manufacturer || 'Not available' },
-        { label: 'Plant Country', value: decoded.plantCountry || 'Not available' }
+        { label: 'Make', value: decoded.make },
+        { label: 'Model', value: decoded.model },
+        { label: 'Year', value: decoded.modelYear },
+        { label: 'Trim', value: decoded.trim || decoded.series },
+        { label: 'Body Class', value: decoded.bodyClass },
+        { label: 'Drive Type', value: decoded.driveType },
+        { label: 'Fuel Type', value: decoded.fuelTypePrimary },
+        { label: 'Engine', value: decoded.engineCylinders ? `${decoded.engineCylinders} cylinders${decoded.displacementL ? `, ${decoded.displacementL}L` : ''}` : null },
+        { label: 'Transmission', value: decoded.transmissionType },
+        { label: 'Base MSRP', value: decoded.baseMsrp ? `$${Number(decoded.baseMsrp).toLocaleString()}` : null },
+        { label: 'Manufacturer', value: decoded.manufacturer },
+        { label: 'Plant Country', value: decoded.plantCountry }
       ];
 
+      // Only add specs that have values
       specs.forEach(spec => {
-        const metric = document.createElement('div');
-        metric.className = 'metric';
-        metric.innerHTML = `
-          <span>${spec.label}</span>
-          <strong>${spec.value}</strong>
-        `;
-        specsGrid.appendChild(metric);
+        if (spec.value) {
+          const metric = document.createElement('div');
+          metric.className = 'metric';
+          metric.innerHTML = `
+            <span>${spec.label}</span>
+            <strong>${spec.value}</strong>
+          `;
+          specsGrid.appendChild(metric);
+        }
       });
 
       const details = [
-        `VIN: ${decoded.vin || 'Not available'}`,
-        `Vehicle Type: ${decoded.vehicleType || 'Not available'}`,
-        `Door Count: ${decoded.doors || 'Not available'}`,
-        `Seat Count: ${decoded.seats || 'Not available'}`,
-        `Weight: ${decoded.grossVehicleWeightRating ? `${decoded.grossVehicleWeightRating} lbs` : 'Not available'}`,
-        `Length: ${decoded.vehicleLength ? `${decoded.vehicleLength} inches` : 'Not available'}`,
-        `Width: ${decoded.vehicleWidth ? `${decoded.vehicleWidth} inches` : 'Not available'}`,
-        `Height: ${decoded.vehicleHeight ? `${decoded.vehicleHeight} inches` : 'Not available'}`,
-        `Wheelbase: ${decoded.wheelbase ? `${decoded.wheelbase} inches` : 'Not available'}`,
-        `ABS: ${decoded.abs || 'Not available'}`,
-        `ESC: ${decoded.esc || 'Not available'}`,
-        `Airbags: Front ${decoded.airbags?.front || 'Not available'}, Side ${decoded.airbags?.side || 'Not available'}, Curtain ${decoded.airbags?.curtain || 'Not available'}`
+        decoded.vin ? `VIN: ${decoded.vin}` : null,
+        decoded.vehicleType ? `Vehicle Type: ${decoded.vehicleType}` : null,
+        decoded.doors ? `Door Count: ${decoded.doors}` : null,
+        decoded.seats ? `Seat Count: ${decoded.seats}` : null,
+        decoded.grossVehicleWeightRating ? `Weight: ${decoded.grossVehicleWeightRating} lbs` : null,
+        decoded.vehicleLength ? `Length: ${decoded.vehicleLength} inches` : null,
+        decoded.vehicleWidth ? `Width: ${decoded.vehicleWidth} inches` : null,
+        decoded.vehicleHeight ? `Height: ${decoded.vehicleHeight} inches` : null,
+        decoded.wheelbase ? `Wheelbase: ${decoded.wheelbase} inches` : null,
+        decoded.abs ? `ABS: ${decoded.abs}` : null,
+        decoded.esc ? `ESC: ${decoded.esc}` : null,
+        decoded.airbags ? `Airbags: Front ${decoded.airbags.front || 'Not available'}, Side ${decoded.airbags.side || 'Not available'}, Curtain ${decoded.airbags.curtain || 'Not available'}` : null
       ];
 
-      details.forEach(detail => {
+      // Only add details that have values
+      details.filter(Boolean).forEach(detail => {
         const p = document.createElement('p');
         p.textContent = detail;
         specsList.appendChild(p);
