@@ -34,6 +34,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Pass browser to buildVehicleDashboard for VIN presence verification
     const dashboard = await buildVehicleDashboard({
       vin,
       askingPrice: askingPrice.value,
