@@ -43,6 +43,19 @@
     .link-list { display:grid; gap:10px; margin-top:12px; }
     .lead-link { display:block; padding:12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); color:#eef3ff; text-decoration:none; }
     .lead-link span { display:block; color:#b4bfdc; font-size:13px; margin-top:4px; }
+    .timeline { display:grid; gap:8px; margin-top:16px; }
+    .timeline-item { display:flex; gap:12px; padding:12px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .timeline-dot { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#62b0ff,#7ee787); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:700; }
+    .timeline-content { flex:1; }
+    .timeline-date { font-size:12px; color:#7ee787; font-weight:700; }
+    .timeline-title { font-size:15px; font-weight:600; margin-top:4px; }
+    .timeline-desc { font-size:13px; color:#b4bfdc; margin-top:4px; }
+    .timeline-type-factory .timeline-dot { background:linear-gradient(135deg,#62b0ff,#4dabf7); }
+    .timeline-type-dealer .timeline-dot { background:linear-gradient(135deg,#7ee787,#52d18f); }
+    .timeline-type-owner .timeline-dot { background:linear-gradient(135deg,#f472b6,#f9a8d4); }
+    .timeline-type-service .timeline-dot { background:linear-gradient(135deg,#fbbf24,#fcd34d); }
+    .timeline-type-accident .timeline-dot { background:linear-gradient(135deg,#f87171,#fb7185); }
+    .timeline-type-registration .timeline-dot { background:linear-gradient(135deg,#a78bfa,#c4b5fd); }
     @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
     @media (max-width: 800px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
@@ -196,6 +209,13 @@
           <h3>Service and oil-change records</h3>
           <ul id="serviceSignals"></ul>
         </div>
+      </div>
+
+      <div class="card">
+        <span class="badge">📅 Vehicle timeline</span>
+        <h3>Complete history from factory to present</h3>
+        <p class="muted" id="timelineStatus">Run a VIN check to see the vehicle's complete history timeline.</p>
+        <div id="timelineContainer" class="timeline"></div>
       </div>
 
       <div class="grid">
@@ -425,6 +445,170 @@
         event.saleDocument || ''
       ].filter(Boolean);
       return parts.join(' • ');
+    }
+
+    function formatTimelineDate(date) {
+      if (!date) return 'Unknown date';
+      try {
+        return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch (e) {
+        return date;
+      }
+    }
+
+    function getTimelineEventType(type) {
+      const typeMap = {
+        factory: 'factory',
+        manufacturing: 'factory',
+        dealer: 'dealer',
+        sale: 'dealer',
+        purchase: 'owner',
+        ownership: 'owner',
+        owner: 'owner',
+        service: 'service',
+        maintenance: 'service',
+        oil: 'service',
+        repair: 'service',
+        accident: 'accident',
+        crash: 'accident',
+        damage: 'accident',
+        registration: 'registration',
+        title: 'registration',
+        record: 'registration'
+      };
+      return typeMap[type?.toLowerCase()] || 'registration';
+    }
+
+    function renderTimeline(timelineEvents) {
+      const container = document.getElementById('timelineContainer');
+      const statusEl = document.getElementById('timelineStatus');
+      
+      if (!timelineEvents || timelineEvents.length === 0) {
+        container.innerHTML = '';
+        statusEl.textContent = 'Vehicle history timeline data not available. Connect a licensed history provider for complete ownership, service, and accident records.';
+        return;
+      }
+
+      // Sort events by date (newest first)
+      const sortedEvents = [...timelineEvents].sort((a, b) => {
+        const dateA = a.date || '9999-12-31';
+        const dateB = b.date || '9999-12-31';
+        return new Date(dateB) - new Date(dateA);
+      });
+
+      // Group events by type for better organization
+      const groupedEvents = {};
+      sortedEvents.forEach(event => {
+        const type = getTimelineEventType(event.type || event.eventType);
+        if (!groupedEvents[type]) groupedEvents[type] = [];
+        groupedEvents[type].push(event);
+      });
+
+      // Render timeline items
+      container.innerHTML = '';
+      
+      // Add factory event first if available
+      if (groupedEvents.factory && groupedEvents.factory.length > 0) {
+        const event = groupedEvents.factory[0];
+        const item = document.createElement('div');
+        item.className = 'timeline-item timeline-type-factory';
+        item.innerHTML = `
+          <div class="timeline-dot">🏭</div>
+          <div class="timeline-content">
+            <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+            <div class="timeline-title">Factory / Manufacturing</div>
+            <div class="timeline-desc">${event.description || event.note || 'Vehicle manufactured'}${event.location ? ` • ${event.location}` : ''}</div>
+          </div>
+        `;
+        container.appendChild(item);
+      }
+
+      // Add dealer events
+      if (groupedEvents.dealer && groupedEvents.dealer.length > 0) {
+        groupedEvents.dealer.slice(0, 3).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-dealer';
+          item.innerHTML = `
+            <div class="timeline-dot">🚗</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+              <div class="timeline-title">Dealer / Sale</div>
+              <div class="timeline-desc">${event.description || event.dealerName || 'Sold by dealer'}${event.price ? ` • $${Number(event.price).toLocaleString()}` : ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      // Add owner events
+      if (groupedEvents.owner && groupedEvents.owner.length > 0) {
+        groupedEvents.owner.slice(0, 5).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-owner';
+          item.innerHTML = `
+            <div class="timeline-dot">👤</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+              <div class="timeline-title">Ownership Change</div>
+              <div class="timeline-desc">${event.description || 'New owner recorded'}${event.mileage ? ` • ${Number(event.mileage).toLocaleString()} mi` : ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      // Add registration events
+      if (groupedEvents.registration && groupedEvents.registration.length > 0) {
+        groupedEvents.registration.slice(0, 5).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-registration';
+          item.innerHTML = `
+            <div class="timeline-dot">📋</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+              <div class="timeline-title">Registration</div>
+              <div class="timeline-desc">${event.description || event.state || 'Registration updated'}${event.expiration ? ` • Expires: ${formatTimelineDate(event.expiration)}` : ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      // Add service events
+      if (groupedEvents.service && groupedEvents.service.length > 0) {
+        groupedEvents.service.slice(0, 8).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-service';
+          item.innerHTML = `
+            <div class="timeline-dot">🔧</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+              <div class="timeline-title">${event.description || event.serviceType || 'Service/Maintenance'}</div>
+              <div class="timeline-desc">${event.mileage ? `${Number(event.mileage).toLocaleString()} mi • ` : ''}${event.provider || event.shop || ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      // Add accident events
+      if (groupedEvents.accident && groupedEvents.accident.length > 0) {
+        groupedEvents.accident.slice(0, 3).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-accident';
+          item.innerHTML = `
+            <div class="timeline-dot">⚠️</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
+              <div class="timeline-title">Accident / Damage</div>
+              <div class="timeline-desc">${event.description || event.damageType || 'Damage recorded'}${event.primaryDamage ? ` • ${event.primaryDamage}` : ''}${event.estimatedRepairCost ? ` • $${Number(event.estimatedRepairCost).toLocaleString()} repair est.` : ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      statusEl.textContent = `${timelineEvents.length} event(s) in vehicle history timeline.`;
     }
 
     function renderHistory(historyJson) {
@@ -674,6 +858,7 @@
           recalls.appendChild(li('No recall records returned in this free lookup.'));
         }
         renderHistory(historyJson);
+        renderTimeline(historyJson?.history?.timelineEvents || historyJson?.timelineEvents || []);
 
         resultEl.style.display = 'block';
         statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
