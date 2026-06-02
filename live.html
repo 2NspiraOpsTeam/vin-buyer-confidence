@@ -577,7 +577,14 @@
       // Group events by type for better organization
       const groupedEvents = {};
       sortedEvents.forEach(event => {
-        const type = getTimelineEventType(event.type || event.eventType || (event.auctionDate ? 'auction' : 'history'));
+        // Handle auction evidence specially
+        if (event.auctionDate || event.platform) {
+          const type = 'auction';
+          if (!groupedEvents[type]) groupedEvents[type] = [];
+          groupedEvents[type].push(event);
+          return;
+        }
+        const type = getTimelineEventType(event.type || event.eventType || 'history');
         if (!groupedEvents[type]) groupedEvents[type] = [];
         groupedEvents[type].push(event);
       });
