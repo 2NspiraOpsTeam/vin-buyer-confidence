@@ -554,27 +554,30 @@
       return typeMap[type?.toLowerCase()] || 'registration';
     }
 
-    function renderTimeline(timelineEvents) {
+    function renderTimeline(timelineEvents, auctionEvidence = []) {
       const container = document.getElementById('timelineContainer');
       const statusEl = document.getElementById('timelineStatus');
       
-      if (!timelineEvents || timelineEvents.length === 0) {
+      // Combine timeline events and auction evidence
+      const allEvents = [...(timelineEvents || []), ...auctionEvidence];
+      
+      if (!allEvents || allEvents.length === 0) {
         container.innerHTML = '';
         statusEl.textContent = 'Vehicle history timeline data not available. Connect a licensed history provider for complete ownership, service, and accident records.';
         return;
       }
 
       // Sort events by date (newest first)
-      const sortedEvents = [...timelineEvents].sort((a, b) => {
-        const dateA = a.date || '9999-12-31';
-        const dateB = b.date || '9999-12-31';
+      const sortedEvents = [...allEvents].sort((a, b) => {
+        const dateA = a.date || a.auctionDate || '9999-12-31';
+        const dateB = b.date || b.auctionDate || '9999-12-31';
         return new Date(dateB) - new Date(dateA);
       });
 
       // Group events by type for better organization
       const groupedEvents = {};
       sortedEvents.forEach(event => {
-        const type = getTimelineEventType(event.type || event.eventType);
+        const type = getTimelineEventType(event.type || event.eventType || (event.auctionDate ? 'auction' : 'history'));
         if (!groupedEvents[type]) groupedEvents[type] = [];
         groupedEvents[type].push(event);
       });
@@ -683,7 +686,24 @@
         });
       }
 
-      statusEl.textContent = `${timelineEvents.length} event(s) in vehicle history timeline.`;
+      // Add auction events
+      if (groupedEvents.auction && groupedEvents.auction.length > 0) {
+        groupedEvents.auction.slice(0, 3).forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item timeline-type-auction';
+          item.innerHTML = `
+            <div class="timeline-dot">💰</div>
+            <div class="timeline-content">
+              <div class="timeline-date">${formatTimelineDate(event.date || event.auctionDate)}</div>
+              <div class="timeline-title">Auction / Loss Event</div>
+              <div class="timeline-desc">${event.platform || 'Auction'}${event.seller ? ` • ${event.seller}` : ''}${event.lossType ? ` • ${event.lossType}` : ''}${event.primaryDamage ? ` • ${event.primaryDamage}` : ''}${event.odometer ? ` • ${Number(event.odometer).toLocaleString()} mi` : ''}${event.estimatedRepairCost ? ` • $${Number(event.estimatedRepairCost).toLocaleString()} est. repair` : ''}</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      statusEl.textContent = `${allEvents.length} event(s) in vehicle history timeline.`;
     }
 
     function renderHistory(historyJson) {
@@ -934,7 +954,7 @@
           recalls.appendChild(li('No recall records returned in this free lookup.'));
         }
         renderHistory(historyJson);
-        renderTimeline(historyJson?.history?.timelineEvents || historyJson?.timelineEvents || []);
+        renderTimeline(historyJson?.history?.timelineEvents || historyJson?.timelineEvents || [], historyJson?.history?.auctionEvidence || []);
 
         resultEl.style.display = 'block';
         statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
