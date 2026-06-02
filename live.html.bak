@@ -998,14 +998,6 @@
       statusEl.textContent = 'Demo loaded. Running the sample VIN check...';
       window.setTimeout(() => runBtn.click(), 300);
     }
-    // Auto-run VIN check if ?vin=... is provided
-    const vinParam = params.get('vin');
-    if (vinParam) {
-      setFieldValue(vinInput, vinParam);
-      statusEl.textContent = 'VIN loaded from URL. Running check...';
-      window.setTimeout(() => runBtn.click(), 300);
-    }
-  }
   </script>
   <script src="/data.js"></script>
 </body>
