@@ -578,8 +578,8 @@
       // Group events by type for better organization
       const groupedEvents = {};
       sortedEvents.forEach(event => {
-        // Handle auction evidence specially
-        if (event.auctionDate || event.platform) {
+        // Handle auction evidence specially (check for platform or date field)
+        if (event.platform || event.date) {
           const type = 'auction';
           if (!groupedEvents[type]) groupedEvents[type] = [];
           groupedEvents[type].push(event);
