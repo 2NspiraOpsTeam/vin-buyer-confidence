@@ -28,84 +28,26 @@
     .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
     button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
     .muted { color:#b4bfdc; }
-  <style>
-    :root {
-      --bg: #07111f;
-      --panel: #0f1b31;
-      --card: rgba(18, 28, 52, 0.92);
-      --text: #eef3ff;
-      --muted: #b4bfdc;
-      --accent: #62b0ff;
-      --accent2: #7ee787;
-      --accent3: #f59e0b;
-      --border: #2a3c6d;
-      --max: 1160px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: linear-gradient(180deg, #07111f 0%, #0b1630 100%);
-      color: var(--text);
-      line-height: 1.6;
-    }
-    a { color: inherit; text-decoration: none; }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 24px 20px 60px; }
-    .nav { padding: 16px 0; position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: rgba(7,17,31,.72); border-bottom: 1px solid rgba(255,255,255,.06); }
-    .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; }
-    .brand { font-weight: 800; letter-spacing:.2px; display:flex; align-items:center; gap:12px; }
-    .brand-logo { height: 36px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 3px 6px; }
-    .btn { display:inline-block; padding: 14px 20px; border-radius: 12px; font-weight: 700; cursor:pointer; }
-    .btn-primary { background: var(--accent); color: #07101f; border:none; }
-    .btn-secondary { border:1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); }
-    .hero { padding: 48px 0 36px; }
-    .eyebrow { color: var(--accent2); font-weight:700; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
-    h1 { font-size: clamp(36px, 6vw, 64px); line-height:1.02; margin: 12px 0 18px; max-width: 820px; }
-    .sub { font-size: 20px; color: #d5def7; max-width: 760px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:24px; margin-top:20px; box-shadow:var(--shadow); transition:transform 0.2s ease, box-shadow 0.2s ease; }
-    .card:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,0,0,0.4); }
-    .card h3 { margin:0 0 16px 0; font-size:18px; color:var(--text); }
-    .card ul { margin:0; padding-left:20px; }
-    .card li { margin-bottom:8px; }
-    .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:16px; margin-top:20px; }
-    .icon-card { padding:18px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:14px; }
-    .icon-big { display:block; font-size:28px; margin-bottom:10px; }
-    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top:20px; }
-    .flow-card { padding:18px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:14px; margin-top:16px; }
-    .metric { padding:14px 16px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric span { display:block; color:#b4bfdc; font-size:13px; }
-    .metric strong { display:block; margin-top:6px; font-size:18px; }
-    input, select { width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1730; color:#eef3ff; font-size:16px; }
-    input:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(98,176,255,0.2); }
-    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:14px; margin-top:16px; }
-    .form-group { margin-bottom:14px; }
-    .form-group label { display:block; margin-bottom:6px; color:#b4bfdc; font-size:13px; font-weight:600; }
-    .form-group strong { color:var(--text); }
-    button { margin-top:16px; padding:14px 18px; border:none; border-radius:12px; background:var(--accent); color:#07101f; font-weight:700; font-size:16px; width:100%; }
-    button:hover { background:#52a0ef; }
-    .muted { color:#b4bfdc; }
-    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:20px; }
+    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
-    .badge-warning { background:rgba(245,158,11,.14); color:#f59e0b; }
-    .warning-card { border-color:rgba(245,158,11,.45); background:rgba(245,158,11,.08); }
+    .badge-warning { background:rgba(255,193,7,.14); color:#ffd36a; }
+    .warning-card { border-color:rgba(255,193,7,.45); background:rgba(255,193,7,.08); }
     .success-card { border-color:rgba(126,231,135,.35); background:rgba(126,231,135,.07); }
-    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
-    .photo-card { display:block; min-height:128px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#eef3ff; text-decoration:none; position:relative; }
-    .photo-card img { width:100%; height:128px; object-fit:cover; display:block; background:#0f1730; }
-    .photo-card span { display:block; padding:8px 10px; color:#b4bfdc; font-size:12px; }
+    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; margin-top:14px; }
+    .photo-card { display:block; min-height:118px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#eef3ff; text-decoration:none; position:relative; }
+    .photo-card img { width:100%; height:118px; object-fit:cover; display:block; background:#0f1730; }
+    .photo-card span { display:block; padding:7px 9px; color:#b4bfdc; font-size:12px; }
     .photo-card.image-missing img { display:none; }
     .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:10px; }
-    .source-button { display:inline-block; margin-top:12px; padding:10px 12px; border-radius:10px; background:var(--accent); color:#07101f; font-weight:700; text-decoration:none; }
+    .source-button { display:inline-block; margin-top:12px; padding:10px 12px; border-radius:10px; background:#62b0ff; color:#07101f; font-weight:700; text-decoration:none; }
     .link-list { display:grid; gap:10px; margin-top:12px; }
     .lead-link { display:block; padding:12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); color:#eef3ff; text-decoration:none; }
     .lead-link span { display:block; color:#b4bfdc; font-size:13px; margin-top:4px; }
-    .timeline { display:grid; gap:10px; margin-top:16px; }
-    .timeline-item { display:flex; gap:14px; padding:14px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
-    .timeline-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; font-weight:700; }
+    .timeline { display:grid; gap:8px; margin-top:16px; }
+    .timeline-item { display:flex; gap:12px; padding:12px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .timeline-dot { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#62b0ff,#7ee787); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:700; }
     .timeline-content { flex:1; }
-    .timeline-date { font-size:12px; color:var(--accent2); font-weight:700; }
+    .timeline-date { font-size:12px; color:#7ee787; font-weight:700; }
     .timeline-title { font-size:15px; font-weight:600; margin-top:4px; }
     .timeline-desc { font-size:13px; color:#b4bfdc; margin-top:4px; }
     .timeline-type-factory .timeline-dot { background:linear-gradient(135deg,#62b0ff,#4dabf7); }
@@ -115,10 +57,76 @@
     .timeline-type-accident .timeline-dot { background:linear-gradient(135deg,#f87171,#fb7185); }
     .timeline-type-registration .timeline-dot { background:linear-gradient(135deg,#a78bfa,#c4b5fd); }
     .timeline-type-auction .timeline-dot { background:linear-gradient(135deg,#f59e0b,#fbbf24); }
-    @media (max-width: 900px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 900px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
+    <h1>Live VIN Check</h1>
+    <p class="muted">Start with the live identity check, then move into compare, comps, and a final buy/pass decision. This is the free trial entry point for the buyer workspace.</p>
+    <div class="mini-flow">
+      <div class="flow-card"><strong>1. Check identity</strong><div class="muted">VIN and recall sanity check</div></div>
+      <div class="flow-card"><strong>2. Compare options</strong><div class="muted">Price, mileage, confidence</div></div>
+      <div class="flow-card"><strong>3. Decide next step</strong><div class="muted">Pursue, verify, negotiate, or walk away</div></div>
+    </div>
+
+    <div class="card">
+      <label for="vin"><strong>Enter VIN</strong></label>
+      <input id="vin" autofocus placeholder="Example: WBA8B9G59JNU12345" />
+      <div class="form-grid">
+        <div>
+          <label for="listingUrl" class="muted">Listing URL</label>
+          <input id="listingUrl" placeholder="https://..." />
+        </div>
+        <div>
+          <label for="askingPrice" class="muted">Asking price</label>
+          <input id="askingPrice" type="number" placeholder="28995" />
+        </div>
+        <div>
+          <label for="claimedMileage" class="muted">Claimed mileage</label>
+          <input id="claimedMileage" type="number" placeholder="72105" />
+        </div>
+        <div>
+          <label for="sellerType" class="muted">Seller type</label>
+          <select id="sellerType">
+            <option value="dealer">Dealer</option>
+            <option value="private party">Private party</option>
+            <option value="auction">Auction</option>
+          </select>
+        </div>
+        <div>
+          <label for="vehicleCondition" class="muted">Condition</label>
+          <select id="vehicleCondition">
+            <option value="excellent">Excellent</option>
+            <option value="very good">Very good</option>
+            <option value="good" selected>Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+      </div>
+      <button id="runBtn">Run VIN Check</button>
+      <p class="muted" id="status"></p>
+      <div class="icon-grid">
+        <div class="icon-card"><span class="icon-big">🆔</span>Identity</div>
+        <div class="icon-card"><span class="icon-big">🛟</span>Recall</div>
+        <div class="icon-card"><span class="icon-big">📈</span>Comps</div>
+        <div class="icon-card"><span class="icon-big">⚠️</span>Risk</div>
+      </div>
+    </div>
+
+    <div id="result" style="display:none;">
+      <div class="card warning-card" id="vinWarningCard" style="display:none;">
+        <span class="badge badge-warning">Needs VIN verification</span>
+        <h3 id="vinWarningTitle">VIN warning</h3>
+        <p id="vinWarningMessage"></p>
+      </div>
+
+      <div class="card">
+        <span class="badge">Live free-data result</span>
+        <h2 id="title"></h2>
         <p id="summary"></p>
       </div>
 
