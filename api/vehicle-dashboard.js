@@ -45,8 +45,10 @@ export default async function handler(req, res) {
     const autodevConfigStatus = getProviderConfigStatus('autodev');
     const vehicleHistoryConfigStatus = getProviderConfigStatus('vehicleHistory');
     const auctionEvidenceConfigStatus = getProviderConfigStatus('auctionEvidence');
+    const vinPresenceConfigStatus = getProviderConfigStatus('vinPresence');
     const auctionEvidenceStatus = dashboard.provenance?.find(item => item.source === 'auction-evidence')?.status;
     const listingPageStatus = dashboard.provenance?.find(item => item.source === 'listing-page')?.status || 'not_provided';
+    const vinPresenceStatus = dashboard.provenance?.find(item => item.source === 'vin-presence')?.status || 'not_configured';
     return res.status(200).json({
       ok: true,
       dashboard,
@@ -61,7 +63,12 @@ export default async function handler(req, res) {
           ? auctionEvidenceStatus || 'configured'
           : auctionEvidenceConfigStatus === 'partial' || auctionEvidenceConfigStatus === 'invalid_config'
             ? auctionEvidenceConfigStatus
-            : auctionEvidenceStatus || 'not_configured'
+            : auctionEvidenceStatus || 'not_configured',
+        vinPresence: vinPresenceConfigStatus === 'configured'
+          ? vinPresenceStatus || 'configured'
+          : vinPresenceConfigStatus === 'partial' || vinPresenceConfigStatus === 'invalid_config'
+            ? vinPresenceConfigStatus
+            : vinPresenceStatus || 'not_configured'
       }
     });
   } catch (error) {
