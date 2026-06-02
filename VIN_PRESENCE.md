@@ -13,7 +13,9 @@ The VIN Presence Check feature identifies external sources where a vehicle's VIN
 The provider module includes:
 
 - `buildVinPresenceLinks({ vin })` - Generates search links for manual VIN lookups on popular automotive sites
-- `getVinPresenceSnapshot({ vin })` - Fetches VIN presence data from configured external sources
+- `getVinPresenceSnapshot({ vin, browser })` - Fetches VIN presence data from configured external sources
+
+When a browser is provided, the provider will attempt to visit each site and verify VIN presence. When no browser is available, it returns search links for manual review.
 
 ### Integration
 
@@ -36,23 +38,17 @@ The `vehicle-dashboard` API endpoint now includes:
   "dashboard": {
     "vinPresence": {
       "provider": "vin-presence",
-      "status": "vin_found" | "vin_not_found" | "search_links_available" | "configured_error",
+      "status": "vin_found" | "vin_not_found" | "search_links_available" | "browser_error",
       "vin": "5UX23EM06P9R83357",
       "sources": [
         {
-          "source": "carvision-search",
-          "url": "https://www.carvision.com/...",
-          "title": "2023 BMW X7 xDrive40i",
+          "source": "carvision",
+          "label": "CarVision",
+          "url": "https://carvision.com/...",
           "vin": "5UX23EM06P9R83357",
-          "make": "BMW",
-          "model": "X7 xDrive40i",
-          "year": "2023",
-          "price": 44999,
-          "mileage": 66833,
-          "condition": "used",
-          "listingUrl": "https://...",
-          "foundAt": "2026-06-01T...",
-          "confidence": "web_search_candidate"
+          "found": true,
+          "confidence": "verified_by_browser",
+          "note": "VIN found on site"
         }
       ],
       "searchLinks": [...],
@@ -72,19 +68,16 @@ The `vehicle-dashboard` API endpoint now includes:
 
 ## Configuration
 
-To enable live VIN presence lookups, configure the following environment variables:
+### Browser Integration
 
-```bash
-VIN_PRESENCE_API_URL=https://api.your-provider.com/vin-presence
-VIN_PRESENCE_API_KEY=your_api_key_here
-```
+To enable live VIN presence verification, the browser must be passed to `getVinPresenceSnapshot`. The API handler currently returns search links for manual review when no browser is available.
 
-### Without API Configuration
+### Manual Search Links
 
-When no API is configured, the provider returns `searchLinks` for manual web searches on:
+When no browser is configured, the provider returns `searchLinks` for manual web searches on:
 - CarVision
 - VINAnalytics
-- AutoToday
+- AutosToday
 - Edmunds
 - DriversHub
 - Facebook Marketplace
@@ -94,7 +87,7 @@ When no API is configured, the provider returns `searchLinks` for manual web sea
 
 The VIN presence check runs automatically as part of the vehicle dashboard build process. No additional code changes are required.
 
-### Example Response (No API Configured)
+### Example Response (No Browser Available)
 
 ```json
 {
@@ -111,12 +104,12 @@ The VIN presence check runs automatically as part of the vehicle dashboard build
     },
     ...
   ],
-  "note": "No VIN presence API is configured. Manual search links are available for review."
+  "note": "No VIN presence API or browser is configured. Manual search links are available for review."
 }
 ```
 
 ## Next Steps
 
-1. **Configure VIN Presence API** - Set up a VIN presence search provider with the required API credentials
-2. **Review Search Results** - When no API is configured, manually review the search links to verify VIN presence
+1. **Browser Integration** - Pass the browser to `getVinPresenceSnapshot` to enable live site verification
+2. **Review Search Results** - When no browser is configured, manually review the search links to verify VIN presence
 3. **Integrate with Buyer Recommendation** - Use VIN presence data to strengthen or weaken buyer recommendations
