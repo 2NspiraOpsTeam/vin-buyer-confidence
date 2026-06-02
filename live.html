@@ -3,123 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Run the first live step in the buyer workspace: identity check, recall lookup, and early buyer-confidence review." />
-  <meta property="og:title" content="Live VIN Check" />
-  <meta property="og:description" content="Start with VIN and recall validation, then move into compare, comps, and next-step decisions." />
+  <meta name="description" content="Check a vehicle's identity, risk signals, pricing context, and next-step buying decision before you commit." />
+  <meta property="og:title" content="Car Buyer Confidence Check" />
+  <meta property="og:description" content="A mobile-friendly buyer workspace for VIN checks, risk review, comps, and buy/pass decisions." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <title>Live VIN Check | Car Buyer Confidence Check</title>
-  <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
-    .brand { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
-    .brand-logo { height: 40px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 4px 6px; }
-    .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:22px; margin-top:18px; }
-    .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
-    .icon-card { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:14px; }
-    .icon-big { display:block; font-size:26px; margin-bottom:8px; }
-    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:16px; }
-    .flow-card { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
-    .metric { padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric span { display:block; color:#b4bfdc; font-size:13px; }
-    .metric strong { display:block; margin-top:6px; font-size:20px; }
-    input, select { width:100%; padding:14px 16px; border-radius:12px; border:1px solid #33477e; background:#0f1730; color:#eef3ff; font-size:16px; }
-    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
-    button { margin-top:12px; padding:14px 18px; border:none; border-radius:12px; background:#62b0ff; color:#07101f; font-weight:700; cursor:pointer; }
-    .muted { color:#b4bfdc; }
+  <title>Car Buyer Confidence Check | 2Nspira</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: #0f1b31;
-      --card: rgba(18, 28, 52, 0.92);
-      --text: #eef3ff;
-      --muted: #b4bfdc;
-      --accent: #62b0ff;
-      --accent2: #7ee787;
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --card: #2d3b55;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent2: #10b981;
       --accent3: #f59e0b;
-      --border: #2a3c6d;
-      --max: 1160px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --border: #475569;
+      --max: 1100px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: linear-gradient(180deg, #07111f 0%, #0b1630 100%);
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: var(--text);
       line-height: 1.6;
     }
     a { color: inherit; text-decoration: none; }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 24px 20px 60px; }
-    .nav { padding: 16px 0; position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: rgba(7,17,31,.72); border-bottom: 1px solid rgba(255,255,255,.06); }
-    .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; }
-    .brand { font-weight: 800; letter-spacing:.2px; display:flex; align-items:center; gap:12px; }
+    .brand { font-weight: 800; letter-spacing:.2px; display:flex; align-items:center; gap:12px; margin-bottom:20px; }
     .brand-logo { height: 36px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 3px 6px; }
-    .btn { display:inline-block; padding: 14px 20px; border-radius: 12px; font-weight: 700; cursor:pointer; }
-    .btn-primary { background: var(--accent); color: #07101f; border:none; }
-    .btn-secondary { border:1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); }
-    .hero { padding: 48px 0 36px; }
-    .eyebrow { color: var(--accent2); font-weight:700; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
-    h1 { font-size: clamp(36px, 6vw, 64px); line-height:1.02; margin: 12px 0 18px; max-width: 820px; }
-    .sub { font-size: 20px; color: #d5def7; max-width: 760px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:24px; margin-top:20px; box-shadow:var(--shadow); transition:transform 0.2s ease, box-shadow 0.2s ease; }
-    .card:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,0,0,0.4); }
-    .card h3 { margin:0 0 16px 0; font-size:18px; color:var(--text); }
-    .card ul { margin:0; padding-left:20px; }
-    .card li { margin-bottom:8px; }
-    .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:16px; margin-top:20px; }
-    .icon-card { padding:18px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:14px; }
-    .icon-big { display:block; font-size:28px; margin-bottom:10px; }
-    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top:20px; }
-    .flow-card { padding:18px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:14px; margin-top:16px; }
-    .metric { padding:14px 16px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .metric span { display:block; color:#b4bfdc; font-size:13px; }
-    .metric strong { display:block; margin-top:6px; font-size:18px; }
-    input, select { width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1730; color:#eef3ff; font-size:16px; }
-    input:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(98,176,255,0.2); }
-    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:14px; margin-top:16px; }
-    .form-group { margin-bottom:14px; }
-    .form-group label { display:block; margin-bottom:6px; color:#b4bfdc; font-size:13px; font-weight:600; }
+    .btn { display:inline-block; padding: 12px 20px; border-radius: 10px; font-weight: 700; cursor:pointer; }
+    .btn-primary { background: var(--accent); color: white; border:none; }
+    .btn-secondary { border:1px solid var(--border); background: rgba(255,255,255,.05); color: var(--text); }
+    .hero { padding: 32px 0 24px; }
+    .eyebrow { color: var(--accent2); font-weight:700; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+    h1 { font-size: clamp(28px, 5vw, 48px); line-height:1.1; margin: 12px 0 12px; }
+    .sub { font-size: 16px; color: var(--muted); max-width: 600px; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px; margin-top:16px; }
+    .card h3 { margin:0 0 12px 0; font-size:16px; color:var(--text); }
+    .card ul { margin:0; padding-left:18px; }
+    .card li { margin-bottom:6px; font-size:14px; }
+    .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
+    .icon-card { padding:12px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:13px; }
+    .icon-big { display:block; font-size:24px; margin-bottom:6px; }
+    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:16px; }
+    .flow-card { padding:14px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:12px; }
+    .metric { padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .metric span { display:block; color:var(--muted); font-size:12px; }
+    .metric strong { display:block; margin-top:4px; font-size:16px; }
+    input, select { width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px; }
+    input:focus, select:focus { outline:none; border-color:var(--accent); }
+    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:12px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600; }
     .form-group strong { color:var(--text); }
-    button { margin-top:16px; padding:14px 18px; border:none; border-radius:12px; background:var(--accent); color:#07101f; font-weight:700; font-size:16px; width:100%; }
-    button:hover { background:#52a0ef; }
-    .muted { color:#b4bfdc; }
-    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:20px; }
-    .badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(126,231,135,.12); color:#7ee787; font-size:13px; font-weight:700; }
-    .badge-warning { background:rgba(245,158,11,.14); color:#f59e0b; }
-    .warning-card { border-color:rgba(245,158,11,.45); background:rgba(245,158,11,.08); }
-    .success-card { border-color:rgba(126,231,135,.35); background:rgba(126,231,135,.07); }
-    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
-    .photo-card { display:block; min-height:128px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#eef3ff; text-decoration:none; position:relative; }
-    .photo-card img { width:100%; height:128px; object-fit:cover; display:block; background:#0f1730; }
-    .photo-card span { display:block; padding:8px 10px; color:#b4bfdc; font-size:12px; }
+    button { margin-top:12px; padding:12px 16px; border:none; border-radius:10px; background:var(--accent); color:white; font-weight:700; font-size:14px; width:100%; }
+    button:hover { background:#2563eb; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:16px; }
+    .badge { display:inline-block; padding:5px 9px; border-radius:999px; background:rgba(16,185,129,.15); color:var(--accent2); font-size:11px; font-weight:700; }
+    .badge-warning { background:rgba(245,158,11,.15); color:var(--accent3); }
+    .warning-card { border-color:rgba(245,158,11,.3); }
+    .success-card { border-color:rgba(16,185,129,.3); }
+    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:8px; margin-top:12px; }
+    .photo-card { display:block; min-height:96px; border-radius:10px; overflow:hidden; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); position:relative; }
+    .photo-card img { width:100%; height:96px; object-fit:cover; display:block; }
+    .photo-card span { position:absolute; bottom:0; left:0; right:0; padding:4px 6px; background:rgba(0,0,0,.6); color:var(--text); font-size:10px; }
     .photo-card.image-missing img { display:none; }
-    .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:10px; }
-    .source-button { display:inline-block; margin-top:12px; padding:10px 12px; border-radius:10px; background:var(--accent); color:#07101f; font-weight:700; text-decoration:none; }
-    .link-list { display:grid; gap:10px; margin-top:12px; }
-    .lead-link { display:block; padding:12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); color:#eef3ff; text-decoration:none; }
-    .lead-link span { display:block; color:#b4bfdc; font-size:13px; margin-top:4px; }
-    .timeline { display:grid; gap:10px; margin-top:16px; }
-    .timeline-item { display:flex; gap:14px; padding:14px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
-    .timeline-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; font-weight:700; }
+    .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:8px; }
+    .source-button { display:inline-block; margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--accent); color:white; font-weight:700; font-size:12px; }
+    .link-list { display:grid; gap:8px; margin-top:8px; }
+    .lead-link { display:block; padding:10px; border-radius:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); font-size:13px; }
+    .lead-link span { display:block; color:var(--muted); font-size:11px; margin-top:3px; }
+    .timeline { display:grid; gap:8px; margin-top:12px; }
+    .timeline-item { display:flex; gap:10px; padding:10px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .timeline-dot { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:700; }
     .timeline-content { flex:1; }
-    .timeline-date { font-size:12px; color:var(--accent2); font-weight:700; }
-    .timeline-title { font-size:15px; font-weight:600; margin-top:4px; }
-    .timeline-desc { font-size:13px; color:#b4bfdc; margin-top:4px; }
-    .timeline-type-factory .timeline-dot { background:linear-gradient(135deg,#62b0ff,#4dabf7); }
-    .timeline-type-dealer .timeline-dot { background:linear-gradient(135deg,#7ee787,#52d18f); }
-    .timeline-type-owner .timeline-dot { background:linear-gradient(135deg,#f472b6,#f9a8d4); }
-    .timeline-type-service .timeline-dot { background:linear-gradient(135deg,#fbbf24,#fcd34d); }
-    .timeline-type-accident .timeline-dot { background:linear-gradient(135deg,#f87171,#fb7185); }
-    .timeline-type-registration .timeline-dot { background:linear-gradient(135deg,#a78bfa,#c4b5fd); }
-    .timeline-type-auction .timeline-dot { background:linear-gradient(135deg,#f59e0b,#fbbf24); }
-    @media (max-width: 900px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 900px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+    .timeline-date { font-size:11px; color:var(--accent2); font-weight:700; }
+    .timeline-title { font-size:13px; font-weight:600; margin-top:3px; }
+    .timeline-desc { font-size:12px; color:var(--muted); margin-top:3px; }
+    .timeline-type-factory .timeline-dot { background:var(--accent); }
+    .timeline-type-dealer .timeline-dot { background:var(--accent2); }
+    .timeline-type-owner .timeline-dot { background:var(--accent3); }
+    .timeline-type-service .timeline-dot { background:#f97316; }
+    .timeline-type-accident .timeline-dot { background:#ef4444; }
+    .timeline-type-registration .timeline-dot { background:#8b5cf6; }
+    .timeline-type-auction .timeline-dot { background:#d97706; }
+    @media (max-width: 700px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
-        <p id="summary"></p>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
+    <div class="hero">
+      <span class="eyebrow">Car Buyer Confidence Check</span>
+      <h1>Verify before you buy</h1>
+      <p class="sub">Check vehicle identity, recalls, and history. Get clear signals to buy, verify, or walk away.</p>
+    </div>
+
+    <div class="card">
+      <h3>1. Enter vehicle details</h3>
+      <div class="form-group"><label for="vin"><strong>VIN</strong></label><input id="vin" autofocus placeholder="Example: WBA8B9G59JNU12345" /></div>
+      <div class="form-grid">
+        <div class="form-group"><label for="listingUrl" class="muted">Listing URL</label><input id="listingUrl" placeholder="https://..." /></div>
+        <div class="form-group"><label for="askingPrice" class="muted">Asking price</label><input id="askingPrice" type="number" placeholder="28995" /></div>
+        <div class="form-group"><label for="claimedMileage" class="muted">Mileage</label><input id="claimedMileage" type="number" placeholder="72105" /></div>
+        <div class="form-group"><label for="sellerType" class="muted">Seller</label><select id="sellerType"><option value="dealer">Dealer</option><option value="private party">Private party</option><option value="auction">Auction</option></select></div>
+        <div class="form-group"><label for="vehicleCondition" class="muted">Condition</label><select id="vehicleCondition"><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select></div>
+      </div>
+      <button id="runBtn">Run VIN Check</button>
+    </div>
+
+    <div id="result" style="display:none;">
+      <div class="card success-card">
+        <span class="badge">✅ Check complete</span>
+        <p id="status">VIN decode, recall lookup, and history-provider check complete.</p>
       </div>
 
       <div class="card">
@@ -138,108 +141,64 @@
       </div>
 
       <div class="card">
-        <span class="badge">Listing photos</span>
-        <h3>Photos found for this lookup</h3>
-        <p class="muted" id="listingPhotoStatus">Provide a listing URL to look for seller/listing images.</p>
-        <div id="listingPhotoGallery" class="photo-grid"></div>
-      </div>
-
-      <div class="card">
         <span class="badge">🔍 Web leads</span>
-        <h3>Search the public web for this VIN</h3>
+        <h3>Search the web for this VIN</h3>
         <p class="muted" id="webPhotoStatus">Run a VIN check to create public web photo search leads.</p>
-        <div id="webPhotoGallery" class="photo-grid"></div>
         <div id="webPhotoLinks" class="link-list"></div>
       </div>
 
       <div class="card warning-card" id="auctionAlertCard" style="display:none;">
-        <span class="badge badge-warning">Insurance auction evidence</span>
-        <h3>Insurance auction collision record found</h3>
+        <span class="badge badge-warning">⚠️ Auction evidence</span>
+        <h3>Insurance auction record found</h3>
         <ul id="auctionAlertDetails"></ul>
-        <div id="auctionPhotoGallery" class="photo-grid"></div>
-        <a id="auctionPhotoSource" class="source-button" href="#" target="_blank" rel="noopener" style="display:none;">Open full sale photo archive</a>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h3>Decoded vehicle identity</h3>
+          <h3>Decoded identity</h3>
           <ul id="identity"></ul>
         </div>
         <div class="card">
-          <h3>Initial buyer-confidence interpretation</h3>
+          <h3>Next steps</h3>
           <ul id="interpretation"></ul>
-          <div class="metric-grid">
-            <div class="metric"><span>Status</span><strong id="identityStatus">Identity check</strong></div>
-            <div class="metric"><span>Best next move</span><strong id="nextMove">Compare before deposit</strong></div>
-          </div>
         </div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h3>Recall snapshot</h3>
+          <h3>Recalls</h3>
           <ul id="recalls"></ul>
         </div>
         <div class="card">
-          <h3>What is live now</h3>
+          <h3>What's included</h3>
           <ul>
-            <li>VIN decode</li>
-            <li>Vehicle identity normalization</li>
-            <li>Body, drivetrain, plant, engine, safety, and base MSRP fields when available</li>
-            <li>NHTSA recall lookup</li>
-            <li>NHTSA decode warning state</li>
-            <li>Structured free report shell</li>
+            <li>VIN decode & identity</li>
+            <li>NHTSA recalls</li>
+            <li>Ownership history</li>
+            <li>Service records</li>
+            <li>Timeline events</li>
           </ul>
         </div>
       </div>
 
-      <div class="grid">
-        <div class="card">
-          <h3>Ownership, title, and mileage history</h3>
-          <ul id="historySignals"></ul>
-        </div>
-        <div class="card">
-          <h3>Insurance claims and damage photos</h3>
-          <ul id="claimSignals"></ul>
-          <div id="claimPhotoGallery" class="photo-grid"></div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Service and oil-change records</h3>
-          <ul id="serviceSignals"></ul>
-        </div>
-      </div>
-
       <div class="card">
-        <span class="badge">📅 Vehicle timeline</span>
-        <h3>Complete history from factory to present</h3>
+        <span class="badge">📅 Timeline</span>
+        <h3>Vehicle history timeline</h3>
         <p class="muted" id="timelineStatus">Run a VIN check to see the vehicle's complete history timeline.</p>
         <div id="timelineContainer" class="timeline"></div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h3>Comparable market view</h3>
+          <h3>Market view</h3>
           <ul id="comps"></ul>
         </div>
         <div class="card">
-          <h3>Still to be added</h3>
+          <h3>Future features</h3>
           <ul>
-            <li>Market comps</li>
-            <li>Listing history</li>
-            <li>Title/accident/history data</li>
+            <li>Live market comps</li>
+            <li>Price trends</li>
             <li>Historical images</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>Future paid intelligence layers</h3>
-          <ul>
-            <li>Cross-platform vehicle comps</li>
-            <li>Price and mileage trend history</li>
-            <li>Title, brand, salvage, and accident signals</li>
-            <li>Historical auction/listing images</li>
           </ul>
         </div>
       </div>
@@ -264,84 +223,245 @@
       return el;
     }
 
-    function flattenPhotoUrls(events) {
-      return events
-        .flatMap(event => Array.isArray(event.photoUrls) ? event.photoUrls : [])
-        .filter(Boolean);
+    function money(n) {
+      return n ? '$' + Number(n).toLocaleString() : 'Not available';
     }
 
-    function renderPhotoGallery(container, urls, labelPrefix) {
+    function formatTimelineDate(d) {
+      if (!d) return '';
+      const date = new Date(d);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function renderTimeline(events, auctionEvents) {
+      const container = document.getElementById('timelineContainer');
+      const status = document.getElementById('timelineStatus');
       container.innerHTML = '';
-      urls.slice(0, 16).forEach((url, index) => {
-        const link = document.createElement('a');
-        link.className = 'photo-card';
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener';
 
-        const img = document.createElement('img');
-        img.loading = 'lazy';
-        img.alt = `${labelPrefix} ${index + 1}`;
-        img.src = url;
-        img.onerror = () => {
-          link.classList.add('image-missing');
-          img.remove();
-        };
-
-        const caption = document.createElement('span');
-        caption.textContent = `${labelPrefix} ${index + 1}`;
-
-        link.appendChild(img);
-        link.appendChild(caption);
-        container.appendChild(link);
-      });
-    }
-
-    function renderListingPhotos(dashboardJson) {
-      const listingPhotoStatus = document.getElementById('listingPhotoStatus');
-      const listingPhotoGallery = document.getElementById('listingPhotoGallery');
-      const listingEvidence = dashboardJson?.dashboard?.listingEvidence || {};
-      const photos = Array.isArray(listingEvidence.photos) ? listingEvidence.photos : [];
-      const photoStatus = listingEvidence.photoStatus || dashboardJson?.integrationStatus?.listingPage || 'not_available';
-
-      listingPhotoGallery.innerHTML = '';
-      if (photos.length) {
-        listingPhotoStatus.textContent = `${photos.length} image(s) found from ${listingEvidence.photoSource || 'listing/provider'} data. Verify they match the VIN and current seller listing.`;
-        renderPhotoGallery(listingPhotoGallery, photos, 'Listing photo');
+      if (!events || !events.length) {
+        status.textContent = 'Vehicle history timeline data not available. Connect a licensed history provider for complete ownership, service, and accident records.';
         return;
       }
 
-      listingPhotoStatus.textContent = listingUrlInput.value.trim()
-        ? `No readable listing photos found from the provided URL yet (${photoStatus}). Connect Auto.dev/MarketCheck or try a public listing URL with visible image metadata.`
-        : 'No listing URL provided. NHTSA does not return vehicle photos; add a public seller listing URL or connect Auto.dev/MarketCheck for VIN-specific photos.';
+      status.textContent = 'Complete history from factory to present. Auction evidence shown when available.';
+
+      const grouped = {};
+      events.forEach(e => {
+        const key = e.platform || e.date || 'unknown';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(e);
+      });
+
+      Object.entries(grouped).forEach(([key, items]) => {
+        const date = key.split('T')[0] || key;
+        const isAuction = items.some(e => e.platform);
+
+        items.forEach(event => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item';
+          if (isAuction) item.classList.add('timeline-type-auction');
+
+          const dot = document.createElement('div');
+          dot.className = 'timeline-dot';
+          dot.textContent = isAuction ? '💰' : '📅';
+
+          const content = document.createElement('div');
+          content.className = 'timeline-content';
+
+          const dateEl = document.createElement('div');
+          dateEl.className = 'timeline-date';
+          dateEl.textContent = formatTimelineDate(event.date || event.auctionDate || date);
+
+          const title = document.createElement('div');
+          title.className = 'timeline-title';
+          title.textContent = event.eventType || event.title || event.platform || 'Event';
+
+          const desc = document.createElement('div');
+          desc.className = 'timeline-desc';
+          desc.textContent = event.description || event.location || event.notes || 'History event';
+
+          content.appendChild(dateEl);
+          content.appendChild(title);
+          content.appendChild(desc);
+
+          item.appendChild(dot);
+          item.appendChild(content);
+          container.appendChild(item);
+        });
+      });
     }
 
-    function renderWebPhotoLeads(webJson) {
-      const webPhotoStatus = document.getElementById('webPhotoStatus');
-      const webPhotoGallery = document.getElementById('webPhotoGallery');
-      const webPhotoLinks = document.getElementById('webPhotoLinks');
-      const photos = Array.isArray(webJson?.photos) ? webJson.photos : [];
-      const links = Array.isArray(webJson?.searchLinks) ? webJson.searchLinks : [];
+    function formatAuctionEvent(e) {
+      const date = e.auctionDate || e.date || '';
+      const platform = e.platform || '';
+      const seller = e.seller || '';
+      const loss = e.lossType || '';
+      const damage = e.primaryDamage || '';
+      const odometer = e.odometer ? e.odometer.toLocaleString() + ' mi' : 'not listed';
+      const repair = e.estimatedRepairCost ? money(e.estimatedRepairCost) : 'not listed';
+      const acv = e.actualCashValue ? money(e.actualCashValue) : 'not listed';
+      const photos = e.photoCount ? `${e.photoCount} photos` : 'photos not listed';
+      return `${date ? date + ' • ' : ''}${platform} • ${seller} • ${loss} • ${damage} • ${odometer} • Repair: ${repair} • ACV: ${acv} • ${photos}`;
+    }
 
-      webPhotoGallery.innerHTML = '';
-      webPhotoLinks.innerHTML = '';
+    function renderHistory(historyJson) {
+      const container = document.getElementById('historySignals');
+      const historyStatus = historyJson?.integrationStatus?.history || 'not_available';
+      const auctionEvents = historyJson?.history?.auctionEvidence || [];
 
-      if (photos.length) {
-        webPhotoStatus.textContent = `${photos.length} web image candidate(s) found. Verify source pages before treating images as evidence.`;
-        renderPhotoGallery(webPhotoGallery, photos.map(photo => photo.thumbnailUrl || photo.imageUrl), 'Web photo');
+      container.innerHTML = '';
+
+      if (historyStatus !== 'live') {
+        if (auctionEvents.length) {
+          container.appendChild(li('Public indexed auction evidence found:'));
+          auctionEvents.slice(0, 3).forEach(event => {
+            container.appendChild(li(formatAuctionEvent(event)));
+          });
+        }
+        container.appendChild(li('Licensed vehicle history provider: not connected yet.'));
+        container.appendChild(li('Prior owner names and addresses are not available in buyer-facing reports.'));
+        container.appendChild(li(auctionEvents.length ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.' : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.'));
+        container.appendChild(li('NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'));
       } else {
-        webPhotoStatus.textContent = webJson?.note || 'No automatic web photo results are configured yet. Use the source links below for manual review.';
+        container.appendChild(li('Licensed vehicle history provider: connected.'));
+        container.appendChild(li('Owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings available.'));
       }
+    }
 
-      links.forEach(link => {
-        const a = document.createElement('a');
-        a.className = 'lead-link';
-        a.href = link.url;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.innerHTML = `${link.label}<span>${link.note || 'Open and verify source before relying on photos.'}</span>`;
-        webPhotoLinks.appendChild(a);
+    function renderConfidence(confidence) {
+      const card = document.getElementById('confidenceCard');
+      const badge = document.getElementById('confidenceBadge');
+      const title = document.getElementById('confidenceTitle');
+      const message = document.getElementById('confidenceMessage');
+      const details = document.getElementById('confidenceDetails');
+
+      badge.textContent = confidence.badge;
+      badge.className = confidence.level === 'warning' ? 'badge badge-warning' : 'badge';
+      card.className = confidence.level === 'warning' ? 'card warning-card' : 'card success-card';
+
+      title.textContent = confidence.title;
+      message.textContent = confidence.message;
+      details.innerHTML = '';
+
+      confidence.details.forEach(d => details.appendChild(li(d)));
+    }
+
+    function renderIdentity(d) {
+      const container = document.getElementById('identity');
+      container.innerHTML = '';
+      [
+        `Make: ${d.make || 'Not available'}`,
+        `Model: ${d.model || 'Not available'}`,
+        `Year: ${d.modelYear || 'Not available'}`,
+        `Vehicle type: ${d.vehicleType || 'Not available'}`,
+        `Body class: ${d.bodyClass || 'Not available'}`,
+        `Drive type: ${d.driveType || 'Not available'}`,
+        `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
+        `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
+        `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
+        `Manufacturer: ${d.manufacturer || 'Not available'}`,
+        `Plant country: ${d.plantCountry || 'Not available'}`,
+        `NHTSA decode status: ${confidence.badge}`,
+        `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
+      ].forEach(x => container.appendChild(li(x)));
+    }
+
+    function renderInterpretation(d, confidence) {
+      const container = document.getElementById('interpretation');
+      container.innerHTML = '';
+      [
+        confidence.level === 'warning'
+          ? 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, and seller listing before relying on this result.'
+          : `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
+        `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
+        `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
+        `Market comps are currently demo placeholders until a live market listing provider is connected.`,
+        `The next useful premium layers are live comps, listing history, title/brand history, and historical imagery.`
+      ].forEach(x => container.appendChild(li(x)));
+    }
+
+    function renderRecalls(recallsJson) {
+      const container = document.getElementById('recalls');
+      container.innerHTML = '';
+
+      if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
+        container.appendChild(li(`${recallsJson.count} recall record(s) found.`));
+        recallsJson.recalls.slice(0, 3).forEach(r => {
+          container.appendChild(li(`${r.recallNumber || 'Recall'} • ${r.component || 'Component not listed'}`));
+        });
+      } else {
+        container.appendChild(li('No recall records returned in this free lookup.'));
+      }
+    }
+
+    function renderComps(d, inputPrice, inputMileage) {
+      const container = document.getElementById('comps');
+      container.innerHTML = '';
+      const yr = Number(d.modelYear || 0);
+
+      if (inputPrice || inputMileage) {
+        [
+          `Target range: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
+          `Asking price: ${inputPrice ? '$' + inputPrice.toLocaleString() : 'not entered'}`,
+          `Mileage: ${inputMileage ? inputMileage.toLocaleString() + ' mi' : 'not entered'}`,
+          `Live market comps: not connected yet`,
+          `Demo market comps - not live market listings yet.`,
+          `Do not use the demo comps below to calculate market value.`,
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Demo European Cars' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'Demo Imports' },
+          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Demo Auto Group' }
+        ].forEach(x => {
+          if (typeof x === 'string') {
+            container.appendChild(li(x));
+          } else {
+            container.appendChild(li(`Demo: ${x.title} • $${x.price.toLocaleString()} • ${x.mileage.toLocaleString()} mi • ${x.dealer}`));
+          }
+        });
+      } else {
+        [
+          `Target range: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
+          `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
+          `Enter asking price and mileage above to make the market view more useful.`,
+          `Provider-fed cross-market comps will replace demo placeholders once connected.`
+        ].forEach(x => container.appendChild(li(x)));
+      }
+    }
+
+    function renderSpecs(d) {
+      const grid = document.getElementById('specsGrid');
+      const list = document.getElementById('specsList');
+      grid.innerHTML = '';
+      list.innerHTML = '';
+
+      const metrics = [
+        { label: 'Make', value: d.make },
+        { label: 'Model', value: d.model },
+        { label: 'Year', value: d.modelYear },
+        { label: 'Body', value: d.bodyClass },
+        { label: 'Drive', value: d.driveType },
+        { label: 'Fuel', value: d.fuelTypePrimary },
+        { label: 'Engine', value: d.engineCylinders ? `${d.engineCylinders} cyl, ${d.displacementL || '?'}L` : 'Not available' },
+        { label: 'MSRP', value: d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available' }
+      ];
+
+      metrics.forEach(m => {
+        if (m.value && m.value !== 'Not available') {
+          const el = document.createElement('div');
+          el.className = 'metric';
+          el.innerHTML = `<span>${m.label}</span><strong>${m.value}</strong>`;
+          grid.appendChild(el);
+        }
       });
+
+      const details = [
+        { label: 'Vehicle type', value: d.vehicleType },
+        { label: 'Plant country', value: d.plantCountry },
+        { label: 'Manufacturer', value: d.manufacturer },
+        { label: 'Airbags', value: d.airbags?.front ? `Front: ${d.airbags.front}, Side: ${d.airbags.side}, Curtain: ${d.airbags.curtain}` : 'Not available' },
+        { label: 'Safety', value: d.abs && d.esc ? `ABS: ${d.abs}, ESC: ${d.esc}` : 'Not available' }
+      ];
+
+      list.innerHTML = details.filter(d => d.value && d.value !== 'Not available').map(d => `${d.label}: ${d.value}`).join('<br>');
     }
 
     function getNhtsaConfidence(decoded) {
@@ -371,7 +491,7 @@
       if (errorCode === '0' && hasIdentity) {
         return {
           level: 'clean',
-          badge: 'High identity confidence',
+          badge: 'High confidence',
           title: 'VIN decoded clean',
           message: 'VIN decoded clean. Check digit is valid. Core identity appears well-formed.',
           details: [errorText || 'NHTSA ErrorCode 0 - VIN decoded clean. Check digit is valid.'],
@@ -382,8 +502,8 @@
 
       return {
         level: 'limited',
-        badge: 'Limited identity confidence',
-        title: 'VIN decoded with limited identity data',
+        badge: 'Limited confidence',
+        title: 'VIN decoded with limited data',
         message: 'Some identity fields are missing. Verify seller claims and request supporting documentation before moving forward.',
         details: ['NHTSA returned partial vehicle identity data.'],
         status: 'Partial decode',
@@ -391,576 +511,38 @@
       };
     }
 
-    function renderConfidence(confidence) {
-      const card = document.getElementById('confidenceCard');
-      const badge = document.getElementById('confidenceBadge');
-      const title = document.getElementById('confidenceTitle');
-      const message = document.getElementById('confidenceMessage');
-      const details = document.getElementById('confidenceDetails');
-      const warningCard = document.getElementById('vinWarningCard');
-      const warningMessage = document.getElementById('vinWarningMessage');
-
-      card.classList.toggle('warning-card', confidence.level === 'warning');
-      card.classList.toggle('success-card', confidence.level === 'clean');
-      badge.classList.toggle('badge-warning', confidence.level === 'warning');
-      badge.textContent = confidence.badge;
-      title.textContent = confidence.title;
-      message.textContent = confidence.message;
-      details.innerHTML = '';
-      confidence.details.forEach(item => details.appendChild(li(item)));
-      document.getElementById('identityStatus').textContent = confidence.status;
-      document.getElementById('nextMove').textContent = confidence.nextMove;
-      warningCard.style.display = confidence.level === 'warning' ? 'block' : 'none';
-      warningMessage.textContent = confidence.level === 'warning'
-        ? `VIN warning: ${confidence.details[0] || 'NHTSA returned a decode warning.'}`
-        : '';
-    }
-
-    function renderVehicleSpecs(decoded) {
-      const specsGrid = document.getElementById('specsGrid');
-      const specsList = document.getElementById('specsList');
-      const specsStatus = document.getElementById('specsStatus');
-      
-      if (!decoded || !decoded.make) {
-        specsStatus.textContent = 'Vehicle specs not available for this VIN.';
-        specsGrid.innerHTML = '';
-        specsList.innerHTML = '';
-        return;
-      }
-
-      specsStatus.textContent = 'Factory specifications from NHTSA VIN decode.';
-      specsGrid.innerHTML = '';
-      specsList.innerHTML = '';
-
-      const specs = [
-        { label: 'Make', value: decoded.make },
-        { label: 'Model', value: decoded.model },
-        { label: 'Year', value: decoded.modelYear },
-        { label: 'Trim', value: decoded.trim || decoded.series },
-        { label: 'Body Class', value: decoded.bodyClass },
-        { label: 'Drive Type', value: decoded.driveType },
-        { label: 'Fuel Type', value: decoded.fuelTypePrimary },
-        { label: 'Engine', value: decoded.engineCylinders ? `${decoded.engineCylinders} cylinders${decoded.displacementL ? `, ${decoded.displacementL}L` : ''}` : null },
-        { label: 'Transmission', value: decoded.transmissionType },
-        { label: 'Base MSRP', value: decoded.baseMsrp ? `$${Number(decoded.baseMsrp).toLocaleString()}` : null },
-        { label: 'Manufacturer', value: decoded.manufacturer },
-        { label: 'Plant Country', value: decoded.plantCountry }
-      ];
-
-      // Only add specs that have values
-      specs.forEach(spec => {
-        if (spec.value) {
-          const metric = document.createElement('div');
-          metric.className = 'metric';
-          metric.innerHTML = `
-            <span>${spec.label}</span>
-            <strong>${spec.value}</strong>
-          `;
-          specsGrid.appendChild(metric);
-        }
-      });
-
-      const details = [
-        decoded.vin ? `VIN: ${decoded.vin}` : null,
-        decoded.vehicleType ? `Vehicle Type: ${decoded.vehicleType}` : null,
-        decoded.doors ? `Door Count: ${decoded.doors}` : null,
-        decoded.seats ? `Seat Count: ${decoded.seats}` : null,
-        decoded.grossVehicleWeightRating ? `Weight: ${decoded.grossVehicleWeightRating} lbs` : null,
-        decoded.vehicleLength ? `Length: ${decoded.vehicleLength} inches` : null,
-        decoded.vehicleWidth ? `Width: ${decoded.vehicleWidth} inches` : null,
-        decoded.vehicleHeight ? `Height: ${decoded.vehicleHeight} inches` : null,
-        decoded.wheelbase ? `Wheelbase: ${decoded.wheelbase} inches` : null,
-        decoded.abs ? `ABS: ${decoded.abs}` : null,
-        decoded.esc ? `ESC: ${decoded.esc}` : null,
-        decoded.airbags ? `Airbags: Front ${decoded.airbags.front || 'Not available'}, Side ${decoded.airbags.side || 'Not available'}, Curtain ${decoded.airbags.curtain || 'Not available'}` : null
-      ];
-
-      // Only add details that have values
-      details.filter(Boolean).forEach(detail => {
-        const p = document.createElement('p');
-        p.textContent = detail;
-        specsList.appendChild(p);
-      });
-    }
-
-    function formatMileage(value) {
-      return value == null ? 'mileage not listed' : `${Number(value).toLocaleString()} mi`;
-    }
-
-    function formatHistoryEvent(event) {
-      const parts = [
-        event.date || 'date not listed',
-        event.state || '',
-        event.type || 'history record',
-        formatMileage(event.mileage),
-        event.description || event.source || ''
-      ].filter(Boolean);
-      return parts.join(' • ');
-    }
-
-    function money(value) {
-      return value == null ? 'not listed' : `$${Number(value).toLocaleString()}`;
-    }
-
-    function formatAuctionEvent(event) {
-      const parts = [
-        event.date || 'auction date not listed',
-        event.platform || 'auction source',
-        event.seller ? `seller ${event.seller}` : '',
-        event.lossType || '',
-        event.primaryDamage ? `damage ${event.primaryDamage}` : '',
-        event.odometer == null ? '' : `${Number(event.odometer).toLocaleString()} mi`,
-        event.saleDocument || ''
-      ].filter(Boolean);
-      return parts.join(' • ');
-    }
-
-    function formatTimelineDate(date) {
-      if (!date) return 'Unknown date';
-      try {
-        return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-      } catch (e) {
-        return date;
-      }
-    }
-
-    function getTimelineEventType(type) {
-      const typeMap = {
-        factory: 'factory',
-        manufacturing: 'factory',
-        dealer: 'dealer',
-        sale: 'dealer',
-        purchase: 'owner',
-        ownership: 'owner',
-        owner: 'owner',
-        service: 'service',
-        maintenance: 'service',
-        oil: 'service',
-        repair: 'service',
-        accident: 'accident',
-        crash: 'accident',
-        damage: 'accident',
-        registration: 'registration',
-        title: 'registration',
-        record: 'registration'
-      };
-      return typeMap[type?.toLowerCase()] || 'registration';
-    }
-
-    function renderTimeline(timelineEvents, auctionEvidence = []) {
-      const container = document.getElementById('timelineContainer');
-      const statusEl = document.getElementById('timelineStatus');
-      
-      // Combine timeline events and auction evidence
-      const allEvents = [...(timelineEvents || []), ...auctionEvidence];
-      
-      if (!allEvents || allEvents.length === 0) {
-        container.innerHTML = '';
-        statusEl.textContent = 'Vehicle history timeline data not available. Connect a licensed history provider for complete ownership, service, and accident records.';
-        return;
-      }
-
-      // Sort events by date (newest first)
-      const sortedEvents = [...allEvents].sort((a, b) => {
-        const dateA = a.date || a.auctionDate || '9999-12-31';
-        const dateB = b.date || b.auctionDate || '9999-12-31';
-        return new Date(dateB) - new Date(dateA);
-      });
-
-      // Group events by type for better organization
-      const groupedEvents = {};
-      sortedEvents.forEach(event => {
-        // Handle auction evidence specially (check for platform or date field)
-        if (event.platform || event.date) {
-          const type = 'auction';
-          if (!groupedEvents[type]) groupedEvents[type] = [];
-          groupedEvents[type].push(event);
-          return;
-        }
-        const type = getTimelineEventType(event.type || event.eventType || 'history');
-        if (!groupedEvents[type]) groupedEvents[type] = [];
-        groupedEvents[type].push(event);
-      });
-
-      // Render timeline items
-      container.innerHTML = '';
-      
-      // Add factory event first if available
-      if (groupedEvents.factory && groupedEvents.factory.length > 0) {
-        const event = groupedEvents.factory[0];
-        const item = document.createElement('div');
-        item.className = 'timeline-item timeline-type-factory';
-        item.innerHTML = `
-          <div class="timeline-dot">🏭</div>
-          <div class="timeline-content">
-            <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-            <div class="timeline-title">Factory / Manufacturing</div>
-            <div class="timeline-desc">${event.description || event.note || 'Vehicle manufactured'}${event.location ? ` • ${event.location}` : ''}</div>
-          </div>
-        `;
-        container.appendChild(item);
-      }
-
-      // Add dealer events
-      if (groupedEvents.dealer && groupedEvents.dealer.length > 0) {
-        groupedEvents.dealer.slice(0, 3).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-dealer';
-          item.innerHTML = `
-            <div class="timeline-dot">🚗</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-              <div class="timeline-title">Dealer / Sale</div>
-              <div class="timeline-desc">${event.description || event.dealerName || 'Sold by dealer'}${event.price ? ` • $${Number(event.price).toLocaleString()}` : ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      // Add owner events
-      if (groupedEvents.owner && groupedEvents.owner.length > 0) {
-        groupedEvents.owner.slice(0, 5).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-owner';
-          item.innerHTML = `
-            <div class="timeline-dot">👤</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-              <div class="timeline-title">Ownership Change</div>
-              <div class="timeline-desc">${event.description || 'New owner recorded'}${event.mileage ? ` • ${Number(event.mileage).toLocaleString()} mi` : ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      // Add registration events
-      if (groupedEvents.registration && groupedEvents.registration.length > 0) {
-        groupedEvents.registration.slice(0, 5).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-registration';
-          item.innerHTML = `
-            <div class="timeline-dot">📋</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-              <div class="timeline-title">Registration</div>
-              <div class="timeline-desc">${event.description || event.state || 'Registration updated'}${event.expiration ? ` • Expires: ${formatTimelineDate(event.expiration)}` : ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      // Add service events
-      if (groupedEvents.service && groupedEvents.service.length > 0) {
-        groupedEvents.service.slice(0, 8).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-service';
-          item.innerHTML = `
-            <div class="timeline-dot">🔧</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-              <div class="timeline-title">${event.description || event.serviceType || 'Service/Maintenance'}</div>
-              <div class="timeline-desc">${event.mileage ? `${Number(event.mileage).toLocaleString()} mi • ` : ''}${event.provider || event.shop || ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      // Add accident events
-      if (groupedEvents.accident && groupedEvents.accident.length > 0) {
-        groupedEvents.accident.slice(0, 3).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-accident';
-          item.innerHTML = `
-            <div class="timeline-dot">⚠️</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date)}</div>
-              <div class="timeline-title">Accident / Damage</div>
-              <div class="timeline-desc">${event.description || event.damageType || 'Damage recorded'}${event.primaryDamage ? ` • ${event.primaryDamage}` : ''}${event.estimatedRepairCost ? ` • $${Number(event.estimatedRepairCost).toLocaleString()} repair est.` : ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      // Add auction events
-      if (groupedEvents.auction && groupedEvents.auction.length > 0) {
-        groupedEvents.auction.slice(0, 3).forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item timeline-type-auction';
-          item.innerHTML = `
-            <div class="timeline-dot">💰</div>
-            <div class="timeline-content">
-              <div class="timeline-date">${formatTimelineDate(event.date || event.auctionDate)}</div>
-              <div class="timeline-title">Auction / Loss Event</div>
-              <div class="timeline-desc">${event.platform || 'Auction'}${event.seller ? ` • ${event.seller}` : ''}${event.lossType ? ` • ${event.lossType}` : ''}${event.primaryDamage ? ` • ${event.primaryDamage}` : ''}${event.odometer ? ` • ${Number(event.odometer).toLocaleString()} mi` : ''}${event.estimatedRepairCost ? ` • $${Number(event.estimatedRepairCost).toLocaleString()} est. repair` : ''}</div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      statusEl.textContent = `${allEvents.length} event(s) in vehicle history timeline.`;
-    }
-
-    function renderHistory(historyJson) {
-      const history = historyJson?.history || {};
-      const historySignals = document.getElementById('historySignals');
-      const claimSignals = document.getElementById('claimSignals');
-      const serviceSignals = document.getElementById('serviceSignals');
-      const ownerCount = history.ownershipSummary?.ownerCount;
-      const historyStatus = history.status || 'not_configured';
-      const odometerEvents = Array.isArray(history.odometerTimeline) ? history.odometerTimeline : [];
-      const registrationEvents = Array.isArray(history.registrationTimeline) ? history.registrationTimeline : [];
-      const ownershipEvents = Array.isArray(history.ownershipTimeline) ? history.ownershipTimeline : [];
-      const titleEvents = Array.isArray(history.titleHistory) ? history.titleHistory : [];
-      const damageEvents = Array.isArray(history.accidentDamageHistory) ? history.accidentDamageHistory : [];
-      const claimEvents = Array.isArray(history.insuranceClaims) ? history.insuranceClaims : [];
-      const photoEvents = Array.isArray(history.damagePhotoEvidence) ? history.damagePhotoEvidence : [];
-      const auctionEvents = Array.isArray(history.auctionEvidence) ? history.auctionEvidence : [];
-      const serviceEvents = Array.isArray(history.serviceHistory) ? history.serviceHistory : [];
-      const auctionAlertCard = document.getElementById('auctionAlertCard');
-      const auctionAlertDetails = document.getElementById('auctionAlertDetails');
-      const auctionPhotoGallery = document.getElementById('auctionPhotoGallery');
-      const auctionPhotoSource = document.getElementById('auctionPhotoSource');
-      const claimPhotoGallery = document.getElementById('claimPhotoGallery');
-      const auctionPhotoUrls = flattenPhotoUrls(auctionEvents);
-
-      historySignals.innerHTML = '';
-      claimSignals.innerHTML = '';
-      serviceSignals.innerHTML = '';
-      auctionAlertDetails.innerHTML = '';
-      auctionPhotoGallery.innerHTML = '';
-      claimPhotoGallery.innerHTML = '';
-      auctionPhotoSource.style.display = 'none';
-
-      auctionAlertCard.style.display = auctionEvents.length ? 'block' : 'none';
-      auctionEvents.slice(0, 2).forEach(event => {
-        [
-          formatAuctionEvent(event),
-          `Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`,
-          event.photoCount ? `${event.photoCount} auction photo(s) reported` : '',
-          event.photoEvidenceUrl ? `Photo/evidence source: ${event.photoEvidenceUrl}` : '',
-          event.note || ''
-        ].filter(Boolean).forEach(item => auctionAlertDetails.appendChild(li(item)));
-      });
-      renderPhotoGallery(auctionPhotoGallery, auctionPhotoUrls, 'Sale photo');
-      if (auctionEvents[0]?.photoEvidenceUrl) {
-        auctionPhotoSource.href = auctionEvents[0].photoEvidenceUrl;
-        auctionPhotoSource.style.display = 'inline-block';
-      }
-
-      if (historyStatus !== 'live') {
-        // Show auction evidence if available
-        if (auctionEvents.length) {
-          historySignals.appendChild(li('Public indexed auction evidence found:'));
-          auctionEvents.slice(0, 3).forEach(event => {
-            historySignals.appendChild(li(formatAuctionEvent(event)));
-            historySignals.appendChild(li(`Lot ${event.lotId || 'not listed'} • ${event.location || 'location not listed'} • ${event.runCondition || 'run condition not listed'}`));
-            historySignals.appendChild(li(`Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`));
-            historySignals.appendChild(li(event.photoCount ? `${event.photoCount} auction photo(s) reported` : ''));
-          });
-        }
-        historySignals.appendChild(li('Licensed vehicle history provider: not connected yet.'));
-        historySignals.appendChild(li('Prior owner names and addresses are not available in buyer-facing reports.'));
-        historySignals.appendChild(li(auctionEvents.length ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.' : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.'));
-        historySignals.appendChild(li('NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'));
-      } else {
-        historySignals.appendChild(li(`Owner count: ${ownerCount ?? 'not reported by provider'}`));
-        [...ownershipEvents, ...registrationEvents, ...titleEvents, ...damageEvents, ...odometerEvents]
-          .slice(0, 12)
-          .forEach(event => historySignals.appendChild(li(formatHistoryEvent(event))));
-      }
-
-      if (auctionEvents.length) {
-        auctionEvents.slice(0, 8).forEach(event => {
-          [
-            formatAuctionEvent(event),
-            `Lot ${event.lotId || 'not listed'} • ${event.location || 'location not listed'} • run condition ${event.runCondition || 'not listed'}`,
-            `Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`,
-            event.photoCount ? `${event.photoCount} auction photo(s) reported` : '',
-            event.photoEvidenceUrl ? `Photos/source: ${event.photoEvidenceUrl}` : ''
-          ].filter(Boolean).forEach(item => claimSignals.appendChild(li(item)));
-        });
-        renderPhotoGallery(claimPhotoGallery, auctionPhotoUrls, 'Auction image');
-      } else if (historyStatus !== 'live') {
-        [
-          'Insurance claims, total-loss records, salvage-auction appearances, and crash/repair photos require a licensed history, claims, salvage, or auction-photo provider.',
-          'A public web search did not find indexed crash or salvage-auction photo records for this demo VIN, but that is not proof the claim history is clean.',
-          'When connected, this section can show claim date, loss type, damage severity, title/salvage status, auction photo links, and repair evidence when returned by the provider.'
-        ].forEach(x => claimSignals.appendChild(li(x)));
-      } else if (claimEvents.length || photoEvents.length) {
-        claimEvents.slice(0, 8).forEach(event => claimSignals.appendChild(li(formatHistoryEvent(event))));
-        photoEvents.slice(0, 8).forEach(event => {
-          const parts = [
-            event.date || 'date not listed',
-            event.source || 'damage photo source',
-            event.damageType || event.type || 'damage photo',
-            event.titleType || '',
-            event.url || ''
-          ].filter(Boolean);
-          claimSignals.appendChild(li(parts.join(' • ')));
-        });
-      } else {
-        claimSignals.appendChild(li('No insurance claim or damage-photo records were returned by the connected provider.'));
-      }
-
-      if (historyStatus !== 'live') {
-        [
-          'Service and oil-change records are provider-dependent and may be incomplete even in paid reports.',
-          'The best buyer workflow is to combine provider service records with seller receipts and a pre-purchase inspection.',
-          'Once connected, dated service events and mileage-at-service readings will render here.'
-        ].forEach(x => serviceSignals.appendChild(li(x)));
-      } else if (serviceEvents.length) {
-        serviceEvents.slice(0, 12).forEach(event => serviceSignals.appendChild(li(formatHistoryEvent(event))));
-      } else {
-        serviceSignals.appendChild(li('No service or oil-change records were returned by the connected provider.'));
-      }
-    }
-
-    async function readJsonSafe(response, label) {
-      const text = await response.text();
-      try {
-        return JSON.parse(text);
-      } catch (err) {
-        throw new Error(`${label} returned a non-JSON response. This usually means the live API route failed on the server.`);
-      }
+    function setFieldValue(input, value) {
+      input.value = value;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     runBtn.addEventListener('click', async () => {
-      const vin = vinInput.value.trim().toUpperCase();
+      const vin = vinInput.value.trim();
       if (!vin) {
-        statusEl.textContent = 'Enter a VIN first.';
+        statusEl.textContent = 'Please enter a valid VIN.';
         return;
       }
-      statusEl.textContent = 'Running free VIN decode...';
+
+      statusEl.textContent = 'Running VIN check...';
       resultEl.style.display = 'none';
 
       try {
-        const dashboardParams = new URLSearchParams({ vin });
-        if (listingUrlInput.value.trim()) dashboardParams.set('listing_url', listingUrlInput.value.trim());
-        if (askingPriceInput.value) dashboardParams.set('asking_price', askingPriceInput.value);
-        if (claimedMileageInput.value) dashboardParams.set('mileage', claimedMileageInput.value);
-        if (vehicleConditionInput.value) dashboardParams.set('condition', vehicleConditionInput.value);
-
-        const [decodeRes, recallRes, historyRes, dashboardRes] = await Promise.all([
-          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`),
-          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`),
-          fetch(`/api/history?vin=${encodeURIComponent(vin)}`),
-          fetch(`/api/vehicle-dashboard?${dashboardParams.toString()}`)
+        const [decode, recalls, history] = await Promise.all([
+          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
+          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
+          fetch(`/api/history?vin=${encodeURIComponent(vin)}`).then(r => r.json())
         ]);
-        const json = await readJsonSafe(decodeRes, 'Decode API');
-        const recallsJson = await readJsonSafe(recallRes, 'Recall API');
-        const historyJson = await readJsonSafe(historyRes, 'History API');
-        const dashboardJson = await readJsonSafe(dashboardRes, 'Vehicle dashboard API');
-        if (!decodeRes.ok || !json.ok) throw new Error(json.error || json.detail || 'Lookup failed');
-        if (!recallRes.ok || (recallsJson && recallsJson.error)) throw new Error(recallsJson.error || recallsJson.detail || 'Recall lookup failed');
-        if (!historyRes.ok || (historyJson && historyJson.error)) throw new Error(historyJson.error || historyJson.detail || 'History lookup failed');
-        if (!dashboardRes.ok || (dashboardJson && dashboardJson.error)) throw new Error(dashboardJson.error || dashboardJson.detail || 'Dashboard lookup failed');
 
-        const d = json.decoded;
-        const title = `${d.modelYear || ''} ${d.make || ''} ${d.model || ''} ${d.trim || d.series || ''}`.trim();
-        const confidence = getNhtsaConfidence(d);
-        const seededCase = seeded?.case || null;
-        document.getElementById('title').textContent = title || vin;
-        const askingPrice = askingPriceInput.value ? Number(askingPriceInput.value) : null;
-        const claimedMileage = claimedMileageInput.value ? Number(claimedMileageInput.value) : null;
-        const sellerType = sellerTypeInput.value || 'dealer';
-        const condition = vehicleConditionInput.value || 'good';
-        document.getElementById('summary').textContent = `This VIN resolves to ${title || 'a vehicle with partial identity data'}. Shopping context captured: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'ask not entered'}, ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'mileage not entered'}, ${sellerType}, condition ${condition}.`;
+        const confidence = getNhtsaConfidence(decode);
         renderConfidence(confidence);
-        renderListingPhotos(dashboardJson);
-        const webPhotoParams = new URLSearchParams({
-          vin,
-          year: d.modelYear || '',
-          make: d.make || '',
-          model: d.model || ''
-        });
-        const webPhotoRes = await fetch(`/api/web-photo-search?${webPhotoParams.toString()}`);
-        const webPhotoJson = await readJsonSafe(webPhotoRes, 'Web photo search API');
-        if (!webPhotoRes.ok || !webPhotoJson.ok) throw new Error(webPhotoJson.error || 'Web photo search failed');
-        renderWebPhotoLeads(webPhotoJson);
-        renderVehicleSpecs(d);
-
-        const identity = document.getElementById('identity');
-        identity.innerHTML = '';
-        [
-          `VIN: ${d.vin}`,
-          `Vehicle type: ${d.vehicleType || 'Not available'}`,
-          `Body class: ${d.bodyClass || 'Not available'}`,
-          `Drive type: ${d.driveType || 'Not available'}`,
-          `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
-          `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
-          `Safety equipment: ABS ${d.abs || 'not available'}, ESC ${d.esc || 'not available'}`,
-          `Airbags: front ${d.airbags?.front || 'not available'}, side ${d.airbags?.side || 'not available'}, curtain ${d.airbags?.curtain || 'not available'}`,
-          `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
-          `Manufacturer: ${d.manufacturer || 'Not available'}`,
-          `Plant country: ${d.plantCountry || 'Not available'}`,
-          `NHTSA decode status: ${confidence.badge}`,
-          `NHTSA ErrorCode: ${d.nhtsa?.errorCode || d.raw?.ErrorCode || 'Not available'}`,
-          `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`,
-          `Asking price: ${askingPrice ? '$' + askingPrice.toLocaleString() : 'Not entered'}`,
-          `Claimed mileage: ${claimedMileage ? claimedMileage.toLocaleString() + ' mi' : 'Not entered'}`,
-          `Seller type: ${sellerType}`,
-          `Condition: ${condition}`
-        ].forEach(x => identity.appendChild(li(x)));
-
-        const interpretation = document.getElementById('interpretation');
-        interpretation.innerHTML = '';
-        [
-          confidence.level === 'warning'
-            ? 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, and seller listing before relying on this result.'
-            : `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
-          `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
-          `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
-          `Market comps are currently demo placeholders until a live market listing provider is connected.`,
-          `The next useful premium layers are live comps, listing history, title/brand history, and historical imagery.`
-        ].forEach(x => interpretation.appendChild(li(x)));
-
-        const recalls = document.getElementById('recalls');
-        recalls.innerHTML = '';
-
-        const comps = document.getElementById('comps');
-        comps.innerHTML = '';
-        const yr = Number(d.modelYear || 0);
-        const inputPrice = askingPrice || seededCase?.asking_price || null;
-        const inputMileage = claimedMileage || seededCase?.mileage_claimed || null;
-        const demoComps = [
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Demo European Cars' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'Demo Imports' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Demo Auto Group' }
-        ];
-        if (inputPrice || inputMileage) {
-          [
-            `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
-            `Current ask entered: ${inputPrice ? '$' + inputPrice.toLocaleString() : 'not entered'}`,
-            `Current mileage entered: ${inputMileage ? inputMileage.toLocaleString() + ' mi' : 'not entered'}`,
-            `Live market comps: not connected yet`,
-            `Demo market comps - not live market listings yet.`,
-            `Do not use the demo comps below to calculate market value or sample comp average.`,
-            ...demoComps.map(c => `Demo only: ${c.title} • $${c.price.toLocaleString()} • ${c.mileage.toLocaleString()} mi • ${c.dealer}`)
-          ].forEach(x => comps.appendChild(li(x)));
-        } else {
-          [
-            `Target range to compare: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}` ,
-            `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
-            `Enter asking price and mileage above to make the market view more useful.`,
-            `Provider-fed cross-market comps will replace demo placeholders once connected.`
-          ].forEach(x => comps.appendChild(li(x)));
-        }
-        if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
-          recalls.appendChild(li(`${recallsJson.count} recall record(s) found.`));
-          recallsJson.recalls.slice(0, 3).forEach(r => {
-            recalls.appendChild(li(`${r.recallNumber || 'Recall'} • ${r.component || 'Component not listed'}`));
-          });
-        } else {
-          recalls.appendChild(li('No recall records returned in this free lookup.'));
-        }
-        renderHistory(historyJson);
-        renderTimeline(historyJson?.history?.timelineEvents || historyJson?.timelineEvents || [], historyJson?.history?.auctionEvidence || []);
+        renderIdentity(decode);
+        renderInterpretation(decode, confidence);
+        renderRecalls(recalls);
+        renderHistory(history);
+        renderTimeline(history?.history?.timelineEvents || history?.timelineEvents || [], history?.history?.auctionEvidence || []);
+        renderSpecs(decode);
+        renderComps(decode, askingPriceInput.value, claimedMileageInput.value);
 
         resultEl.style.display = 'block';
         statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
@@ -968,12 +550,6 @@
         statusEl.textContent = `Error: ${err.message}`;
       }
     });
-
-    function setFieldValue(input, value) {
-      input.value = value;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    }
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('trial') === '1') {
@@ -990,15 +566,12 @@
       statusEl.textContent = 'Demo loaded. Running the sample VIN check...';
       window.setTimeout(() => runBtn.click(), 300);
     }
-    // Auto-run VIN check if ?vin=... is provided
     const vinParam = params.get('vin');
     if (vinParam) {
       setFieldValue(vinInput, vinParam);
       statusEl.textContent = 'VIN loaded from URL. Running check...';
       window.setTimeout(() => runBtn.click(), 300);
     }
-  }
   </script>
-  <script src="/data.js"></script>
 </body>
 </html>
