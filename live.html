@@ -556,7 +556,7 @@
 
         const confidence = getNhtsaConfidence(decode);
         renderConfidence(confidence);
-        renderIdentity(decode);
+        renderIdentity(decode, confidence);
         renderInterpretation(decode, confidence);
         renderRecalls(recalls);
         renderHistory(history);
