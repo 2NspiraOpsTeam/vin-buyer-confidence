@@ -366,7 +366,7 @@
       confidence.details.forEach(d => details.appendChild(li(d)));
     }
 
-    function renderIdentity(d) {
+    function renderIdentity(d, confidence) {
       const container = document.getElementById('identity');
       container.innerHTML = '';
       [
