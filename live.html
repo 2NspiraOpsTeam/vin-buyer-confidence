@@ -762,14 +762,20 @@
       }
 
       if (historyStatus !== 'live') {
-        [
-          'Licensed vehicle history provider: not connected yet.',
-          'Prior owner names and addresses are not available in buyer-facing reports.',
-          auctionEvents.length
-            ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.'
-            : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.',
-          'NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'
-        ].forEach(x => historySignals.appendChild(li(x)));
+        // Show auction evidence if available
+        if (auctionEvents.length) {
+          historySignals.appendChild(li('Public indexed auction evidence found:'));
+          auctionEvents.slice(0, 3).forEach(event => {
+            historySignals.appendChild(li(formatAuctionEvent(event)));
+            historySignals.appendChild(li(`Lot ${event.lotId || 'not listed'} • ${event.location || 'location not listed'} • ${event.runCondition || 'run condition not listed'}`));
+            historySignals.appendChild(li(`Repair estimate: ${money(event.estimatedRepairCost)}; ACV: ${money(event.actualCashValue)}`));
+            historySignals.appendChild(li(event.photoCount ? `${event.photoCount} auction photo(s) reported` : ''));
+          });
+        }
+        historySignals.appendChild(li('Licensed vehicle history provider: not connected yet.'));
+        historySignals.appendChild(li('Prior owner names and addresses are not available in buyer-facing reports.'));
+        historySignals.appendChild(li(auctionEvents.length ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.' : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.'));
+        historySignals.appendChild(li('NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'));
       } else {
         historySignals.appendChild(li(`Owner count: ${ownerCount ?? 'not reported by provider'}`));
         [...ownershipEvents, ...registrationEvents, ...titleEvents, ...damageEvents, ...odometerEvents]
