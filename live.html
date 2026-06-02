@@ -129,6 +129,14 @@
         <p id="summary"></p>
       </div>
 
+      <div class="card">
+        <span class="badge">🏭 Vehicle specs</span>
+        <h3>Factory specifications</h3>
+        <p class="muted" id="specsStatus">Run a VIN check to see factory specifications.</p>
+        <div id="specsGrid" class="metric-grid"></div>
+        <div id="specsList" class="muted" style="margin-top:12px;"></div>
+      </div>
+
       <div class="card" id="confidenceCard">
         <span class="badge" id="confidenceBadge">Identity confidence</span>
         <h3 id="confidenceTitle"></h3>
@@ -413,6 +421,69 @@
       warningMessage.textContent = confidence.level === 'warning'
         ? `VIN warning: ${confidence.details[0] || 'NHTSA returned a decode warning.'}`
         : '';
+    }
+
+    function renderVehicleSpecs(decoded) {
+      const specsGrid = document.getElementById('specsGrid');
+      const specsList = document.getElementById('specsList');
+      const specsStatus = document.getElementById('specsStatus');
+      
+      if (!decoded || !decoded.make) {
+        specsStatus.textContent = 'Vehicle specs not available for this VIN.';
+        specsGrid.innerHTML = '';
+        specsList.innerHTML = '';
+        return;
+      }
+
+      specsStatus.textContent = 'Factory specifications from NHTSA VIN decode.';
+      specsGrid.innerHTML = '';
+      specsList.innerHTML = '';
+
+      const specs = [
+        { label: 'Make', value: decoded.make || 'Not available' },
+        { label: 'Model', value: decoded.model || 'Not available' },
+        { label: 'Year', value: decoded.modelYear || 'Not available' },
+        { label: 'Trim', value: decoded.trim || decoded.series || 'Not available' },
+        { label: 'Body Class', value: decoded.bodyClass || 'Not available' },
+        { label: 'Drive Type', value: decoded.driveType || 'Not available' },
+        { label: 'Fuel Type', value: decoded.fuelTypePrimary || 'Not available' },
+        { label: 'Engine', value: decoded.engineCylinders ? `${decoded.engineCylinders} cylinders${decoded.displacementL ? `, ${decoded.displacementL}L` : ''}` : 'Not available' },
+        { label: 'Transmission', value: decoded.transmissionType || 'Not available' },
+        { label: 'Base MSRP', value: decoded.baseMsrp ? `$${Number(decoded.baseMsrp).toLocaleString()}` : 'Not available' },
+        { label: 'Manufacturer', value: decoded.manufacturer || 'Not available' },
+        { label: 'Plant Country', value: decoded.plantCountry || 'Not available' }
+      ];
+
+      specs.forEach(spec => {
+        const metric = document.createElement('div');
+        metric.className = 'metric';
+        metric.innerHTML = `
+          <span>${spec.label}</span>
+          <strong>${spec.value}</strong>
+        `;
+        specsGrid.appendChild(metric);
+      });
+
+      const details = [
+        `VIN: ${decoded.vin || 'Not available'}`,
+        `Vehicle Type: ${decoded.vehicleType || 'Not available'}`,
+        `Door Count: ${decoded.doors || 'Not available'}`,
+        `Seat Count: ${decoded.seats || 'Not available'}`,
+        `Weight: ${decoded.grossVehicleWeightRating ? `${decoded.grossVehicleWeightRating} lbs` : 'Not available'}`,
+        `Length: ${decoded.vehicleLength ? `${decoded.vehicleLength} inches` : 'Not available'}`,
+        `Width: ${decoded.vehicleWidth ? `${decoded.vehicleWidth} inches` : 'Not available'}`,
+        `Height: ${decoded.vehicleHeight ? `${decoded.vehicleHeight} inches` : 'Not available'}`,
+        `Wheelbase: ${decoded.wheelbase ? `${decoded.wheelbase} inches` : 'Not available'}`,
+        `ABS: ${decoded.abs || 'Not available'}`,
+        `ESC: ${decoded.esc || 'Not available'}`,
+        `Airbags: Front ${decoded.airbags?.front || 'Not available'}, Side ${decoded.airbags?.side || 'Not available'}, Curtain ${decoded.airbags?.curtain || 'Not available'}`
+      ];
+
+      details.forEach(detail => {
+        const p = document.createElement('p');
+        p.textContent = detail;
+        specsList.appendChild(p);
+      });
     }
 
     function formatMileage(value) {
@@ -782,6 +853,7 @@
         const webPhotoJson = await readJsonSafe(webPhotoRes, 'Web photo search API');
         if (!webPhotoRes.ok || !webPhotoJson.ok) throw new Error(webPhotoJson.error || 'Web photo search failed');
         renderWebPhotoLeads(webPhotoJson);
+        renderVehicleSpecs(d);
 
         const identity = document.getElementById('identity');
         identity.innerHTML = '';
