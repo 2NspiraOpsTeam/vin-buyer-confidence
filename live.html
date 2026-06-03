@@ -11,515 +11,470 @@
   <title>Free VIN Check | 2Nspira</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #1e293b;
-      --card: #2d3b55;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #6366f1;
-      --accent2: #10b981;
-      --accent3: #f59e0b;
-      --accent4: #ec4899;
-      --border: #475569;
-      --max: 1100px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.25);
-      --shadow-hover: 0 8px 30px rgba(0,0,0,0.35);
+      --bg: #0b1020;
+      --panel: #111831;
+      --card: #151f3f;
+      --text: #e8ecf8;
+      --muted: #b4bfdc;
+      --accent: #58a6ff;
+      --accent2: #7ee787;
+      --warn: #f2cc60;
+      --danger: #ff7b72;
+      --border: #26345f;
+      --max: 1120px;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 15s ease infinite;
-      color: var(--text);
-      line-height: 1.6;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    a { color: inherit; text-decoration: none; }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 24px 20px 60px; }
-    .brand { font-weight: 800; letter-spacing:.2px; display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-    .brand-logo { height: 36px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 3px 6px; }
-    .btn { display:inline-block; padding: 14px 24px; border-radius: 12px; font-weight: 700; cursor:pointer; transition: all 0.2s ease; }
-    .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, #4f46e5 100%); color: white; border:none; box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99,102,241,0.4); }
-    .btn-secondary { border:1px solid var(--border); background: rgba(255,255,255,.05); color: var(--text); }
-    .btn-secondary:hover { background: rgba(255,255,255,.08); }
-    .hero { padding: 40px 0 24px; text-align: center; }
-    .eyebrow { color: var(--accent2); font-weight:700; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
-    h1 { font-size: clamp(32px, 6vw, 56px); line-height:1.1; margin: 16px 0 12px; background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .sub { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto; }
-    .card { background: rgba(30,41,59,0.6); backdrop-filter: blur(10px); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:20px; transition: all 0.3s ease; box-shadow: var(--shadow); }
-    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: rgba(99,102,241,0.3); }
-    .card h3 { margin:0 0 14px 0; font-size:16px; color:var(--text); font-weight:600; }
-    .card ul { margin:0; padding-left:18px; }
-    .card li { margin-bottom:6px; font-size:14px; }
-    .icon-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
-    .icon-card { padding:14px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; font-size:13px; transition: all 0.2s ease; }
-    .icon-card:hover { background:rgba(255,255,255,.06); transform: translateY(-2px); }
-    .icon-big { display:block; font-size:24px; margin-bottom:6px; }
-    .mini-flow { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:16px; }
-    .flow-card { padding:16px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); transition: all 0.2s ease; }
-    .flow-card:hover { background:rgba(255,255,255,.06); transform: translateY(-2px); }
-    .metric-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:12px; }
-    .metric { padding:12px 14px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); transition: all 0.2s ease; }
-    .metric:hover { background:rgba(255,255,255,.06); }
-    .metric span { display:block; color:var(--muted); font-size:12px; }
-    .metric strong { display:block; margin-top:4px; font-size:16px; color:var(--text); }
-    input, select { width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px; transition: all 0.2s ease; }
-    input:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(99,102,241,0.2); }
-    .form-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:12px; }
-    .form-group { margin-bottom:12px; }
-    .form-group label { display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600; }
-    .form-group strong { color:var(--text); }
-    button { margin-top:16px; padding:14px 16px; border:none; border-radius:12px; background: linear-gradient(135deg, var(--accent) 0%, #4f46e5 100%); color:white; font-weight:700; font-size:14px; width:100%; transition: all 0.2s ease; }
-    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
-    .muted { color:var(--muted); }
-    .grid { display:grid; grid-template-columns: repeat(2,1fr); gap:16px; }
-    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(16,185,129,.15); color:var(--accent2); font-size:11px; font-weight:700; }
-    .badge-warning { background:rgba(245,158,11,.15); color:var(--accent3); }
-    .badge-accent { background:rgba(99,102,241,.15); color:var(--accent); }
-    .warning-card { border-color:rgba(245,158,11,.3); }
-    .success-card { border-color:rgba(16,185,129,.3); }
-    .photo-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:8px; margin-top:12px; }
-    .photo-card { display:block; min-height:96px; border-radius:10px; overflow:hidden; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); position:relative; transition: all 0.2s ease; }
-    .photo-card:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    .photo-card img { width:100%; height:96px; object-fit:cover; display:block; }
-    .photo-card span { position:absolute; bottom:0; left:0; right:0; padding:4px 6px; background:rgba(0,0,0,.6); color:var(--text); font-size:10px; }
-    .photo-card.image-missing img { display:none; }
-    .photo-card.image-missing { display:flex; align-items:center; justify-content:center; text-align:center; padding:8px; }
-    .source-button { display:inline-block; margin-top:8px; padding:8px 12px; border-radius:8px; background:var(--accent); color:white; font-weight:700; font-size:12px; }
-    .link-list { display:grid; gap:8px; margin-top:8px; }
-    .lead-link { display:block; padding:12px; border-radius:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); font-size:13px; transition: all 0.2s ease; }
-    .lead-link:hover { background:rgba(255,255,255,.06); border-color:rgba(99,102,241,0.3); }
-    .lead-link span { display:block; color:var(--muted); font-size:11px; margin-top:3px; }
-    .timeline { display:grid; gap:8px; margin-top:12px; }
-    .timeline-item { display:flex; gap:10px; padding:12px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); transition: all 0.2s ease; }
-    .timeline-item:hover { background:rgba(255,255,255,.05); }
-    .timeline-dot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:700; }
-    .timeline-content { flex:1; }
-    .timeline-date { font-size:11px; color:var(--accent2); font-weight:700; }
-    .timeline-title { font-size:13px; font-weight:600; margin-top:3px; }
-    .timeline-desc { font-size:12px; color:var(--muted); margin-top:3px; }
-    .timeline-type-factory .timeline-dot { background:var(--accent); }
-    .timeline-type-dealer .timeline-dot { background:var(--accent2); }
-    .timeline-type-owner .timeline-dot { background:var(--accent3); }
-    .timeline-type-service .timeline-dot { background:#f97316; }
-    .timeline-type-accident .timeline-dot { background:#ef4444; }
-    .timeline-type-registration .timeline-dot { background:#8b5cf6; }
-    .timeline-type-auction .timeline-dot { background:linear-gradient(135deg, var(--accent3) 0%, #d97706 100%); }
-    @media (max-width: 700px) { .grid, .icon-grid, .mini-flow, .metric-grid, .form-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 700px) { .photo-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 700px) { .hero h1 { font-size: 28px; } }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%); color:var(--text); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .nav { padding: 18px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .brand { font-weight:800; display:flex; align-items:center; gap:12px; }
+    .brand-logo { height: 34px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 3px 6px; }
+    .nav-links { display:flex; gap:12px; flex-wrap:wrap; }
+    .nav-link { display:inline-block; padding:10px 12px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:14px; }
+    .section { padding: 28px 0; }
+    .hero { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 22px; }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    .badge { display:inline-block; padding:7px 11px; border-radius:999px; font-size:13px; font-weight:700; }
+    .badge-warn { background: rgba(242,204,96,.12); color: var(--warn); }
+    .badge-ok { background: rgba(126,231,135,.12); color: var(--accent2); }
+    .badge-danger { background: rgba(255,123,114,.12); color: var(--danger); }
+    h1,h2,h3 { margin-top:0; }
+    .muted { color: var(--muted); }
+    ul, ol { padding-left: 18px; }
+    .score { font-size: 52px; font-weight: 800; }
+    .subgrid { display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
+    .scorelist { display:grid; gap:12px; }
+    .scoreitem { padding:12px 14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .finding { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
+    .finding:first-child { border-top:none; padding-top:0; }
+    .pillrow { display:flex; gap:10px; flex-wrap:wrap; }
+    .timeline { display:grid; gap:14px; }
+    .timeline-item { padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
+    .timeline-date { font-size:13px; color: var(--accent2); font-weight:700; margin-bottom:8px; }
+    .source-item { padding:14px 0; border-top:1px solid rgba(255,255,255,.08); }
+    .source-item:first-child { border-top:none; padding-top:0; }
+    .action-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .action-btn { display:inline-block; padding:12px 14px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--text); }
+    .account-strip { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:16px; }
+    .account-tile { padding:14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .account-tile strong { display:block; margin-top:6px; }
+    .compare-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin-top:14px; }
+    .compare-card { padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .compare-card.active { border-color: rgba(126,231,135,.45); box-shadow: 0 0 0 1px rgba(126,231,135,.16) inset; }
+    .compare-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+    .mini-label { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .metric-row { display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-top:12px; }
+    .metric { padding:10px 12px; border-radius:12px; background: rgba(11,16,32,.55); border:1px solid rgba(255,255,255,.05); }
+    .metric strong { display:block; font-size:18px; margin-top:4px; }
+    .market-range { margin-top:16px; padding:16px; border-radius:16px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .range-bar { position:relative; height:14px; border-radius:999px; background: linear-gradient(90deg, rgba(126,231,135,.35), rgba(242,204,96,.35), rgba(255,123,114,.35)); margin:14px 0 10px; overflow:hidden; }
+    .range-marker { position:absolute; top:-4px; width:3px; height:22px; background:#eef3ff; border-radius:999px; box-shadow: 0 0 0 2px rgba(11,16,32,.65); }
+    .range-labels { display:flex; justify-content:space-between; color: var(--muted); font-size:13px; }
+    .market-verdict { margin-top:14px; padding:14px; border-radius:14px; background: rgba(98,176,255,.08); border:1px solid rgba(98,176,255,.18); }
+    .price-badge { display:inline-block; padding:7px 11px; border-radius:999px; font-size:13px; font-weight:700; margin-top:10px; }
+    .price-badge.high { background: rgba(255,123,114,.12); color: var(--danger); }
+    .price-badge.fair { background: rgba(242,204,96,.12); color: var(--warn); }
+    .price-badge.value { background: rgba(126,231,135,.12); color: var(--accent2); }
+    .chip-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .comp-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:14px; }
+    .comp-card { padding:12px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .comp-photo { width:100%; height:140px; object-fit:cover; border-radius:12px; margin-bottom:10px; }
+    .history-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+    .history-event { padding:14px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-top:12px; }
+    .mini-head { font-size:12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .timeline-rail { position:relative; margin-top:14px; padding-left:20px; }
+    .timeline-rail:before { content:''; position:absolute; left:7px; top:4px; bottom:4px; width:2px; background: linear-gradient(180deg, rgba(88,166,255,.7), rgba(126,231,135,.35)); }
+    .timeline-node { position:relative; padding:0 0 16px 18px; }
+    .timeline-node:before { content:''; position:absolute; left:-1px; top:6px; width:14px; height:14px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(88,166,255,.15); }
+    .timeline-node strong { display:block; margin-bottom:4px; }
+    .state-chip { display:inline-block; margin-top:8px; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:12px; }
+    .section-badge { display:inline-block; padding:6px 10px; border-radius:999px; background: rgba(98,176,255,.10); color: var(--accent); font-size:12px; font-weight:700; margin-bottom:10px; }
+    .photo-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
+    .photo-card { position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.03); }
+    .photo-card img { width:100%; height:150px; object-fit:cover; display:block; }
+    .photo-caption { padding:10px 12px; color: var(--muted); font-size:13px; }
+    .market-inputs { display:grid; grid-template-columns: 1fr 1fr auto; gap:12px; margin-top:14px; align-items:end; }
+    .market-inputs label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; }
+    .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
+    .market-btn { padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; cursor:pointer; }
+    .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
+    @media (max-width: 900px) { .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs, .photo-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
-    <div class="hero">
-      <span class="eyebrow">Free VIN Check Tool</span>
-      <h1>Verify before you buy</h1>
-      <p class="sub">Check vehicle identity, recalls, and history. No login required.</p>
+  <div class="wrap nav">
+    <div class="nav-inner">
+      <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
+      <div class="nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/customer">Customer Dashboard</a>
+        <a class="nav-link" href="#identity">Identity</a>
+        <a class="nav-link" href="#specs">Specs</a>
+        <a class="nav-link" href="#timeline">Timeline</a>
+        <a class="nav-link" href="#market">Market</a>
+        <a class="nav-link" href="#safety">Safety</a>
+        <a class="nav-link" href="#questions">Questions</a>
+      </div>
     </div>
+  </div>
 
+  <div class="wrap section hero">
+    <div>
+      <h1 id="vehicleTitle" style="margin-bottom:8px;">Vehicle Review</h1>
+      <div class="muted" id="caseMeta">Free VIN check</div>
+    </div>
+    <div>
+      <span class="badge badge-warn" id="verdictBadge">Verdict</span>
+    </div>
+  </div>
+
+  <div class="wrap section subgrid">
     <div class="card">
-      <h3>1. Enter vehicle details</h3>
-      <div class="form-group"><label for="vin"><strong>VIN</strong></label><input id="vin" autofocus placeholder="Example: WBA8B9G59JNU12345" /></div>
-      <div class="form-grid">
-        <div class="form-group"><label for="listingUrl" class="muted">Listing URL</label><input id="listingUrl" placeholder="https://..." /></div>
-        <div class="form-group"><label for="askingPrice" class="muted">Asking price</label><input id="askingPrice" type="number" placeholder="28995" /></div>
-        <div class="form-group"><label for="claimedMileage" class="muted">Mileage</label><input id="claimedMileage" type="number" placeholder="72105" /></div>
-        <div class="form-group"><label for="sellerType" class="muted">Seller</label><select id="sellerType"><option value="dealer">Dealer</option><option value="private party">Private party</option><option value="auction">Auction</option></select></div>
-        <div class="form-group"><label for="vehicleCondition" class="muted">Condition</label><select id="vehicleCondition"><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select></div>
-      </div>
-      <button id="runBtn">Run VIN Check</button>
+      <h2>Summary verdict</h2>
+      <p id="verdictSummary"></p>
+      <p class="muted" id="verdictRationale"></p>
+      <ul id="highlights"></ul>
     </div>
+    <div class="card">
+      <h2>Confidence score</h2>
+      <div class="score" id="overallScore">--</div>
+      <p class="muted" id="overallScoreExplanation"></p>
+      <div class="scorelist" id="scoreList"></div>
+    </div>
+  </div>
 
-    <div id="result" style="display:none;">
-      <div class="card success-card">
-        <span class="badge">✅ Check complete</span>
-        <p id="status">VIN decode, recall lookup, and history-provider check complete.</p>
+  <div class="wrap section grid-2">
+    <div class="card">
+      <h2>Case details</h2>
+      <div class="pillrow" id="casePills"></div>
+      <p class="muted" id="concernText" style="margin-top:16px;"></p>
+      <p><a id="listingLink" href="#" target="_blank" rel="noreferrer">View listing URL</a></p>
+    </div>
+    <div class="card">
+      <h2>Key findings</h2>
+      <div id="findingsList"></div>
+    </div>
+  </div>
+
+  <div id="specs" class="wrap section grid-2">
+    <div class="card">
+      <div class="section-badge">Factory specs</div>
+      <h2>Factory specifications</h2>
+      <div class="metric-row">
+        <div class="metric"><span class="mini-label">Make</span><strong id="specMake">--</strong></div>
+        <div class="metric"><span class="mini-label">Model</span><strong id="specModel">--</strong></div>
+        <div class="metric"><span class="mini-label">Year</span><strong id="specYear">--</strong></div>
+        <div class="metric"><span class="mini-label">Body</span><strong id="specBody">--</strong></div>
+        <div class="metric"><span class="mini-label">Drive</span><strong id="specDrive">--</strong></div>
+        <div class="metric"><span class="mini-label">Fuel</span><strong id="specFuel">--</strong></div>
+        <div class="metric"><span class="mini-label">Engine</span><strong id="specEngine">--</strong></div>
+        <div class="metric"><span class="mini-label">MSRP</span><strong id="specMsrp">--</strong></div>
       </div>
+      <p class="muted" id="specDetails" style="margin-top:12px;"></p>
+    </div>
+    <div class="card">
+      <div class="section-badge">Identity</div>
+      <h2>Decoded identity</h2>
+      <ul id="identity"></ul>
+    </div>
+  </div>
 
-      <div class="card">
-        <span class="badge badge-accent">🏭 Vehicle specs</span>
-        <h3>Factory specifications</h3>
-        <p class="muted" id="specsStatus">Run a VIN check to see factory specifications.</p>
-        <div id="specsGrid" class="metric-grid"></div>
-        <div id="specsList" class="muted" style="margin-top:12px;"></div>
+  <div id="timeline" class="wrap section history-grid">
+    <div class="card">
+      <div class="section-badge">History</div>
+      <h2>Ownership and registration timeline</h2>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">2018</div><strong>Owner period 1 begins</strong><span class="muted">Personal use starts. Registration and transfer details should lock in here once history-provider data is live.</span><div class="state-chip">New York</div></div>
+        <div class="timeline-node"><div class="mini-head">2021</div><strong>Ownership transfer</strong><span class="muted">Short hold/transfer events, usage type changes, and title handoffs should appear as discrete timeline markers.</span><div class="state-chip">Transfer recorded</div></div>
+        <div class="timeline-node"><div class="mini-head">2021 to present</div><strong>Owner period 2</strong><span class="muted">Current registration state, duration, and ownership context belong here.</span><div class="state-chip">New Jersey</div></div>
       </div>
-
-      <div class="card">
-        <span class="badge badge-accent">🔍 Web leads</span>
-        <h3>Search the web for this VIN</h3>
-        <p class="muted" id="webPhotoStatus">Run a VIN check to create public web photo search leads.</p>
-        <div id="webPhotoLinks" class="link-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-badge">Risk</div>
+      <h2>Title and accident history</h2>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Title status</div><strong>No premium history source connected yet</strong><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
+        <div class="timeline-node"><div class="mini-head">Damage history</div><strong>Provider-dependent section</strong><span class="muted">Reported accidents, structural damage, severity clues, and insurance-loss style events belong here.</span></div>
       </div>
-
-      <div class="card warning-card" id="auctionAlertCard" style="display:none;">
-        <span class="badge badge-warning">⚠️ Auction evidence</span>
-        <h3>Insurance auction record found</h3>
-        <ul id="auctionAlertDetails"></ul>
+    </div>
+    <div class="card">
+      <div class="section-badge">Usage</div>
+      <h2>Odometer and service history</h2>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Mileage history</div><strong>Reported odometer readings</strong><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
+        <div class="timeline-node"><div class="mini-head">Service history</div><strong>Maintenance and repair evidence</strong><span class="muted">Service and repair records will populate here when supported by the licensed history source.</span></div>
       </div>
-
-      <div class="card" id="historySignals" style="display:none;">
-        <h3>Vehicle history signals</h3>
-        <ul></ul>
+    </div>
+    <div class="card">
+      <div class="section-badge">Evidence</div>
+      <h2>Listing evidence and photos</h2>
+      <div class="photo-grid">
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80" alt="Current listing photo" /><div class="photo-caption">Current listing photo set, seller media, condition clues</div></div>
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80" alt="Exterior detail" /><div class="photo-caption">Exterior condition, trim/equipment verification</div></div>
+        <div class="photo-card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80" alt="Interior detail" /><div class="photo-caption">Interior wear, mileage coherence, seller quality</div></div>
       </div>
+      <div class="timeline-rail">
+        <div class="timeline-node"><div class="mini-head">Current listing</div><strong>Photos, seller, listing URL, ask, mileage</strong><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
+        <div class="timeline-node"><div class="mini-head">Listing history</div><strong>Price changes and prior appearances</strong><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
+      </div>
+    </div>
+  </div>
 
-      <div class="grid">
-        <div class="card">
-          <h3>Decoded identity</h3>
-          <ul id="identity"></ul>
+  <div id="market" class="wrap section">
+    <div class="card">
+      <h2>Comparable market view</h2>
+      <p class="muted">See whether this car is priced low, fair, or stretched relative to the market.</p>
+      <div class="market-inputs">
+        <div>
+          <label for="marketMileage">Mileage</label>
+          <input id="marketMileage" type="number" value="72105" />
         </div>
-        <div class="card">
-          <h3>Next steps</h3>
-          <ul id="interpretation"></ul>
+        <div>
+          <label for="marketCondition">Condition</label>
+          <select id="marketCondition">
+            <option value="excellent">Excellent</option>
+            <option value="very good">Very good</option>
+            <option value="good" selected>Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+        <button id="updateMarketView" class="market-btn">Update market view</button>
+      </div>
+      <div class="market-range">
+        <div class="mini-label">Market price range</div>
+        <div class="range-bar">
+          <div class="range-marker" style="left: 68%;"></div>
+        </div>
+        <div class="range-labels">
+          <span id="marketLowLabel">$24.9k</span>
+          <span>Fair market</span>
+          <span id="marketHighLabel">$31.5k</span>
         </div>
       </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Recalls</h3>
-          <ul id="recalls"></ul>
-        </div>
-        <div class="card">
-          <h3>What's included</h3>
-          <ul>
-            <li>VIN decode & identity</li>
-            <li>NHTSA recalls</li>
-            <li>Ownership history</li>
-            <li>Service records</li>
-            <li>Timeline events</li>
-          </ul>
-        </div>
+      <div class="market-verdict">
+        <div class="mini-head">Market take</div>
+        <strong id="marketTakeTitle">Fair, with room to negotiate</strong><br>
+        <span class="muted" id="marketTakeBody">Mileage and current ask suggest the car is still within a reasonable band, but there is room to push the price lower.</span><br>
+        <span id="marketPositionBadge" class="price-badge fair">Fair / slightly high</span>
       </div>
-
-      <div class="card">
-        <span class="badge badge-accent">📅 Timeline</span>
-        <h3>Vehicle history timeline</h3>
-        <p class="muted" id="timelineStatus">Run a VIN check to see the vehicle's complete history timeline.</p>
-        <div id="timelineContainer" class="timeline"></div>
+      <div class="metric-row">
+        <div class="metric"><span class="mini-label">Asking price</span><strong id="askingPriceValue">$28,995</strong></div>
+        <div class="metric"><span class="mini-label">Fair market range</span><strong id="marketRangeValue">$26,900 - $29,900</strong></div>
+        <div class="metric"><span class="mini-label">Negotiation room</span><strong id="negotiationRoomValue">$900 - $1,800</strong></div>
+        <div class="metric"><span class="mini-label">Best use</span><strong id="bestUseValue">Seller leverage</strong></div>
       </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Market view</h3>
-          <ul id="comps"></ul>
+      <div class="chip-row">
+        <span class="soft-chip">Mileage-adjusted estimate</span>
+        <span class="soft-chip">Condition-aware pricing</span>
+        <span class="soft-chip">Use with seller questions</span>
+        <span class="soft-chip">Supports walk-away decisions</span>
+        <span class="soft-chip">Future live comps layer</span>
+      </div>
+      <div class="comp-grid">
+        <div class="comp-card">
+          <img class="comp-photo" src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80" alt="Comparable BMW" />
+          <strong>2018 BMW 330i xDrive</strong><br><span class="muted">$27,995 • 58,420 mi • White Plains, NY</span><br><a href="https://example.com/comp-1" target="_blank" rel="noreferrer">Open listing</a>
         </div>
-        <div class="card">
-          <h3>Future features</h3>
-          <ul>
-            <li>Live market comps</li>
-            <li>Price trends</li>
-            <li>Historical images</li>
-          </ul>
+        <div class="comp-card">
+          <img class="comp-photo" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80" alt="Comparable BMW" />
+          <strong>2018 BMW 330i xDrive</strong><br><span class="muted">$29,150 • 51,200 mi • Paramus, NJ</span><br><a href="https://example.com/comp-2" target="_blank" rel="noreferrer">Open listing</a>
         </div>
       </div>
     </div>
   </div>
 
+  <div id="safety" class="wrap section history-grid">
+    <div class="card">
+      <div class="section-badge">Safety</div>
+      <h2>Safety snapshot</h2>
+      <div class="history-event"><div class="mini-head">Crash ratings</div><strong>NHTSA safety ratings module</strong><br><span class="muted">Overall, frontal, side, and rollover ratings should render here after model/variant matching is connected.</span></div>
+      <div class="history-event"><div class="mini-head">Safety equipment</div><strong>ABS, ESC, airbags, active-safety context</strong><br><span class="muted">VIN-derived safety equipment and future safety-tech context belong here.</span></div>
+    </div>
+    <div class="card">
+      <div class="section-badge">Recalls</div>
+      <h2>Recall center</h2>
+      <div class="history-event"><div class="mini-head">Open recalls</div><strong>NHTSA-backed recall signals</strong><br><span class="muted">Open recall count, affected systems, consequence, and remedy should appear here.</span></div>
+      <div class="history-event"><div class="mini-head">Affected systems</div><strong>Brakes, airbags, fuel, electrical, steering</strong><br><span class="muted">Recall grouping should become visual and system-based, not just text rows.</span></div>
+    </div>
+    <div class="card" style="grid-column: 1 / -1;">
+      <div class="section-badge">Reviews</div>
+      <h2>Expert and owner reviews</h2>
+      <div class="history-grid">
+        <div class="history-event"><div class="mini-head">Expert summary</div><strong>What reviewers say about this model/year</strong><br><span class="muted">This section should summarize praise, complaints, and buyer watchouts once licensed review input is connected.</span></div>
+        <div class="history-event"><div class="mini-head">Owner sentiment</div><strong>Common pros, common complaints, reliability themes</strong><br><span class="muted">Owner sentiment should be treated as a future licensed or curated layer, not scraped content.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2>Buyer recommendation engine</h2>
+      <div class="history-grid">
+        <div class="history-event"><div class="mini-head">Verdict</div><strong>Verify Further</strong><br><span class="muted">Final decision state should synthesize history, listing evidence, comps, and unresolved discrepancies.</span></div>
+        <div class="history-event"><div class="mini-head">Discrepancies</div><strong>Seller claim mismatches surface here</strong><br><span class="muted">This is where the product moat becomes visible: identifying what does not line up.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="questions" class="wrap section grid-2">
+    <div class="card">
+      <h2>Questions to ask the seller next</h2>
+      <ol id="sellerQuestions"></ol>
+    </div>
+    <div class="card">
+      <h2>Recommended next step</h2>
+      <p id="nextStep"></p>
+      <p class="muted">This is driven by structured case data from the current seeded workspace dataset.</p>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2>Platform notes</h2>
+      <p class="muted">This customer dashboard renders structured case data, findings, evidence timelines, and source-confidence summaries. Future releases can support multi-case comparison, downloadable reports, historical images, and richer source-backed event cards.</p>
+    </div>
+  </div>
+
+  <script src="/data.js"></script>
   <script>
-    const runBtn = document.getElementById('runBtn');
-    const vinInput = document.getElementById('vin');
-    const listingUrlInput = document.getElementById('listingUrl');
-    const askingPriceInput = document.getElementById('askingPrice');
-    const claimedMileageInput = document.getElementById('claimedMileage');
-    const sellerTypeInput = document.getElementById('sellerType');
-    const vehicleConditionInput = document.getElementById('vehicleCondition');
-    const statusEl = document.getElementById('status');
-    const resultEl = document.getElementById('result');
-    const seeded = window.PROTOTYPE_DATA || null;
+    const data = window.PROTOTYPE_DATA;
+    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+    const badgeClass = level => level === 'high' ? 'badge-ok' : level === 'medium' ? 'badge-warn' : 'badge-danger';
 
-    function li(text) {
-      const el = document.createElement('li');
-      el.textContent = text;
-      return el;
-    }
+    const vehicle = data.case.vehicle;
+    document.getElementById('vehicleTitle').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} Review`;
+    document.getElementById('caseMeta').textContent = `Order #${data.case.case_id.toUpperCase()} • Free VIN check`;
+    document.getElementById('verdictBadge').textContent = `Verdict: ${data.verdict.verdict_label}`;
+    document.getElementById('verdictSummary').innerHTML = `<strong>${data.verdict.summary}</strong>`;
+    document.getElementById('verdictRationale').textContent = data.verdict.rationale;
+    document.getElementById('concernText').textContent = `Customer concern: ${data.case.customer_primary_concern}`;
+    document.getElementById('listingLink').href = data.case.listing_url;
 
-    function money(n) {
-      return n ? '$' + Number(n).toLocaleString() : 'Not available';
-    }
+    const overall = data.scores.find(s => s.score_type === 'overall_confidence_score');
+    document.getElementById('overallScore').textContent = overall ? overall.score_value : '--';
+    document.getElementById('overallScoreExplanation').textContent = overall ? overall.explanation : '';
 
-    function formatTimelineDate(d) {
-      if (!d) return '';
-      const date = new Date(d);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function renderTimeline(events, auctionEvents) {
-      const container = document.getElementById('timelineContainer');
-      const status = document.getElementById('timelineStatus');
-      container.innerHTML = '';
-
-      if (!events || !events.length) {
-        status.textContent = 'Vehicle history timeline data not available. Connect a licensed history provider for complete ownership, service, and accident records.';
-        return;
-      }
-
-      status.textContent = 'Complete history from factory to present. Auction evidence shown when available.';
-
-      const grouped = {};
-      events.forEach(e => {
-        const key = e.platform || e.date || 'unknown';
-        if (!grouped[key]) grouped[key] = [];
-        grouped[key].push(e);
-      });
-
-      Object.entries(grouped).forEach(([key, items]) => {
-        const date = key.split('T')[0] || key;
-        const isAuction = items.some(e => e.platform);
-
-        items.forEach(event => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item';
-          if (isAuction) item.classList.add('timeline-type-auction');
-
-          const dot = document.createElement('div');
-          dot.className = 'timeline-dot';
-          dot.textContent = isAuction ? '💰' : '📅';
-
-          const content = document.createElement('div');
-          content.className = 'timeline-content';
-
-          const dateEl = document.createElement('div');
-          dateEl.className = 'timeline-date';
-          dateEl.textContent = formatTimelineDate(event.date || event.auctionDate || date);
-
-          const title = document.createElement('div');
-          title.className = 'timeline-title';
-          title.textContent = event.eventType || event.title || event.platform || 'Event';
-
-          const desc = document.createElement('div');
-          desc.className = 'timeline-desc';
-          desc.textContent = event.description || event.location || event.notes || 'History event';
-
-          content.appendChild(dateEl);
-          content.appendChild(title);
-          content.appendChild(desc);
-
-          item.appendChild(dot);
-          item.appendChild(content);
-          container.appendChild(item);
-        });
-      });
-    }
-
-    function formatAuctionEvent(e) {
-      const date = e.auctionDate || e.date || '';
-      const platform = e.platform || '';
-      const seller = e.seller || '';
-      const loss = e.lossType || '';
-      const damage = e.primaryDamage || '';
-      const odometer = e.odometer ? e.odometer.toLocaleString() + ' mi' : 'not listed';
-      const repair = e.estimatedRepairCost ? money(e.estimatedRepairCost) : 'not listed';
-      const acv = e.actualCashValue ? money(e.actualCashValue) : 'not listed';
-      const photos = e.photoCount ? `${e.photoCount} photos` : 'photos not listed';
-      return `${date ? date + ' • ' : ''}${platform} • ${seller} • ${loss} • ${damage} • ${odometer} • Repair: ${repair} • ACV: ${acv} • ${photos}`;
-    }
-
-    function renderHistory(historyJson) {
-      const container = document.getElementById('historySignals');
-      const historyStatus = historyJson?.integrationStatus?.history || 'not_available';
-      const auctionEvents = historyJson?.history?.auctionEvidence || [];
-
-      container.innerHTML = '';
-
-      if (historyStatus !== 'live') {
-        if (auctionEvents.length) {
-          container.appendChild(li('Public indexed auction evidence found:'));
-          auctionEvents.slice(0, 3).forEach(event => {
-            container.appendChild(li(formatAuctionEvent(event)));
-          });
-        }
-        container.appendChild(li('Licensed vehicle history provider: not connected yet.'));
-        container.appendChild(li('Prior owner names and addresses are not available in buyer-facing reports.'));
-        container.appendChild(li(auctionEvents.length ? 'Public indexed auction evidence was found, but owner/registration/title history still requires a licensed history provider.' : 'When connected, this section can show owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings.'));
-        container.appendChild(li('NMVTIS-style title data can show title/brand/odometer signals, but service and oil-change records require a commercial history or service-record provider.'));
-      } else {
-        container.appendChild(li('Licensed vehicle history provider: connected.'));
-        container.appendChild(li('Owner count, ownership periods, title states, registration events, title brands, accident/damage records, and odometer readings available.'));
-      }
-    }
-
-    function renderIdentity(d) {
-      const container = document.getElementById('identity');
-      container.innerHTML = '';
-      [
-        `Make: ${d.make || 'Not available'}`,
-        `Model: ${d.model || 'Not available'}`,
-        `Year: ${d.modelYear || 'Not available'}`,
-        `Vehicle type: ${d.vehicleType || 'Not available'}`,
-        `Body class: ${d.bodyClass || 'Not available'}`,
-        `Drive type: ${d.driveType || 'Not available'}`,
-        `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
-        `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
-        `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
-        `Manufacturer: ${d.manufacturer || 'Not available'}`,
-        `Plant country: ${d.plantCountry || 'Not available'}`,
-        `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
-      ].forEach(x => container.appendChild(li(x)));
-    }
-
-    function renderInterpretation(d) {
-      const container = document.getElementById('interpretation');
-      container.innerHTML = '';
-      [
-        `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
-        `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
-        `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
-        `Market comps are currently demo placeholders until a live market listing provider is connected.`,
-        `The next useful premium layers are live comps, listing history, title/brand history, and historical imagery.`
-      ].forEach(x => container.appendChild(li(x)));
-    }
-
-    function renderRecalls(recallsJson) {
-      const container = document.getElementById('recalls');
-      container.innerHTML = '';
-
-      if (recallsJson?.ok && Array.isArray(recallsJson.recalls) && recallsJson.recalls.length) {
-        container.appendChild(li(`${recallsJson.count} recall record(s) found.`));
-        recallsJson.recalls.slice(0, 3).forEach(r => {
-          container.appendChild(li(`${r.recallNumber || 'Recall'} • ${r.component || 'Component not listed'}`));
-        });
-      } else {
-        container.appendChild(li('No recall records returned in this free lookup.'));
-      }
-    }
-
-    function renderComps(d, inputPrice, inputMileage) {
-      const container = document.getElementById('comps');
-      container.innerHTML = '';
-      const yr = Number(d.modelYear || 0);
-
-      if (inputPrice || inputMileage) {
-        [
-          `Target range: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
-          `Asking price: ${inputPrice ? '$' + inputPrice.toLocaleString() : 'not entered'}`,
-          `Mileage: ${inputMileage ? inputMileage.toLocaleString() + ' mi' : 'not entered'}`,
-          `Live market comps: not connected yet`,
-          `Demo market comps - not live market listings yet.`,
-          `Do not use the demo comps below to calculate market value.`,
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 27995, mileage: 58420, dealer: 'Demo European Cars' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 29150, mileage: 51200, dealer: 'Demo Imports' },
-          { title: `${d.modelYear || '2018'} ${d.make || 'BMW'} ${d.model || '330i'} xDrive`, price: 30450, mileage: 47610, dealer: 'Demo Auto Group' }
-        ].forEach(x => {
-          if (typeof x === 'string') {
-            container.appendChild(li(x));
-          } else {
-            container.appendChild(li(`Demo: ${x.title} • $${x.price.toLocaleString()} • ${x.mileage.toLocaleString()} mi • ${x.dealer}`));
-          }
-        });
-      } else {
-        [
-          `Target range: ${yr ? `${Math.max(yr-1, yr-5)}-${yr+1}` : 'similar years'}`,
-          `Look for ${d.make || 'same make'} ${d.model || 'same model'} examples within similar mileage bands.`,
-          `Enter asking price and mileage above to make the market view more useful.`,
-          `Provider-fed cross-market comps will replace demo placeholders once connected.`
-        ].forEach(x => container.appendChild(li(x)));
-      }
-    }
-
-    function renderSpecs(d) {
-      const grid = document.getElementById('specsGrid');
-      const list = document.getElementById('specsList');
-      grid.innerHTML = '';
-      list.innerHTML = '';
-
-      const metrics = [
-        { label: 'Make', value: d.make },
-        { label: 'Model', value: d.model },
-        { label: 'Year', value: d.modelYear },
-        { label: 'Body', value: d.bodyClass },
-        { label: 'Drive', value: d.driveType },
-        { label: 'Fuel', value: d.fuelTypePrimary },
-        { label: 'Engine', value: d.engineCylinders ? `${d.engineCylinders} cyl, ${d.displacementL || '?'}L` : 'Not available' },
-        { label: 'MSRP', value: d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available' }
-      ];
-
-      metrics.forEach(m => {
-        if (m.value && m.value !== 'Not available') {
-          const el = document.createElement('div');
-          el.className = 'metric';
-          el.innerHTML = `<span>${m.label}</span><strong>${m.value}</strong>`;
-          grid.appendChild(el);
-        }
-      });
-
-      const details = [
-        { label: 'Vehicle type', value: d.vehicleType },
-        { label: 'Plant country', value: d.plantCountry },
-        { label: 'Manufacturer', value: d.manufacturer },
-        { label: 'Airbags', value: d.airbags?.front ? `Front: ${d.airbags.front}, Side: ${d.airbags.side}, Curtain: ${d.airbags.curtain}` : 'Not available' },
-        { label: 'Safety', value: d.abs && d.esc ? `ABS: ${d.abs}, ESC: ${d.esc}` : 'Not available' }
-      ];
-
-      list.innerHTML = details.filter(d => d.value && d.value !== 'Not available').map(d => `${d.label}: ${d.value}`).join('<br>');
-    }
-
-    function setFieldValue(input, value) {
-      input.value = value;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    runBtn.addEventListener('click', async () => {
-      const vin = vinInput.value.trim();
-      if (!vin) {
-        statusEl.textContent = 'Please enter a valid VIN.';
-        return;
-      }
-
-      statusEl.textContent = 'Running VIN check...';
-      resultEl.style.display = 'none';
-
-      try {
-        const [decode, recalls, history] = await Promise.all([
-          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
-          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
-          fetch(`/api/history?vin=${encodeURIComponent(vin)}`).then(r => r.json())
-        ]);
-
-        renderIdentity(decode.decoded);
-        renderInterpretation(decode.decoded);
-        renderRecalls(recalls);
-        renderHistory(history);
-        renderTimeline(history?.history?.timelineEvents || history?.timelineEvents || [], history?.history?.auctionEvidence || []);
-        renderSpecs(decode.decoded);
-        renderComps(decode.decoded, askingPriceInput.value, claimedMileageInput.value);
-
-        resultEl.style.display = 'block';
-        statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
-      } catch (err) {
-        statusEl.textContent = `Error: ${err.message}`;
-      }
+    const highlights = [
+      `VIN: ${vehicle.vin}`,
+      `Asking price: ${fmtMoney(data.case.asking_price)}`,
+      `Claimed mileage: ${data.case.mileage_claimed.toLocaleString()} mi`,
+      `Seller type: ${data.case.seller_type}`
+    ];
+    const highlightUl = document.getElementById('highlights');
+    highlights.forEach(text => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      highlightUl.appendChild(li);
     });
 
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('trial') === '1') {
-      statusEl.textContent = 'Free VIN check ready. Enter a VIN and shopping details to run your check.';
-      vinInput.focus();
+    const scoreList = document.getElementById('scoreList');
+    data.scores.filter(s => s.score_type !== 'overall_confidence_score').forEach(score => {
+      const div = document.createElement('div');
+      div.className = 'scoreitem';
+      div.innerHTML = `<strong>${score.score_type.replaceAll('_', ' ')}</strong><br>${score.score_value}/${score.scale_max} • <span class="muted">${score.explanation}</span>`;
+      scoreList.appendChild(div);
+    });
+
+    const casePills = document.getElementById('casePills');
+    [
+      `Status: ${data.case.status}`,
+      `Seller: ${data.case.seller_type}`,
+      `Mileage: ${data.case.mileage_claimed.toLocaleString()} mi`,
+      `Price: ${fmtMoney(data.case.asking_price)}`
+    ].forEach(text => {
+      const span = document.createElement('span');
+      span.className = 'badge badge-ok';
+      span.textContent = text;
+      casePills.appendChild(span);
+    });
+
+    const findingsList = document.getElementById('findingsList');
+    data.findings.forEach(finding => {
+      const div = document.createElement('div');
+      div.className = 'finding';
+      div.innerHTML = `<strong>${finding.title}</strong><br><span class="muted">${finding.explanation}</span><br><span class="badge ${finding.severity === 'medium' ? 'badge-warn' : finding.severity === 'high' ? 'badge-danger' : 'badge-ok'}" style="margin-top:8px;">${finding.severity} severity</span>`;
+      findingsList.appendChild(div);
+    });
+
+    const timelineList = document.getElementById('timelineList');
+    data.evidence_timeline.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'timeline-item';
+      div.innerHTML = `<div class="timeline-date">${item.date}</div><strong>${item.title}</strong><br><span class="muted">${item.detail}</span><br><span class="badge ${badgeClass(item.confidence)}" style="margin-top:10px;">${item.confidence} confidence</span>`;
+      timelineList.appendChild(div);
+    });
+
+    const sourceSummary = document.getElementById('sourceSummary');
+    data.source_summary.forEach(src => {
+      const div = document.createElement('div');
+      div.className = 'source-item';
+      div.innerHTML = `<strong>${src.source}</strong><br><span class="muted">Role: ${src.role}</span><br><span class="muted">${src.status}</span><br><span class="badge ${badgeClass(src.confidence)}" style="margin-top:8px;">${src.confidence} source confidence</span>`;
+      sourceSummary.appendChild(div);
+    });
+
+    const sellerQuestions = document.getElementById('sellerQuestions');
+    data.seller_questions.forEach(q => {
+      const li = document.createElement('li');
+      li.innerHTML = `${q.question_text}<br><span class="muted">Why it matters: ${q.reason}</span>`;
+      sellerQuestions.appendChild(li);
+    });
+
+    document.getElementById('nextStep').textContent = data.verdict.summary;
+
+    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+    const askingPrice = 28995;
+    const marketMileageInput = document.getElementById('marketMileage');
+    const marketConditionInput = document.getElementById('marketCondition');
+    const marketLowLabel = document.getElementById('marketLowLabel');
+    const marketHighLabel = document.getElementById('marketHighLabel');
+    const marketRangeValue = document.getElementById('marketRangeValue');
+    const negotiationRoomValue = document.getElementById('negotiationRoomValue');
+    const bestUseValue = document.getElementById('bestUseValue');
+    const marketTakeTitle = document.getElementById('marketTakeTitle');
+    const marketTakeBody = document.getElementById('marketTakeBody');
+    const marketPositionBadge = document.getElementById('marketPositionBadge');
+
+    function recalcMarketView() {
+      const mileage = Number(marketMileageInput.value) || 72105;
+      const condition = marketConditionInput.value || 'good';
+      const baseLow = 24900;
+      const baseHigh = 31500;
+      const mileageDiff = mileage - 61240;
+      const mileageAdjustment = mileageDiff * 0.15;
+      let conditionAdjustment = 0;
+      if (condition === 'excellent') conditionAdjustment = 800;
+      if (condition === 'fair') conditionAdjustment = -1200;
+      if (condition === 'poor') conditionAdjustment = -2500;
+      const low = Math.max(22000, baseLow + mileageAdjustment + conditionAdjustment);
+      const high = Math.min(34000, baseHigh + mileageAdjustment + conditionAdjustment);
+      const range = high - low;
+      const mid = (low + high) / 2;
+      const diff = askingPrice - mid;
+      const position = diff / (range / 2);
+      let positionBadge = 'fair';
+      let positionText = 'Fair';
+      if (position < -0.5) { positionBadge = 'value'; positionText = 'Value buy'; }
+      if (position > 0.5) { positionBadge = 'high'; positionText = 'Stretch / overpay'; }
+      marketLowLabel.textContent = fmtMoney(low);
+      marketHighLabel.textContent = fmtMoney(high);
+      marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
+      negotiationRoomValue.textContent = fmtMoney(Math.round(range * 0.15));
+      bestUseValue.textContent = position > 0.3 ? 'Seller leverage' : position < -0.3 ? 'Buyer leverage' : 'Balanced';
+      marketTakeTitle.textContent = position > 0.3 ? 'Slightly high for condition' : position < -0.3 ? 'Good value for condition' : 'Fair, with room to negotiate';
+      marketTakeBody.textContent = position > 0.3 ? 'Asking price is above fair market range. Consider counteroffer or walk away.' : position < -0.3 ? 'Asking price is below fair market range. Good opportunity if vehicle condition matches.' : 'Asking price is within fair market range. Standard negotiation may apply.';
+      marketPositionBadge.className = `price-badge ${positionBadge}`;
+      marketPositionBadge.textContent = positionText;
     }
-    if (params.get('demo') === '1') {
-      setFieldValue(vinInput, 'WBA8B9G59JNU12345');
-      setFieldValue(listingUrlInput, 'https://example.com/listing/340i-demo');
-      setFieldValue(askingPriceInput, '28995');
-      setFieldValue(claimedMileageInput, '72105');
-      setFieldValue(sellerTypeInput, 'dealer');
-      setFieldValue(vehicleConditionInput, 'good');
-      statusEl.textContent = 'Demo loaded. Running the sample VIN check...';
-      window.setTimeout(() => runBtn.click(), 300);
-    }
-    const vinParam = params.get('vin');
-    if (vinParam) {
-      setFieldValue(vinInput, vinParam);
-      statusEl.textContent = 'VIN loaded from URL. Running check...';
-      window.setTimeout(() => runBtn.click(), 300);
-    }
+
+    document.getElementById('updateMarketView').addEventListener('click', recalcMarketView);
+    marketMileageInput.addEventListener('input', recalcMarketView);
+    marketConditionInput.addEventListener('change', recalcMarketView);
+
+    recalcMarketView();
   </script>
 </body>
 </html>
