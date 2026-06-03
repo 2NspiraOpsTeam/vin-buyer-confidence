@@ -159,6 +159,30 @@
     </div>
   </div>
 
+  <div class="wrap section grid-2">
+    <div class="card">
+      <h2>Run VIN Check</h2>
+      <p class="muted" id="vinCheckStatus">Enter a VIN to run a free check and populate the vehicle details.</p>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="vinInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">VIN</label>
+        <input id="vinInput" type="text" placeholder="Example: WBA8B9G59JNU12345" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
+      </div>
+      <button id="runVinBtn" style="padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; font-size:14px; width:100%; cursor:pointer;">Run VIN Check</button>
+    </div>
+    <div class="card">
+      <h2>Shopping context</h2>
+      <p class="muted" id="shoppingContext">Enter shopping details to enhance the market view and recommendations.</p>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="askingPriceInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Asking price</label>
+        <input id="askingPriceInput" type="number" placeholder="28995" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="mileageInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Mileage</label>
+        <input id="mileageInput" type="number" placeholder="72105" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
+      </div>
+    </div>
+  </div>
+
   <div id="specs" class="wrap section grid-2">
     <div class="card">
       <div class="section-badge">Factory specs</div>
@@ -475,6 +499,97 @@
     marketConditionInput.addEventListener('change', recalcMarketView);
 
     recalcMarketView();
+
+    // VIN check functionality
+    const vinInput = document.getElementById('vinInput');
+    const askingPriceInput = document.getElementById('askingPriceInput');
+    const mileageInput = document.getElementById('mileageInput');
+    const runVinBtn = document.getElementById('runVinBtn');
+    const vinCheckStatus = document.getElementById('vinCheckStatus');
+    const shoppingContext = document.getElementById('shoppingContext');
+
+    const specMake = document.getElementById('specMake');
+    const specModel = document.getElementById('specModel');
+    const specYear = document.getElementById('specYear');
+    const specBody = document.getElementById('specBody');
+    const specDrive = document.getElementById('specDrive');
+    const specFuel = document.getElementById('specFuel');
+    const specEngine = document.getElementById('specEngine');
+    const specMsrp = document.getElementById('specMsrp');
+    const specDetails = document.getElementById('specDetails');
+    const identityList = document.getElementById('identity');
+
+    runVinBtn.addEventListener('click', async () => {
+      const vin = vinInput.value.trim();
+      if (!vin) {
+        vinCheckStatus.textContent = 'Please enter a valid VIN.';
+        return;
+      }
+
+      vinCheckStatus.textContent = 'Running VIN check...';
+
+      try {
+        const [decode, recalls] = await Promise.all([
+          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
+          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`).then(r => r.json())
+        ]);
+
+        const d = decode.decoded;
+
+        // Populate specs
+        specMake.textContent = d.make || '--';
+        specModel.textContent = d.model || '--';
+        specYear.textContent = d.modelYear || '--';
+        specBody.textContent = d.bodyClass || '--';
+        specDrive.textContent = d.driveType || '--';
+        specFuel.textContent = d.fuelTypePrimary || '--';
+        specEngine.textContent = d.engineCylinders ? `${d.engineCylinders} cyl, ${d.displacementL || '?'}L` : '--';
+        specMsrp.textContent = d.baseMsrp ? `$${Number(d.baseMsrp).toLocaleString()}` : '--';
+
+        // Populate identity
+        identityList.innerHTML = '';
+        [
+          `Make: ${d.make || 'Not available'}`,
+          `Model: ${d.model || 'Not available'}`,
+          `Year: ${d.modelYear || 'Not available'}`,
+          `Vehicle type: ${d.vehicleType || 'Not available'}`,
+          `Body class: ${d.bodyClass || 'Not available'}`,
+          `Drive type: ${d.driveType || 'Not available'}`,
+          `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
+          `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
+          `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
+          `Manufacturer: ${d.manufacturer || 'Not available'}`,
+          `Plant country: ${d.plantCountry || 'Not available'}`,
+          `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
+        ].forEach(x => {
+          const li = document.createElement('li');
+          li.textContent = x;
+          identityList.appendChild(li);
+        });
+
+        // Update shopping context
+        const price = askingPriceInput.value || 'not entered';
+        const mileage = mileageInput.value || 'not entered';
+        shoppingContext.innerHTML = `Asking price: <strong>$${price}</strong> | Mileage: <strong>${mileage} mi</strong>`;
+
+        // Update market view
+        recalcMarketView();
+
+        vinCheckStatus.textContent = 'VIN check complete. Vehicle details populated.';
+      } catch (err) {
+        vinCheckStatus.textContent = `Error: ${err.message}`;
+      }
+    });
+
+    // Demo mode
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === '1') {
+      vinInput.value = 'WBA8B9G59JNU12345';
+      askingPriceInput.value = '28995';
+      mileageInput.value = '72105';
+      vinCheckStatus.textContent = 'Demo loaded. Running the sample VIN check...';
+      setTimeout(() => runVinBtn.click(), 300);
+    }
   </script>
 </body>
 </html>
