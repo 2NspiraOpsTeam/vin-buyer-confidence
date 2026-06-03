@@ -161,13 +161,16 @@
 
   <div class="wrap section grid-2">
     <div class="card">
-      <h2>Run VIN Check</h2>
-      <p class="muted" id="vinCheckStatus">Enter a VIN to run a free check and populate the vehicle details.</p>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label for="vinInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">VIN</label>
-        <input id="vinInput" type="text" placeholder="Example: WBA8B9G59JNU12345" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
+      <h3>1. Enter vehicle details</h3>
+      <div class="form-group"><label for="vin"><strong>VIN</strong></label><input id="vin" autofocus placeholder="Example: WBA8B9G59JNU12345" /></div>
+      <div class="form-grid">
+        <div class="form-group"><label for="listingUrl" class="muted">Listing URL</label><input id="listingUrl" placeholder="https://..." /></div>
+        <div class="form-group"><label for="askingPrice" class="muted">Asking price</label><input id="askingPrice" type="number" placeholder="28995" /></div>
+        <div class="form-group"><label for="claimedMileage" class="muted">Mileage</label><input id="claimedMileage" type="number" placeholder="72105" /></div>
+        <div class="form-group"><label for="sellerType" class="muted">Seller</label><select id="sellerType"><option value="dealer">Dealer</option><option value="private party">Private party</option><option value="auction">Auction</option></select></div>
+        <div class="form-group"><label for="vehicleCondition" class="muted">Condition</label><select id="vehicleCondition"><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select></div>
       </div>
-      <button id="runVinBtn" style="padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; font-size:14px; width:100%; cursor:pointer;">Run VIN Check</button>
+      <button id="runBtn">Run VIN Check</button>
     </div>
     <div class="card">
       <h2>Shopping context</h2>
@@ -502,10 +505,10 @@
     recalcMarketView();
 
     // VIN check functionality
-    const vinInput = document.getElementById('vinInput');
+    const vinInput = document.getElementById('vin');
     const askingPriceInput = document.getElementById('askingPriceInput');
     const mileageInput = document.getElementById('mileageInput');
-    const runVinBtn = document.getElementById('runVinBtn');
+    const runBtn = document.getElementById('runBtn');
     const vinCheckStatus = document.getElementById('vinCheckStatus');
     const shoppingContext = document.getElementById('shoppingContext');
 
@@ -520,7 +523,7 @@
     const specDetails = document.getElementById('specDetails');
     const identityList = document.getElementById('identity');
 
-    runVinBtn.addEventListener('click', async () => {
+    runBtn.addEventListener('click', async () => {
       const vin = vinInput.value.trim();
       if (!vin) {
         vinCheckStatus.textContent = 'Please enter a valid VIN.';
@@ -589,7 +592,7 @@
       askingPriceInput.value = '28995';
       mileageInput.value = '72105';
       vinCheckStatus.textContent = 'Demo loaded. Running the sample VIN check...';
-      setTimeout(() => runVinBtn.click(), 300);
+      setTimeout(() => runBtn.click(), 300);
     });
   </script>
 </body>
