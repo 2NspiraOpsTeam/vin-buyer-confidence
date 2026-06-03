@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Check a vehicle's identity, risk signals, pricing context, and next-step buying decision before you commit." />
-  <meta property="og:title" content="Car Buyer Confidence Check" />
-  <meta property="og:description" content="A mobile-friendly buyer workspace for VIN checks, risk review, comps, and buy/pass decisions." />
+  <meta name="description" content="Free VIN check tool - verify vehicle identity, recalls, and history. No login required." />
+  <meta property="og:title" content="Free VIN Check" />
+  <meta property="og:description" content="Check vehicle identity, recalls, and history. No login required. Free tool by 2Nspira." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <title>Car Buyer Confidence Check | 2Nspira</title>
+  <title>Free VIN Check | 2Nspira</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -121,9 +121,9 @@
   <div class="wrap">
     <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
     <div class="hero">
-      <span class="eyebrow">Car Buyer Confidence Check</span>
+      <span class="eyebrow">Free VIN Check Tool</span>
       <h1>Verify before you buy</h1>
-      <p class="sub">Check vehicle identity, recalls, and history. Get clear signals to buy, verify, or walk away.</p>
+      <p class="sub">Check vehicle identity, recalls, and history. No login required.</p>
     </div>
 
     <div class="card">
@@ -151,13 +151,6 @@
         <p class="muted" id="specsStatus">Run a VIN check to see factory specifications.</p>
         <div id="specsGrid" class="metric-grid"></div>
         <div id="specsList" class="muted" style="margin-top:12px;"></div>
-      </div>
-
-      <div class="card" id="confidenceCard">
-        <span class="badge" id="confidenceBadge">Identity confidence</span>
-        <h3 id="confidenceTitle"></h3>
-        <p class="muted" id="confidenceMessage"></p>
-        <ul id="confidenceDetails"></ul>
       </div>
 
       <div class="card">
@@ -348,25 +341,7 @@
       }
     }
 
-    function renderConfidence(confidence) {
-      const card = document.getElementById('confidenceCard');
-      const badge = document.getElementById('confidenceBadge');
-      const title = document.getElementById('confidenceTitle');
-      const message = document.getElementById('confidenceMessage');
-      const details = document.getElementById('confidenceDetails');
-
-      badge.textContent = confidence.badge;
-      badge.className = confidence.level === 'warning' ? 'badge badge-warning' : 'badge badge-accent';
-      card.className = confidence.level === 'warning' ? 'card warning-card' : 'card success-card';
-
-      title.textContent = confidence.title;
-      message.textContent = confidence.message;
-      details.innerHTML = '';
-
-      confidence.details.forEach(d => details.appendChild(li(d)));
-    }
-
-    function renderIdentity(d, confidence) {
+    function renderIdentity(d) {
       const container = document.getElementById('identity');
       container.innerHTML = '';
       [
@@ -381,18 +356,15 @@
         `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
         `Manufacturer: ${d.manufacturer || 'Not available'}`,
         `Plant country: ${d.plantCountry || 'Not available'}`,
-        `NHTSA decode status: ${confidence.badge}`,
         `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
       ].forEach(x => container.appendChild(li(x)));
     }
 
-    function renderInterpretation(d, confidence) {
+    function renderInterpretation(d) {
       const container = document.getElementById('interpretation');
       container.innerHTML = '';
       [
-        confidence.level === 'warning'
-          ? 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, and seller listing before relying on this result.'
-          : `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
+        `Core identity appears ${d.make && d.model && d.modelYear ? 'well-formed' : 'partially resolved and may need verification'}.`,
         `Shopping context captured from intake makes downstream valuation and recommendation more useful.`,
         `If seller claims or listing details conflict with this identity layer, that becomes an early red flag to investigate.`,
         `Market comps are currently demo placeholders until a live market listing provider is connected.`,
@@ -484,53 +456,6 @@
       list.innerHTML = details.filter(d => d.value && d.value !== 'Not available').map(d => `${d.label}: ${d.value}`).join('<br>');
     }
 
-    function getNhtsaConfidence(decoded) {
-      const raw = decoded?.raw || {};
-      const nhtsa = decoded?.nhtsa || {};
-      const errorCode = String(nhtsa.errorCode || raw.ErrorCode || '').trim();
-      const errorText = String(nhtsa.errorText || raw.ErrorText || '').trim();
-      const warnings = Array.isArray(nhtsa.warnings) && nhtsa.warnings.length
-        ? nhtsa.warnings
-        : errorText && errorCode !== '0'
-          ? errorText.split(';').map(item => item.trim().replace(/^\d+\s*-\s*/, '')).filter(Boolean)
-          : [];
-      const hasIdentity = Boolean(decoded?.make && decoded?.model && decoded?.modelYear);
-
-      if (errorCode && errorCode !== '0') {
-        return {
-          level: 'warning',
-          badge: 'Needs VIN verification',
-          title: 'VIN warning',
-          message: 'NHTSA returned a decode warning. Verify the VIN against the windshield, title, registration, seller listing, and vehicle photos before relying on this result.',
-          details: warnings.length ? warnings : [`NHTSA ErrorCode ${errorCode}`],
-          status: 'VIN warning',
-          nextMove: 'Verify VIN first'
-        };
-      }
-
-      if (errorCode === '0' && hasIdentity) {
-        return {
-          level: 'clean',
-          badge: 'High confidence',
-          title: 'VIN decoded clean',
-          message: 'VIN decoded clean. Check digit is valid. Core identity appears well-formed.',
-          details: [errorText || 'NHTSA ErrorCode 0 - VIN decoded clean. Check digit is valid.'],
-          status: 'Clean VIN decode',
-          nextMove: 'Compare before deposit'
-        };
-      }
-
-      return {
-        level: 'limited',
-        badge: 'Limited confidence',
-        title: 'VIN decoded with limited data',
-        message: 'Some identity fields are missing. Verify seller claims and request supporting documentation before moving forward.',
-        details: ['NHTSA returned partial vehicle identity data.'],
-        status: 'Partial decode',
-        nextMove: 'Verify details'
-      };
-    }
-
     function setFieldValue(input, value) {
       input.value = value;
       input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -554,10 +479,8 @@
           fetch(`/api/history?vin=${encodeURIComponent(vin)}`).then(r => r.json())
         ]);
 
-        const confidence = getNhtsaConfidence(decode);
-        renderConfidence(confidence);
-        renderIdentity(decode, confidence);
-        renderInterpretation(decode, confidence);
+        renderIdentity(decode);
+        renderInterpretation(decode);
         renderRecalls(recalls);
         renderHistory(history);
         renderTimeline(history?.history?.timelineEvents || history?.timelineEvents || [], history?.history?.auctionEvidence || []);
@@ -573,7 +496,7 @@
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('trial') === '1') {
-      statusEl.textContent = 'Free trial ready. Enter a VIN and shopping details to run your first buyer-confidence check.';
+      statusEl.textContent = 'Free VIN check ready. Enter a VIN and shopping details to run your check.';
       vinInput.focus();
     }
     if (params.get('demo') === '1') {
