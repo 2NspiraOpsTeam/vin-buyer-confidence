@@ -585,13 +585,18 @@
       });
     });
 
-    // Demo mode
+    // Demo mode or trial mode with VIN
     const params = new URLSearchParams(window.location.search);
     if (params.get('demo') === '1') {
       vinInput.value = 'WBA8B9G59JNU12345';
       askingPriceInput.value = '28995';
       mileageInput.value = '72105';
       vinCheckStatus.textContent = 'Demo loaded. Running the sample VIN check...';
+      setTimeout(() => runBtn.click(), 300);
+    } else if (params.get('vin')) {
+      // Trial mode with VIN from vin-entry.html
+      vinInput.value = params.get('vin');
+      vinCheckStatus.textContent = 'VIN loaded from trial. Running check...';
       setTimeout(() => runBtn.click(), 300);
     });
   </script>
