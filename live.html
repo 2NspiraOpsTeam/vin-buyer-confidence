@@ -484,13 +484,13 @@
           fetch(`/api/history?vin=${encodeURIComponent(vin)}`).then(r => r.json())
         ]);
 
-        renderIdentity(decode);
-        renderInterpretation(decode);
+        renderIdentity(decode.decoded);
+        renderInterpretation(decode.decoded);
         renderRecalls(recalls);
         renderHistory(history);
         renderTimeline(history?.history?.timelineEvents || history?.timelineEvents || [], history?.history?.auctionEvidence || []);
-        renderSpecs(decode);
-        renderComps(decode, askingPriceInput.value, claimedMileageInput.value);
+        renderSpecs(decode.decoded);
+        renderComps(decode.decoded, askingPriceInput.value, claimedMileageInput.value);
 
         resultEl.style.display = 'block';
         statusEl.textContent = 'VIN decode, recall lookup, and history-provider check complete.';
