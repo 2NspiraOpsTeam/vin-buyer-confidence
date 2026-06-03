@@ -506,8 +506,11 @@
 
     // VIN check functionality
     const vinInput = document.getElementById('vin');
+    const listingUrlInput = document.getElementById('listingUrl');
     const askingPriceInput = document.getElementById('askingPriceInput');
     const mileageInput = document.getElementById('mileageInput');
+    const sellerInput = document.getElementById('seller');
+    const conditionInput = document.getElementById('condition');
     const runBtn = document.getElementById('runBtn');
     const vinCheckStatus = document.getElementById('vinCheckStatus');
     const shoppingContext = document.getElementById('shoppingContext');
@@ -596,6 +599,11 @@
     } else if (params.get('vin')) {
       // Trial mode with VIN from vin-entry.html
       vinInput.value = params.get('vin');
+      listingUrlInput.value = params.get('listingUrl') || '';
+      askingPriceInput.value = params.get('askingPrice') || '';
+      mileageInput.value = params.get('mileage') || '';
+      sellerInput.value = params.get('seller') || 'Dealer';
+      conditionInput.value = params.get('condition') || 'Good';
       vinCheckStatus.textContent = 'VIN loaded from trial. Running check...';
       setTimeout(() => runBtn.click(), 300);
     });

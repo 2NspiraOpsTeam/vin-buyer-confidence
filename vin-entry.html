@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Start your free VIN check - enter your vehicle's VIN to begin." />
+  <meta property="og:title" content="Free VIN Check - Start Here" />
+  <meta property="og:description" content="Check vehicle identity, recalls, and history. No login required. Free tool by 2Nspira." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Start Free VIN Check | 2Nspira</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111831;
+      --card: #151f3f;
+      --text: #e8ecf8;
+      --muted: #b4bfdc;
+      --accent: #58a6ff;
+      --accent2: #7ee787;
+      --warn: #f2cc60;
+      --danger: #ff7b72;
+      --border: #26345f;
+      --max: 800px;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%); color:var(--text); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .nav { padding: 18px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .brand { font-weight:800; display:flex; align-items:center; gap:12px; }
+    .brand-logo { height: 34px; width: auto; border-radius: 8px; background: rgba(255,255,255,.92); padding: 3px 6px; }
+    .nav-links { display:flex; gap:12px; flex-wrap:wrap; }
+    .nav-link { display:inline-block; padding:10px 12px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:14px; }
+    .section { padding: 32px 0; }
+    .hero { text-align:center; padding: 48px 0 24px; }
+    .hero h1 { font-size: 32px; margin-bottom: 16px; }
+    .hero p { color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
+    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; font-weight:600; }
+    .form-group input, .form-group select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); font-size:14px; }
+    .form-group input:focus, .form-group select:focus { outline:none; border-color: var(--accent); }
+    .btn { display:inline-block; padding:14px 20px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; font-size:16px; cursor:pointer; width:100%; }
+    .btn:hover { background: #4d96ff; }
+    .btn-secondary { background: rgba(255,255,255,.08); color: var(--text); }
+    .btn-secondary:hover { background: rgba(255,255,255,.12); }
+    .success-box { padding: 20px; border-radius: 14px; background: rgba(126,231,135,.08); border:1px solid rgba(126,231,135,.2); margin-top: 20px; }
+    .success-box strong { color: var(--accent2); display:block; margin-bottom:8px; }
+    .muted { color: var(--muted); }
+    .back-link { display:inline-block; margin-top: 20px; color: var(--accent); text-decoration:none; font-size:14px; }
+    .back-link:hover { text-decoration:underline; }
+    .features { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top:24px; }
+    .feature { padding:16px; border-radius:14px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); text-align:center; }
+    .feature-icon { font-size:24px; margin-bottom:8px; }
+    .feature strong { display:block; margin-bottom:4px; }
+    @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap nav">
+    <div class="nav-inner">
+      <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" class="brand-logo" /></div>
+      <div class="nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/customer">Customer Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap section hero">
+    <h1>Start Your Free VIN Check</h1>
+    <p>Enter your vehicle's information to get instant identity verification, recall checks, and buyer confidence insights.</p>
+  </div>
+
+  <div class="wrap section">
+    <div class="card">
+      <h2 style="margin-top:0;">Enter Vehicle Information</h2>
+      <p class="muted" style="margin-bottom:20px;">This is the starting point for your free trial. You'll see the full vehicle review after running the check.</p>
+      
+      <div class="form-group">
+        <label for="vin">Vehicle Identification Number (VIN)</label>
+        <input id="vin" type="text" placeholder="Example: WBA8B9G59JNU12345" maxlength="17" />
+      </div>
+
+      <div class="form-group">
+        <label for="listingUrl">Listing URL</label>
+        <input id="listingUrl" type="text" placeholder="https://..." />
+      </div>
+
+      <div class="form-group">
+        <label for="askingPrice">Asking Price</label>
+        <input id="askingPrice" type="number" placeholder="28995" />
+      </div>
+
+      <div class="form-group">
+        <label for="mileage">Mileage</label>
+        <input id="mileage" type="number" placeholder="72105" />
+      </div>
+
+      <div class="form-group">
+        <label for="seller">Seller Type</label>
+        <select id="seller">
+          <option value="Dealer">Dealer</option>
+          <option value="Private party">Private party</option>
+          <option value="Auction">Auction</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="condition">Condition</label>
+        <select id="condition">
+          <option value="Excellent">Excellent</option>
+          <option value="Very good">Very good</option>
+          <option value="Good" selected>Good</option>
+          <option value="Fair">Fair</option>
+          <option value="Poor">Poor</option>
+        </select>
+      </div>
+
+      <button id="runBtn" class="btn">Run VIN Check</button>
+
+      <div id="status" class="muted" style="margin-top:16px;"></div>
+
+      <div id="result" style="display:none;">
+        <div class="success-box">
+          <strong>✅ VIN Check Complete</strong>
+          <p class="muted" id="resultText">Vehicle details have been retrieved. Click below to view the full review.</p>
+        </div>
+        <button id="viewResultBtn" class="btn" style="margin-top:16px;">View Full Vehicle Review</button>
+      </div>
+
+      <a id="backLink" class="back-link" href="/">← Back to home</a>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <strong>Vehicle Identity</strong>
+        <p class="muted" style="font-size:12px;">Verify make, model, year, and specs from official sources.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚠️</div>
+        <strong>Recall Check</strong>
+        <p class="muted" style="font-size:12px;">See open safety recalls and affected systems.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <strong>Buyer Confidence</strong>
+        <p class="muted" style="font-size:12px;">Get clear next-step recommendations.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const vinInput = document.getElementById('vin');
+      const listingUrlInput = document.getElementById('listingUrl');
+      const askingPriceInput = document.getElementById('askingPrice');
+      const mileageInput = document.getElementById('mileage');
+      const sellerInput = document.getElementById('seller');
+      const conditionInput = document.getElementById('condition');
+      const runBtn = document.getElementById('runBtn');
+      const status = document.getElementById('status');
+      const result = document.getElementById('result');
+      const resultText = document.getElementById('resultText');
+      const viewResultBtn = document.getElementById('viewResultBtn');
+
+      runBtn.addEventListener('click', async () => {
+        const vin = vinInput.value.trim();
+        if (!vin) {
+          status.textContent = 'Please enter a valid VIN (17 characters).';
+          status.style.color = 'var(--danger)';
+          return;
+        }
+        if (vin.length !== 17) {
+          status.textContent = 'VIN must be exactly 17 characters.';
+          status.style.color = 'var(--danger)';
+          return;
+        }
+
+        status.textContent = 'Running VIN check...';
+        status.style.color = 'var(--accent)';
+
+        try {
+          const [decode, recalls] = await Promise.all([
+            fetch(`/api/decode?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
+            fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`).then(r => r.json())
+          ]);
+
+          if (decode.error) {
+            status.textContent = `Error: ${decode.error}`;
+            status.style.color = 'var(--danger)';
+            return;
+          }
+
+          const d = decode.decoded;
+
+          // Store data for the full review
+          sessionStorage.setItem('vin', vin);
+          sessionStorage.setItem('listingUrl', listingUrlInput.value);
+          sessionStorage.setItem('askingPrice', askingPriceInput.value);
+          sessionStorage.setItem('mileage', mileageInput.value);
+          sessionStorage.setItem('seller', sellerInput.value);
+          sessionStorage.setItem('condition', conditionInput.value);
+
+          // Show success
+          status.textContent = 'VIN check complete!';
+          status.style.color = 'var(--accent2)';
+          result.style.display = 'block';
+          resultText.innerHTML = `Vehicle: <strong>${d.year || '?'} ${d.make || '?'} ${d.model || '?'}</strong><br>Click "View Full Vehicle Review" to see the complete analysis.`;
+
+        } catch (err) {
+          status.textContent = `Error: ${err.message}`;
+          status.style.color = 'var(--danger)';
+        }
+      });
+
+      viewResultBtn.addEventListener('click', () => {
+        const vin = vinInput.value.trim();
+        const listingUrl = listingUrlInput.value.trim();
+        const askingPrice = askingPriceInput.value.trim();
+        const mileage = mileageInput.value.trim();
+        const seller = sellerInput.value;
+        const condition = conditionInput.value;
+
+        if (vin) {
+          const params = new URLSearchParams({
+            trial: '1',
+            vin: vin,
+            listingUrl: listingUrl,
+            askingPrice: askingPrice,
+            mileage: mileage,
+            seller: seller,
+            condition: condition
+          });
+          window.location.href = `/live.html?${params.toString()}#vin`;
+        } else {
+          status.textContent = 'Please enter a VIN first.';
+          status.style.color = 'var(--danger)';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
