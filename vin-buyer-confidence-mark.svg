@@ -1,0 +1,24 @@
+<svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">VIN Buyer Confidence logo</title>
+  <desc id="desc">A shield and car inspired mark for the VIN Buyer Confidence app.</desc>
+  <rect x="4" y="4" width="80" height="80" rx="24" fill="url(#bg)" />
+  <rect x="4.5" y="4.5" width="79" height="79" rx="23.5" stroke="#FFFFFF" stroke-opacity="0.18" />
+  <path d="M24 48.5L31.5 34.5C32.8 32 35.3 30.5 38.1 30.5H50.9C53.7 30.5 56.2 32 57.5 34.5L65 48.5V58C65 60.2 63.2 62 61 62H58C55.8 62 54 60.2 54 58V56H35V58C35 60.2 33.2 62 31 62H28C25.8 62 24 60.2 24 58V48.5Z" fill="#EEF4FF"/>
+  <path d="M33.5 46H55.5C56.7 46 57.6 45 57.3 43.9L55.8 38.8C55.2 36.8 53.4 35.5 51.3 35.5H37.7C35.6 35.5 33.8 36.8 33.2 38.8L31.7 43.9C31.4 45 32.3 46 33.5 46Z" fill="#5AA9FF"/>
+  <circle cx="35.5" cy="51.5" r="3.5" fill="#0C1429"/>
+  <circle cx="53.5" cy="51.5" r="3.5" fill="#0C1429"/>
+  <path d="M61 25L47 39L40 32" stroke="#7DE58A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M110 30H160.5C168.6 30 175.9 34.8 179.1 42.2L182.4 49.6C184 53.2 181.4 57.2 177.4 57.2H108.6C104.6 57.2 102 53.2 103.6 49.6L106.9 42.2C110.1 34.8 117.4 30 125.5 30H134.5" fill="#EEF4FF" fill-opacity="0.12"/>
+  <path d="M115.5 49H171.5" stroke="#5AA9FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M128 42H159" stroke="#EEF4FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M194 31.5H305" stroke="#EEF4FF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M194 55H282" stroke="#AAB8D9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M290 55H304" stroke="#7DE58A" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg" x1="10" y1="10" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1E3C"/>
+      <stop offset="0.55" stop-color="#19386E"/>
+      <stop offset="1" stop-color="#2B7FE0"/>
+    </linearGradient>
+  </defs>
+</svg>
