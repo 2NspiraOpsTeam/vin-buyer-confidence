@@ -21,6 +21,7 @@
   --nav-backdrop: none;
   --nav-bg: transparent;
   --nav-margin-bottom: 0;
+  --sticky-actions-offset: calc(env(safe-area-inset-bottom, 0px) + 16px);
 }
 
 * { box-sizing: border-box; }
@@ -36,6 +37,13 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 .wrap {
@@ -63,6 +71,12 @@ a {
   flex-wrap: wrap;
 }
 
+.nav-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .brand {
   font-weight: 800;
   letter-spacing: var(--brand-letter-spacing, normal);
@@ -78,6 +92,24 @@ a {
   border-radius: 8px;
   background: rgba(255,255,255,.92);
   padding: 3px 6px;
+}
+
+.brand-wordmark {
+  white-space: nowrap;
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .nav-links,
@@ -97,6 +129,8 @@ a {
   display: inline-block;
   padding: 12px 14px;
   border-radius: 12px;
+  min-height: 46px;
+  line-height: 1.2;
 }
 
 .nav-link,
@@ -123,6 +157,15 @@ a {
 .market-btn {
   background: var(--accent);
   color: #07101f;
+}
+
+button,
+.market-btn {
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .section { padding: 28px 0; }
@@ -167,6 +210,10 @@ h1, h2, h3 { margin-top: 0; }
 .muted { color: var(--muted); }
 
 ul, ol { padding-left: 18px; }
+
+[id] {
+  scroll-margin-top: 18px;
+}
 
 .badge,
 .pill,
@@ -371,6 +418,7 @@ ul, ol { padding-left: 18px; }
   border-radius: 12px;
   background: rgba(11,16,32,.55);
   border: 1px solid rgba(255,255,255,.05);
+  min-height: 84px;
 }
 
 .metric strong {
@@ -526,6 +574,75 @@ ul, ol { padding-left: 18px; }
   cursor: pointer;
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.form-group {
+  display: grid;
+  gap: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+.market-inputs input,
+.market-inputs select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(11,16,32,.7);
+  color: var(--text);
+}
+
+.mobile-action-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: var(--sticky-actions-offset);
+  z-index: 40;
+  display: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  background: rgba(7,17,31,.92);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 42px rgba(0,0,0,.35);
+}
+
+.mobile-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.mobile-action-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: #07101f;
+}
+
+.has-mobile-actions {
+  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+}
+
 .pillrow,
 .action-row,
 .link-row {
@@ -559,5 +676,100 @@ ul, ol { padding-left: 18px; }
   .workspace-grid,
   .checkout-flow {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 780px) {
+  .nav {
+    padding: 14px 0;
+  }
+
+  .nav-inner {
+    align-items: flex-start;
+  }
+
+  .nav-main {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .brand-wordmark {
+    font-size: 14px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    padding-top: 6px;
+  }
+
+  .nav-links.open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 12px 10px;
+  }
+
+  .hero {
+    align-items: flex-start;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .score {
+    font-size: 44px;
+  }
+
+  .range-labels {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .metric {
+    min-height: 74px;
+  }
+
+  .mobile-action-bar {
+    display: grid;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrap {
+    padding: 0 14px;
+  }
+
+  .nav-links.open,
+  .metric-row,
+  .market-inputs,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-wordmark {
+    font-size: 13px;
+  }
+
+  .mobile-action-bar {
+    left: 8px;
+    right: 8px;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .mobile-action {
+    min-height: 46px;
+    font-size: 11px;
   }
 }
