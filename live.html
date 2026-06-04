@@ -419,6 +419,21 @@
         const hasRecalls = (recalls && recalls.count > 0);
         const hasListing = listingUrl && listingUrl.trim() !== '';
         
+        // Source status mapping
+        const vinStatus = 'confirmed';
+        const recallsStatus = hasRecalls ? 'confirmed' : 'not_connected';
+        const historyStatus = hasHistory ? 'confirmed' : 'not_connected';
+        const listingStatus = hasListing ? 'confirmed' : 'not_connected';
+        const marketStatus = hasListing ? 'partial' : 'not_connected';
+        
+        // Status language
+        const statusLanguage = {
+          confirmed: { label: 'Confirmed', color: '#7ee787', text: 'Strong evidence supports this' },
+          partial: { label: 'Partial', color: '#f2cc60', text: 'Some evidence present, but more is needed' },
+          not_connected: { label: 'Not connected', color: '#b4bfdc', text: 'This source is not available yet' },
+          needs_verification: { label: 'Needs verification', color: '#ff7b72', text: 'Claim may be plausible but evidence is thin' }
+        };
+        
         let verdictLabel = hasListing ? 'Strong Buy' : 'Verify Further';
         let verdictSummaryText = '';
         let verdictRationaleText = '';
@@ -493,22 +508,23 @@
         listingLink.href = hasListing ? listingUrl : '#';
         listingLink.textContent = hasListing ? 'View listing' : 'No listing URL entered';
         
-        // Key findings
+        // Key findings with source-status language
         findingsList.innerHTML = '';
         const findings = [
-          { type: 'ok', text: `VIN decodes to ${year} ${make} ${model} ${trim}` },
-          { type: 'ok', text: `Body class: ${bodyClass}` },
-          { type: 'ok', text: `Drive type: ${driveType}` },
-          { type: 'ok', text: `Fuel: ${fuelTypePrimary}` },
-          { type: hasRecalls ? 'warn' : 'ok', text: hasRecalls ? `${recalls.count} open recall(s) found` : 'No recalls found for this VIN' },
-          { type: 'info', text: hasListing ? 'Market context available' : 'Enter asking price and mileage for market comparison' }
+          { status: 'confirmed', text: `VIN decodes to ${year} ${make} ${model} ${trim}` },
+          { status: 'confirmed', text: `Body class: ${bodyClass}` },
+          { status: 'confirmed', text: `Drive type: ${driveType}` },
+          { status: 'confirmed', text: `Fuel: ${fuelTypePrimary}` },
+          { status: recallsStatus, text: recallsStatus === 'confirmed' ? `${recalls.count} open recall(s) found` : 'Recall data unavailable' },
+          { status: marketStatus, text: marketStatus === 'confirmed' ? 'Market context available' : 'Enter asking price and mileage for market comparison' }
         ];
         
         findings.forEach(item => {
           const div = document.createElement('div');
           div.className = 'finding';
-          const icon = item.type === 'ok' ? '✅' : item.type === 'warn' ? '⚠️' : 'ℹ️';
-          div.innerHTML = `<strong>${icon}</strong> ${item.text}`;
+          const status = statusLanguage[item.status];
+          const icon = item.status === 'confirmed' ? '✅' : item.status === 'partial' ? '⚠️' : 'ℹ️';
+          div.innerHTML = `<strong style="color:${status.color}">${icon}</strong> ${item.text} <span class="state-chip" style="color:${status.color}; border-color:${status.color}33">${status.label}</span>`;
           findingsList.appendChild(div);
         });
         
