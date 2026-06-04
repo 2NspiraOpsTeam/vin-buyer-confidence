@@ -54,23 +54,23 @@ window.PROTOTYPE_DATA = {
   seller_questions: [
     {
       priority: 1,
-      question_text: 'Can you send photos that confirm the claimed options and interior features?',
-      reason: 'Some feature claims are not yet strongly supported.'
+      question_text: 'Can you send close photos or a quick walkaround video that clearly shows the claimed options, trim details, and interior features?',
+      reason: 'Why this matters: the listing claims higher-value features that are not yet clearly supported by the current photos.'
     },
     {
       priority: 2,
-      question_text: 'What major maintenance has been done in the last 20k miles?',
-      reason: 'Service support is thin relative to the asking price.'
+      question_text: 'What major maintenance has been completed in the last 20,000 miles, and do you have invoices or timestamps for that work?',
+      reason: 'Why this matters: service support is thinner than ideal for the asking price, which raises ownership-risk questions.'
     },
     {
       priority: 3,
-      question_text: 'Do you have receipts for cooling, brakes, suspension, or common wear items?',
-      reason: 'These records would materially improve confidence.'
+      question_text: 'Do you have receipts for cooling-system work, brakes, suspension, tires, or other common wear items?',
+      reason: 'Why this matters: those records would materially improve confidence in the condition story and help justify the price.'
     },
     {
       priority: 4,
-      question_text: 'Can you send cold-start and walkaround video?',
-      reason: 'This helps validate current condition signals remotely.'
+      question_text: 'Can you send a cold-start video and a slow exterior/interior walkaround before I decide on a PPI or travel?',
+      reason: 'Why this matters: remote condition clues can help confirm whether this car is worth the next spend.'
     }
   ],
   evidence_timeline: [
@@ -107,19 +107,19 @@ window.PROTOTYPE_DATA = {
     {
       source: 'VIN identity source',
       role: 'vehicle identity',
-      status: 'supports core vehicle identity',
+      status: 'Confirmed: core vehicle identity aligns with the VIN-backed data available today.',
       confidence: 'high'
     },
     {
       source: 'Listing history source',
       role: 'price and mileage history',
-      status: 'useful but not authoritative for title truth',
+      status: 'Partial: useful for pricing and timeline context, but not strong enough on its own to prove title or condition claims.',
       confidence: 'medium'
     },
     {
       source: 'Seller listing',
       role: 'feature and condition claims',
-      status: 'helpful but requires verification',
+      status: 'Needs verification: seller-provided claims are useful leads, but they should not be treated as confirmed until backed by stronger evidence.',
       confidence: 'low'
     }
   ]

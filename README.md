@@ -22,6 +22,7 @@ The static server does not run the API handlers. Use the npm scripts below for n
 - `checkout.html` - trial/demo/payment-entry surface
 - `live.html` - free VIN workflow
 - `customer.html` - buyer workspace preview
+- `docs/maya-messaging-pack.md` - positioning, GTM copy, seller-question templates, and trust language
 - `account.html` and `success.html` - post-payment account/session surfaces
 - `api/` - checkout, webhook, session, and dashboard handlers
 - `scripts/` - readiness and smoke-test scripts
