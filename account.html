@@ -9,24 +9,17 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <title>Account | Car Buyer Confidence Check</title>
+  <link rel="stylesheet" href="/styles/shared-ui.css" />
   <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 70px; }
-    .nav { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
-    .brand img { height:36px; width:auto; border-radius:8px; background:rgba(255,255,255,.92); padding:3px 6px; }
-    .muted { color:#b4bfdc; }
-    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
-    .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:20px; }
-    .pill { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(98,176,255,.12); color:#62b0ff; font-size:13px; font-weight:700; }
-    .stat-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
-    .stat { padding:14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); }
-    .stat span { display:block; color:#b4bfdc; font-size:13px; }
+    :root {
+      --max: 1080px;
+      --card-padding: 20px;
+      --nav-margin-bottom: 22px;
+    }
+    .wrap { padding: 28px 20px 70px; }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .pill { background:rgba(98,176,255,.12); color:#62b0ff; padding:7px 11px; }
     .stat strong { display:block; margin-top:6px; font-size:20px; }
-    .link-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
-    .btn { display:inline-block; padding:12px 14px; border-radius:12px; text-decoration:none; font-weight:700; }
-    .btn-primary { background:#62b0ff; color:#07101f; }
-    .btn-secondary { background:rgba(255,255,255,.04); color:#eef3ff; border:1px solid rgba(255,255,255,.07); }
-    ul { padding-left:18px; }
     @media (max-width: 900px) { .grid, .stat-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
