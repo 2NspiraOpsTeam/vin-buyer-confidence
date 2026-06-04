@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Free VIN check tool - verify vehicle identity, recalls, and history. No login required." />
-  <meta property="og:title" content="Free VIN Check" />
-  <meta property="og:description" content="Check vehicle identity, recalls, and history. No login required. Free tool by 2Nspira." />
+  <meta name="description" content="VIN check tool - verify vehicle identity, recalls, and history. No login required." />
+  <meta property="og:title" content="VIN Check" />
+  <meta property="og:description" content="Check vehicle identity, recalls, and history. No login required. Tool by 2Nspira." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <title>Free VIN Check | 2Nspira</title>
+  <title>VIN Check | 2Nspira</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -126,7 +126,7 @@
   <div class="wrap section hero">
     <div>
       <h1 id="vehicleTitle" style="margin-bottom:8px;">Vehicle Review</h1>
-      <div class="muted" id="caseMeta">Free VIN check</div>
+      <div class="muted" id="caseMeta">VIN check</div>
     </div>
     <div>
       <span class="badge badge-warn" id="verdictBadge">Verdict</span>
@@ -405,7 +405,7 @@
         
         // Vehicle title and meta
         vehicleTitle.textContent = `${year} ${make} ${model} ${trim} Review`;
-        caseMeta.textContent = 'Free VIN check • Decoded from NHTSA data';
+        caseMeta.textContent = 'VIN check • Decoded from NHTSA data';
         
         // Verdict section - generate based on data quality
         const hasHistory = false; // No history API connected yet
