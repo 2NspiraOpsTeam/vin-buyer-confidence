@@ -107,6 +107,8 @@
     .market-inputs label { display:block; font-size:13px; color: var(--muted); margin-bottom:6px; }
     .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
     .market-btn { padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; cursor:pointer; }
+    .market-source { padding:12px 14px; border-radius:12px; background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); min-height: 74px; }
+    .market-source strong { display:block; margin-top:8px; font-size:18px; }
     .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
     @media (max-width: 900px) {
       .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs, .photo-grid { grid-template-columns: 1fr; }
@@ -183,6 +185,7 @@
         <div class="form-group"><label for="condition" class="muted">Condition</label><select id="condition"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div>
       </div>
       <button id="runBtn">Run VIN Check</button>
+      <p id="vinCheckStatus" class="muted" style="margin-top:12px;"></p>
     </div>
   </div>
 
@@ -253,11 +256,21 @@
   <div id="market" class="wrap section">
     <div class="card">
       <h2>Comparable market view</h2>
-      <p class="muted">See whether this car is priced low, fair, or stretched relative to the market.</p>
+      <p class="muted">See whether this car is priced low, fair, or stretched relative to the market using the asking price and mileage from the main vehicle details form.</p>
       <div class="market-inputs">
         <div>
-          <label for="marketMileage">Mileage</label>
-          <input id="marketMileage" type="number" value="72105" />
+          <label>Asking price source</label>
+          <div class="market-source">
+            <span class="mini-label">Vehicle details form</span>
+            <strong id="marketSourcePrice">$28,995</strong>
+          </div>
+        </div>
+        <div>
+          <label>Mileage source</label>
+          <div class="market-source">
+            <span class="mini-label">Vehicle details form</span>
+            <strong id="marketSourceMileage">72,105 mi</strong>
+          </div>
         </div>
         <div>
           <label for="marketCondition">Condition</label>
@@ -274,7 +287,7 @@
       <div class="market-range">
         <div class="mini-label">Market price range</div>
         <div class="range-bar">
-          <div class="range-marker" style="left: 68%;"></div>
+          <div id="rangeMarker" class="range-marker" style="left: 68%;"></div>
         </div>
         <div class="range-labels">
           <span id="marketLowLabel">$24.9k</span>
@@ -376,6 +389,20 @@
       const conditionInput = document.getElementById('condition');
       const runBtn = document.getElementById('runBtn');
       const vinCheckStatus = document.getElementById('vinCheckStatus');
+      const marketConditionInput = document.getElementById('marketCondition');
+      const updateMarketViewBtn = document.getElementById('updateMarketView');
+      const marketSourcePrice = document.getElementById('marketSourcePrice');
+      const marketSourceMileage = document.getElementById('marketSourceMileage');
+      const marketLowLabel = document.getElementById('marketLowLabel');
+      const marketHighLabel = document.getElementById('marketHighLabel');
+      const marketTakeTitle = document.getElementById('marketTakeTitle');
+      const marketTakeBody = document.getElementById('marketTakeBody');
+      const marketPositionBadge = document.getElementById('marketPositionBadge');
+      const askingPriceValue = document.getElementById('askingPriceValue');
+      const marketRangeValue = document.getElementById('marketRangeValue');
+      const negotiationRoomValue = document.getElementById('negotiationRoomValue');
+      const bestUseValue = document.getElementById('bestUseValue');
+      const rangeMarker = document.getElementById('rangeMarker');
       
       // Top half elements
       const vehicleTitle = document.getElementById('vehicleTitle');
@@ -404,6 +431,97 @@
       
       const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
       const badgeClass = level => level === 'high' ? 'badge-ok' : level === 'medium' ? 'badge-warn' : 'badge-danger';
+      const fmtNumber = n => new Intl.NumberFormat('en-US').format(n);
+      const conditionToMarket = {
+        Excellent: 'excellent',
+        Good: 'good',
+        Fair: 'fair'
+      };
+      const marketToForm = {
+        excellent: 'Excellent',
+        'very good': 'Good',
+        good: 'Good',
+        fair: 'Fair',
+        poor: 'Fair'
+      };
+
+      function syncMarketSources() {
+        const askingPrice = Number(askingPriceInput.value);
+        const mileage = Number(mileageInput.value);
+        marketSourcePrice.textContent = askingPrice > 0 ? fmtMoney(askingPrice) : 'Add asking price';
+        marketSourceMileage.textContent = mileage > 0 ? `${fmtNumber(mileage)} mi` : 'Add mileage';
+      }
+
+      function updateMarketView() {
+        syncMarketSources();
+
+        const askingPrice = Number(askingPriceInput.value);
+        const mileage = Number(mileageInput.value);
+        const selectedCondition = marketConditionInput.value;
+        const conditionAdjustments = {
+          excellent: 1600,
+          'very good': 900,
+          good: 0,
+          fair: -1400,
+          poor: -2600
+        };
+
+        if (!(askingPrice > 0) || !(mileage >= 0)) {
+          askingPriceValue.textContent = askingPrice > 0 ? fmtMoney(askingPrice) : '--';
+          marketRangeValue.textContent = 'Add asking price and mileage';
+          negotiationRoomValue.textContent = '--';
+          bestUseValue.textContent = 'Waiting on values';
+          marketLowLabel.textContent = '--';
+          marketHighLabel.textContent = '--';
+          marketTakeTitle.textContent = 'Market view pending';
+          marketTakeBody.textContent = 'Enter asking price and mileage in the main vehicle details form to generate a consistent market view.';
+          marketPositionBadge.textContent = 'Waiting on values';
+          marketPositionBadge.className = 'price-badge fair';
+          rangeMarker.style.left = '50%';
+          return;
+        }
+
+        const baseline = 31500;
+        const mileagePenalty = mileage * 0.055;
+        const conditionAdjustment = conditionAdjustments[selectedCondition] || 0;
+        const midpoint = Math.max(8500, Math.round((baseline - mileagePenalty + conditionAdjustment) / 50) * 50);
+        const low = Math.max(7000, midpoint - 1500);
+        const high = midpoint + 1500;
+        const delta = askingPrice - midpoint;
+        const markerPosition = Math.max(0, Math.min(100, ((askingPrice - low) / Math.max(1, high - low)) * 100));
+
+        let title = 'Fair, with room to negotiate';
+        let body = 'The current ask sits inside a reasonable band, so use the evidence stack to negotiate rather than assuming the price is broken.';
+        let badgeText = 'Fair / slightly high';
+        let badgeClassName = 'price-badge fair';
+        let negotiationText = 'Use seller leverage';
+
+        if (delta <= -1750) {
+          title = 'Below market if the story checks out';
+          body = 'This price sits meaningfully below the estimated band, which can be a value opportunity or a signal that something still needs proof.';
+          badgeText = 'Below market';
+          badgeClassName = 'price-badge value';
+          negotiationText = 'Move fast, verify hard';
+        } else if (delta >= 1750) {
+          title = 'Priced high for the current evidence';
+          body = 'The ask is stretching above the likely market band, so the burden shifts to the seller to justify the premium with condition, records, or equipment.';
+          badgeText = 'Above market';
+          badgeClassName = 'price-badge high';
+          negotiationText = 'Ask for price reduction';
+        }
+
+        askingPriceValue.textContent = fmtMoney(askingPrice);
+        marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
+        negotiationRoomValue.textContent = delta >= 0 ? `${fmtMoney(Math.max(0, askingPrice - high))} - ${fmtMoney(Math.max(300, askingPrice - midpoint))}` : `${fmtMoney(Math.max(300, midpoint - askingPrice))} under market`;
+        bestUseValue.textContent = negotiationText;
+        marketLowLabel.textContent = fmtMoney(low);
+        marketHighLabel.textContent = fmtMoney(high);
+        marketTakeTitle.textContent = title;
+        marketTakeBody.textContent = body;
+        marketPositionBadge.textContent = badgeText;
+        marketPositionBadge.className = badgeClassName;
+        rangeMarker.style.left = `${markerPosition}%`;
+      }
 
       // Helper to populate top half with decoded VIN data
       function populateTopHalf(decoded, recalls, listingUrl, askingPrice, mileage, seller, condition) {
@@ -521,6 +639,7 @@
         specFuel.textContent = fuelTypePrimary;
         specEngine.textContent = `${engineCylinders} cyl, ${displacementL}L`;
         specMsrp.textContent = decoded.baseMsrp || 'N/A';
+        updateMarketView();
       }
 
       // Main VIN check function
@@ -570,9 +689,23 @@
 
       // Event listeners
       runBtn.addEventListener('click', runVinCheck);
+      updateMarketViewBtn.addEventListener('click', updateMarketView);
+      askingPriceInput.addEventListener('input', updateMarketView);
+      mileageInput.addEventListener('input', updateMarketView);
+      conditionInput.addEventListener('change', () => {
+        marketConditionInput.value = conditionToMarket[conditionInput.value] || 'good';
+        updateMarketView();
+      });
+      marketConditionInput.addEventListener('change', () => {
+        conditionInput.value = marketToForm[marketConditionInput.value] || 'Good';
+        updateMarketView();
+      });
       
       // Demo mode or start mode with VIN
       const params = new URLSearchParams(window.location.search);
+      marketConditionInput.value = conditionToMarket[conditionInput.value] || 'good';
+      syncMarketSources();
+      updateMarketView();
       if (params.get('demo') === '1') {
         vinInput.value = 'WBA8B9G59JNU12345';
         askingPriceInput.value = '28995';
