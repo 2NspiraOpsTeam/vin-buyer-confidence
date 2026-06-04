@@ -171,23 +171,11 @@
       <div class="form-grid">
         <div class="form-group"><label for="listingUrl" class="muted">Listing URL</label><input id="listingUrl" placeholder="https://..." /></div>
         <div class="form-group"><label for="askingPrice" class="muted">Asking price</label><input id="askingPrice" type="number" placeholder="28995" /></div>
-        <div class="form-group"><label for="claimedMileage" class="muted">Mileage</label><input id="claimedMileage" type="number" placeholder="72105" /></div>
+        <div class="form-group"><label for="mileageInput" class="muted">Mileage</label><input id="mileageInput" type="number" placeholder="72105" /></div>
         <div class="form-group"><label for="seller" class="muted">Seller</label><select id="seller"><option value="Dealer">Dealer</option><option value="Private party">Private party</option><option value="Auction">Auction</option></select></div>
         <div class="form-group"><label for="condition" class="muted">Condition</label><select id="condition"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div>
       </div>
       <button id="runBtn">Run VIN Check</button>
-    </div>
-    <div class="card">
-      <h2>Shopping context</h2>
-      <p class="muted" id="shoppingContext">Enter shopping details to enhance the market view and recommendations.</p>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label for="askingPriceInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Asking price</label>
-        <input id="askingPriceInput" type="number" placeholder="28995" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label for="mileageInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Mileage</label>
-        <input id="mileageInput" type="number" placeholder="72105" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
-      </div>
     </div>
   </div>
 
@@ -376,7 +364,7 @@
       const vinInput = document.getElementById('vin');
       const listingUrlInput = document.getElementById('listingUrl');
       const askingPriceInput = document.getElementById('askingPrice');
-      const mileageInput = document.getElementById('mileage');
+      const mileageInput = document.getElementById('mileageInput');
       const sellerInput = document.getElementById('seller');
       const conditionInput = document.getElementById('condition');
       const runBtn = document.getElementById('runBtn');
