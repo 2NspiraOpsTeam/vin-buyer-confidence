@@ -12,19 +12,20 @@
   <style>
     :root {
       --bg: #0b1020;
-      --panel: #111831;
+      --panel: #131a2e;
       --card: #151f3f;
       --text: #e8ecf8;
-      --muted: #b4bfdc;
+      --muted: #a6b0cc;
       --accent: #58a6ff;
       --accent2: #7ee787;
       --warn: #f2cc60;
       --danger: #ff7b72;
-      --border: #26345f;
+      --border: rgba(255,255,255,.04);
       --max: 1120px;
     }
     * { box-sizing: border-box; }
-    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%); color:var(--text); }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #131a2e 100%); color:var(--text); }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
     .nav { padding: 18px 0; border-bottom:1px solid rgba(255,255,255,.08); }
     .nav-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
@@ -34,7 +35,8 @@
     .nav-link { display:inline-block; padding:10px 12px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:14px; }
     .section { padding: 28px 0; }
     .hero { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
-    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 22px; }
+    .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 24px; transition: all 0.2s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 24px 70px rgba(0,0,0,.3); }
     .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
     .grid-2 { display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
     .badge { display:inline-block; padding:7px 11px; border-radius:999px; font-size:13px; font-weight:700; }
@@ -138,6 +140,9 @@
       <p id="verdictSummary"></p>
       <p class="muted" id="verdictRationale"></p>
       <ul id="highlights"></ul>
+      <div style="margin-top:20px;">
+        <a href="/customer.html" class="btn btn-primary">Manage Your Workspace</a>
+      </div>
     </div>
     <div class="card">
       <h2>Confidence score</h2>
@@ -146,8 +151,6 @@
       <div class="scorelist" id="scoreList"></div>
     </div>
   </div>
-
-  <div class="wrap section grid-2">
     <div class="card">
       <h2>Case details</h2>
       <div class="pillrow" id="casePills"></div>
