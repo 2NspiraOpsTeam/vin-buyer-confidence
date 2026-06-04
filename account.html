@@ -13,7 +13,13 @@
     body { margin:0; font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#eef3ff; }
     .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 70px; }
     .nav { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
-    .brand img { height:36px; width:auto; border-radius:8px; background:rgba(255,255,255,.92); padding:3px 6px; }
+    .brand-link { display:inline-flex; align-items:center; gap:14px; color:#eef3ff; text-decoration:none; }
+    .brand-link:hover .brand-kicker, .brand-link:focus-visible .brand-kicker { color:#62b0ff; }
+    .brand-link:focus-visible { border-radius:18px; }
+    .brand-link img { height:52px; width:auto; border-radius:12px; background:rgba(255,255,255,.96); padding:5px 10px; box-shadow: 0 10px 28px rgba(0,0,0,.22); }
+    .brand-meta { display:grid; gap:4px; }
+    .brand-name { font-size:21px; font-weight:800; line-height:1; letter-spacing:.02em; }
+    .brand-kicker { color:#b4bfdc; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; transition: color 0.2s ease; }
     .muted { color:#b4bfdc; }
     .grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
     .card { background:#151f3f; border:1px solid #26345f; border-radius:18px; padding:20px; }
@@ -33,7 +39,13 @@
 <body>
   <div class="wrap">
     <div class="nav">
-      <div class="brand"><img src="/2nspira-logo.jpg" alt="2Nspira" /></div>
+      <a href="https://www.2nspira.com/" class="brand-link" target="_blank" rel="noreferrer" aria-label="Visit the 2Nspira website">
+        <img src="/2nspira-logo.jpg" alt="2Nspira" />
+        <span class="brand-meta">
+          <span class="brand-name">2Nspira</span>
+          <span class="brand-kicker">Visit 2Nspira.com</span>
+        </span>
+      </a>
       <div class="link-row" style="margin-top:0;">
         <a class="btn btn-secondary" href="/">Home</a>
         <a class="btn btn-secondary" href="/customer.html">Buyer Workspace</a>
