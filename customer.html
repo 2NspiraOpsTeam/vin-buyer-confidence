@@ -177,25 +177,25 @@
       <div class="section-badge">History</div>
       <h2>Ownership and registration timeline</h2>
       <div class="timeline-rail">
-        <div class="timeline-node"><div class="mini-head">2018</div><strong>Owner period 1 begins</strong><span class="muted">Personal use starts. Registration and transfer details should lock in here once history-provider data is live.</span><div class="state-chip">New York</div></div>
-        <div class="timeline-node"><div class="mini-head">2021</div><strong>Ownership transfer</strong><span class="muted">Short hold/transfer events, usage type changes, and title handoffs should appear as discrete timeline markers.</span><div class="state-chip">Transfer recorded</div></div>
-        <div class="timeline-node"><div class="mini-head">2021 to present</div><strong>Owner period 2</strong><span class="muted">Current registration state, duration, and ownership context belong here.</span><div class="state-chip">New Jersey</div></div>
+        <div class="timeline-node"><div class="mini-head">2018</div><strong>Owner period 1 begins</strong><span class="muted">This timeline is intended to show when ownership periods start, where the car was registered, and how long each hold lasted.</span><div class="state-chip">New York</div></div>
+        <div class="timeline-node"><div class="mini-head">2021</div><strong>Ownership transfer</strong><span class="muted">Transfers, usage changes, and title handoffs belong here because they often shape risk and resale value.</span><div class="state-chip">Transfer recorded</div></div>
+        <div class="timeline-node"><div class="mini-head">2021 to present</div><strong>Owner period 2</strong><span class="muted">Current ownership context should make it easier to judge stability, usage, and whether the seller story holds together.</span><div class="state-chip">New Jersey</div></div>
       </div>
     </div>
     <div class="card">
       <div class="section-badge">Risk</div>
       <h2>Title and accident history</h2>
       <div class="timeline-rail">
-        <div class="timeline-node"><div class="mini-head">Title status</div><strong>No premium history source connected yet</strong><span class="muted">Salvage, rebuilt, flood, theft, and total loss indicators will render here after provider activation.</span></div>
-        <div class="timeline-node"><div class="mini-head">Damage history</div><strong>Provider-dependent section</strong><span class="muted">Reported accidents, structural damage, severity clues, and insurance-loss style events belong here.</span></div>
+        <div class="timeline-node"><div class="mini-head">Title status</div><strong>No premium title-history source is loaded in this sample</strong><span class="muted">If salvage, rebuilt, flood, theft, or total-loss history is not available, treat that as unresolved risk rather than a clean result.</span></div>
+        <div class="timeline-node"><div class="mini-head">Damage history</div><strong>Accident and structural history belongs here</strong><span class="muted">This section should surface reported accidents, structural concerns, and insurance-style loss events when that evidence is available.</span></div>
       </div>
     </div>
     <div class="card">
       <div class="section-badge">Usage</div>
       <h2>Odometer and service history</h2>
       <div class="timeline-rail">
-        <div class="timeline-node"><div class="mini-head">Mileage history</div><strong>Reported odometer readings</strong><span class="muted">Dated mileage records, rollback checks, and annual-mileage context will render here.</span></div>
-        <div class="timeline-node"><div class="mini-head">Service history</div><strong>Maintenance and repair evidence</strong><span class="muted">Service and repair records will populate here when supported by the licensed history source.</span></div>
+        <div class="timeline-node"><div class="mini-head">Mileage history</div><strong>Reported odometer readings</strong><span class="muted">Mileage entries should help confirm progression, flag odd jumps, and support pricing confidence.</span></div>
+        <div class="timeline-node"><div class="mini-head">Service history</div><strong>Maintenance and repair evidence</strong><span class="muted">Service records matter because they strengthen the ownership story and help justify whether the asking price is fair.</span></div>
       </div>
     </div>
     <div class="card">
@@ -207,8 +207,8 @@
         <div class="photo-card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80" alt="Interior detail" /><div class="photo-caption">Interior wear, mileage coherence, seller quality</div></div>
       </div>
       <div class="timeline-rail">
-        <div class="timeline-node"><div class="mini-head">Current listing</div><strong>Photos, seller, listing URL, ask, mileage</strong><span class="muted">This section is structured to render current listing media and evidence side by side with history signals.</span></div>
-        <div class="timeline-node"><div class="mini-head">Listing history</div><strong>Price changes and prior appearances</strong><span class="muted">Future provider wiring should surface prior online appearances and price changes here.</span></div>
+        <div class="timeline-node"><div class="mini-head">Current listing</div><strong>Photos, seller, listing URL, ask, mileage</strong><span class="muted">Listing media should sit next to the evidence so the buyer can compare the sales story with what is actually supported.</span></div>
+        <div class="timeline-node"><div class="mini-head">Listing history</div><strong>Price changes and prior appearances</strong><span class="muted">Prior appearances and price cuts can strengthen negotiation leverage or expose a softer history than the seller is presenting.</span></div>
       </div>
     </div>
   </div>
@@ -357,21 +357,21 @@
     <div class="card">
       <div class="section-badge">Safety</div>
       <h2>Safety snapshot</h2>
-      <div class="history-event"><div class="mini-head">Crash ratings</div><strong>NHTSA safety ratings module</strong><br><span class="muted">Overall, frontal, side, and rollover ratings should render here after model/variant matching is connected.</span></div>
-      <div class="history-event"><div class="mini-head">Safety equipment</div><strong>ABS, ESC, airbags, active-safety context</strong><br><span class="muted">VIN-derived safety equipment and future safety-tech context belong here.</span></div>
+      <div class="history-event"><div class="mini-head">Crash ratings</div><strong>Crash-rating context</strong><br><span class="muted">When model and variant matching is available, this section should clarify whether the car carries any safety tradeoffs a buyer should know before moving forward.</span></div>
+      <div class="history-event"><div class="mini-head">Safety equipment</div><strong>ABS, ESC, airbags, active-safety context</strong><br><span class="muted">Safety equipment belongs here because it changes how a buyer judges value, family fit, and long-term comfort with the car.</span></div>
     </div>
     <div class="card">
       <div class="section-badge">Recalls</div>
       <h2>Recall center</h2>
-      <div class="history-event"><div class="mini-head">Open recalls</div><strong>NHTSA-backed recall signals</strong><br><span class="muted">Open recall count, affected systems, consequence, and remedy should appear here.</span></div>
-      <div class="history-event"><div class="mini-head">Affected systems</div><strong>Brakes, airbags, fuel, electrical, steering</strong><br><span class="muted">Recall grouping should become visual and system-based, not just text rows.</span></div>
+      <div class="history-event"><div class="mini-head">Open recalls</div><strong>Recall signals</strong><br><span class="muted">Open recalls should make it easy to see what systems are affected, how urgent the issue is, and whether it changes the timing of your next step.</span></div>
+      <div class="history-event"><div class="mini-head">Affected systems</div><strong>Brakes, airbags, fuel, electrical, steering</strong><br><span class="muted">System-based grouping helps buyers quickly understand whether a recall is minor admin work or a real decision factor.</span></div>
     </div>
     <div class="card" style="grid-column: 1 / -1;">
       <div class="section-badge">Reviews</div>
       <h2>Expert and owner reviews</h2>
       <div class="history-grid">
-        <div class="history-event"><div class="mini-head">Expert summary</div><strong>What reviewers say about this model/year</strong><br><span class="muted">This section should summarize praise, complaints, and buyer watchouts once licensed review input is connected.</span></div>
-        <div class="history-event"><div class="mini-head">Owner sentiment</div><strong>Common pros, common complaints, reliability themes</strong><br><span class="muted">Owner sentiment should be treated as a future licensed or curated layer, not scraped content.</span></div>
+        <div class="history-event"><div class="mini-head">Expert summary</div><strong>What reviewers say about this model/year</strong><br><span class="muted">Expert context should help the buyer understand known strengths, watchouts, and whether this is the right version of the car to chase.</span></div>
+        <div class="history-event"><div class="mini-head">Owner sentiment</div><strong>Common pros, common complaints, reliability themes</strong><br><span class="muted">Owner patterns matter when they help the buyer pressure-test long-term ownership risk, not when they read like random internet noise.</span></div>
       </div>
     </div>
   </div>
