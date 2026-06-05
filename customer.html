@@ -48,6 +48,11 @@
     .badge-warn { background: rgba(242,204,96,.12); color: var(--warn); }
     .badge-ok { background: rgba(126,231,135,.12); color: var(--accent2); }
     .badge-danger { background: rgba(255,123,114,.12); color: var(--danger); }
+    /* Status chip styles for source confidence */
+    .state-chip.confirmed { background: rgba(126,231,135,0.12); color: var(--accent2); border: 1px solid rgba(126,231,135,0.3); }
+    .state-chip.partial { background: rgba(242,204,96,0.12); color: var(--warn); border: 1px solid rgba(242,204,96,0.3); }
+    .state-chip.not_connected { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+    .state-chip.needs_verification { background: rgba(166,176,204,0.12); color: var(--muted); border: 1px solid rgba(166,176,204,0.3); }
     h1,h2,h3 { margin-top:0; }
     .muted { color: var(--muted); }
     ul, ol { padding-left: 18px; }
@@ -165,6 +170,32 @@
       <div class="scorelist" id="scoreList"></div>
     </div>
   </div>
+  
+  <div class="wrap section">
+    <div class="card">
+      <h2>Understanding source confidence</h2>
+      <p class="muted">This review uses source confidence to show how strongly each claim is supported by evidence.</p>
+      <div class="grid-2" style="margin-top:16px;">
+        <div style="padding:14px; border-radius:14px; background: rgba(126,231,135,0.08); border:1px solid rgba(126,231,135,0.2);">
+          <strong style="color:var(--accent2);">Confirmed</strong><br>
+          <span class="muted">Strong evidence supports this claim. Safe to rely on.</span>
+        </div>
+        <div style="padding:14px; border-radius:14px; background: rgba(242,204,96,0.08); border:1px solid rgba(242,204,96,0.2);">
+          <strong style="color:var(--warn);">Partial</strong><br>
+          <span class="muted">Some evidence present, but more is needed. Verify before committing.</span>
+        </div>
+        <div style="padding:14px; border-radius:14px; background: rgba(88,166,255,0.08); border:1px solid rgba(88,166,255,0.2);">
+          <strong style="color:var(--accent);">Not connected</strong><br>
+          <span class="muted">This source is not available yet. Don't treat silence as proof.</span>
+        </div>
+        <div style="padding:14px; border-radius:14px; background: rgba(166,176,204,0.08); border:1px solid rgba(166,176,204,0.2);">
+          <strong style="color:var(--muted);">Needs verification</strong><br>
+          <span class="muted">Claim may be plausible but evidence is thin. Ask the seller for proof.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="card">
       <h2>Case details</h2>
       <div class="pillrow" id="casePills"></div>
@@ -495,7 +526,23 @@
     data.source_summary.forEach(src => {
       const div = document.createElement('div');
       div.className = 'source-item';
-      div.innerHTML = `<strong>${src.source}</strong><br><span class="muted">Role: ${src.role}</span><br><span class="muted">${src.status}</span><br><span class="badge ${badgeClass(src.confidence)}" style="margin-top:8px;">${src.confidence} source confidence</span>`;
+      
+      // Determine status class and label from status text
+      let statusClass = 'not_connected';
+      let statusLabel = 'Not connected';
+      
+      if (src.status.includes('Confirmed') || src.status.includes('verified')) {
+        statusClass = 'confirmed';
+        statusLabel = 'Confirmed';
+      } else if (src.status.includes('Partial') || src.status.includes('needs more evidence')) {
+        statusClass = 'partial';
+        statusLabel = 'Partial';
+      } else if (src.status.includes('Needs verification') || src.status.includes('unconfirmed')) {
+        statusClass = 'needs_verification';
+        statusLabel = 'Needs verification';
+      }
+      
+      div.innerHTML = `<strong>${src.source}</strong><br><span class="muted">Role: ${src.role}</span><br><span class="muted">${src.status}</span><br><span class="state-chip ${statusClass}" style="margin-top:8px;">${statusLabel}</span>`;
       sourceSummary.appendChild(div);
     });
 

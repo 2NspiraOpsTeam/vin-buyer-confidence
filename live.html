@@ -98,6 +98,11 @@
     .timeline-node:before { content:''; position:absolute; left:-1px; top:6px; width:14px; height:14px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(88,166,255,.15); }
     .timeline-node strong { display:block; margin-bottom:4px; }
     .state-chip { display:inline-block; margin-top:8px; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:12px; }
+    /* Status chip styles for source confidence */
+    .state-chip.confirmed { background: rgba(126,231,135,0.12); color: var(--accent2); border: 1px solid rgba(126,231,135,0.3); }
+    .state-chip.partial { background: rgba(242,204,96,0.12); color: var(--warn); border: 1px solid rgba(242,204,96,0.3); }
+    .state-chip.not_connected { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+    .state-chip.needs_verification { background: rgba(166,176,204,0.12); color: var(--muted); border: 1px solid rgba(166,176,204,0.3); }
     .section-badge { display:inline-block; padding:6px 10px; border-radius:999px; background: rgba(98,176,255,.10); color: var(--accent); font-size:12px; font-weight:700; margin-bottom:10px; }
     .photo-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
     .photo-card { position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.03); }
@@ -523,8 +528,8 @@
           const div = document.createElement('div');
           div.className = 'finding';
           const status = statusLanguage[item.status];
-          const icon = item.status === 'confirmed' ? '✅' : item.status === 'partial' ? '⚠️' : 'ℹ️';
-          div.innerHTML = `<strong style="color:${status.color}">${icon}</strong> ${item.text} <span class="state-chip" style="color:${status.color}; border-color:${status.color}33">${status.label}</span>`;
+          const icon = item.status === 'confirmed' ? '✅' : item.status === 'partial' ? '⚠️' : item.status === 'needs_verification' ? '❓' : 'ℹ️';
+          div.innerHTML = `<strong style="color:${status.color}">${icon}</strong> ${item.text} <span class="state-chip ${item.status}">${status.label}</span>`;
           findingsList.appendChild(div);
         });
         
