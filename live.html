@@ -24,6 +24,7 @@
       --max: 1120px;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #131a2e 100%); color:var(--text); }
     a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
@@ -38,6 +39,7 @@
     .brand-kicker { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; transition: color 0.2s ease; }
     .nav-links { display:flex; gap:12px; flex-wrap:wrap; }
     .nav-link { display:inline-block; padding:10px 12px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:14px; }
+    .nav-toggle { display:none; align-items:center; justify-content:center; min-height:44px; min-width:44px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color:var(--text); font-weight:700; }
     .section { padding: 28px 0; }
     .hero { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
     .card { background: rgba(21,31,63,.92); border:1px solid var(--border); border-radius: 18px; padding: 24px; transition: all 0.2s ease; }
@@ -113,9 +115,57 @@
     .market-inputs input, .market-inputs select { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: rgba(11,16,32,.7); color: var(--text); }
     .market-btn { padding:12px 14px; border-radius:12px; border:none; background: var(--accent); color:#07101f; font-weight:700; cursor:pointer; }
     .soft-chip { padding:8px 10px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color: var(--muted); font-size:13px; }
+    .sticky-actions { display:none; }
+    button, .action-btn, .nav-link, .market-btn, input, select { min-height: 44px; }
+    #identity, #specs, #timeline, #market, #safety, #questions { scroll-margin-top: 88px; }
     @media (max-width: 900px) {
       .grid-3, .grid-2, .subgrid, .compare-grid, .metric-row, .account-strip, .comp-grid, .history-grid, .market-inputs, .photo-grid { grid-template-columns: 1fr; }
       .brand-name { font-size: 18px; }
+      body { padding-bottom: 88px; }
+      .nav-inner { align-items:flex-start; }
+      .nav-toggle { display:inline-flex; }
+      .nav-links { display:none; width:100%; flex-direction:column; gap:10px; padding-top:8px; }
+      .nav-links[data-open="true"] { display:flex; }
+      .nav-link { width:100%; }
+      .hero { align-items:flex-start; }
+      h1 { font-size: 32px; line-height: 1.08; }
+      h2 { font-size: 26px; }
+      .card { padding: 20px; }
+      .sticky-actions {
+        display:grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap:10px;
+        position:fixed;
+        left:12px;
+        right:12px;
+        bottom:12px;
+        z-index:40;
+        padding:10px;
+        border-radius:18px;
+        background: rgba(7,17,31,.94);
+        border:1px solid rgba(255,255,255,.08);
+        box-shadow: 0 18px 42px rgba(0,0,0,.32);
+        backdrop-filter: blur(14px);
+      }
+      .sticky-action {
+        min-height:48px;
+        border-radius:14px;
+        border:1px solid rgba(255,255,255,.08);
+        background: rgba(255,255,255,.04);
+        color: var(--text);
+        font-weight:700;
+        text-decoration:none;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding: 0 10px;
+        font-size: 13px;
+      }
+      .sticky-action.primary {
+        background: var(--accent);
+        border-color: transparent;
+        color:#07101f;
+      }
     }
   </style>
 </head>
@@ -129,7 +179,8 @@
           <span class="brand-kicker">by 2Nspira</span>
         </span>
       </a>
-      <div class="nav-links">
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">Menu</button>
+      <div class="nav-links" id="primaryNav" data-open="false">
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/customer">Customer Dashboard</a>
         <a class="nav-link" href="#identity">Identity</a>
@@ -188,6 +239,7 @@
         <div class="form-group"><label for="condition" class="muted">Condition</label><select id="condition"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div>
       </div>
       <button id="runBtn">Run VIN Check</button>
+      <p id="vinCheckStatus" class="muted" style="margin-top:12px;"></p>
     </div>
   </div>
 
@@ -371,8 +423,16 @@
     </div>
   </div>
 
+  <div class="sticky-actions" aria-label="Quick actions">
+    <button type="button" class="sticky-action primary" id="stickyRunCheck">Run Check</button>
+    <a class="sticky-action" href="#market">Market</a>
+    <a class="sticky-action" href="#questions">Ask Seller</a>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const navToggle = document.getElementById('navToggle');
+      const primaryNav = document.getElementById('primaryNav');
       const vinInput = document.getElementById('vin');
       const listingUrlInput = document.getElementById('listingUrl');
       const askingPriceInput = document.getElementById('askingPrice');
@@ -380,7 +440,23 @@
       const sellerInput = document.getElementById('seller');
       const conditionInput = document.getElementById('condition');
       const runBtn = document.getElementById('runBtn');
+      const stickyRunCheck = document.getElementById('stickyRunCheck');
       const vinCheckStatus = document.getElementById('vinCheckStatus');
+
+      function closeNavMenu() {
+        primaryNav.dataset.open = 'false';
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      navToggle.addEventListener('click', () => {
+        const isOpen = primaryNav.dataset.open === 'true';
+        primaryNav.dataset.open = isOpen ? 'false' : 'true';
+        navToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+      primaryNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeNavMenu));
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 900) closeNavMenu();
+      });
       
       // Top half elements
       const vehicleTitle = document.getElementById('vehicleTitle');
@@ -591,6 +667,7 @@
 
       // Event listeners
       runBtn.addEventListener('click', runVinCheck);
+      stickyRunCheck.addEventListener('click', () => runBtn.click());
       
       // Demo mode or start mode with VIN
       const params = new URLSearchParams(window.location.search);
