@@ -44,7 +44,7 @@
     </div>
   </div>
 
-  <div class="wrap section subgrid">
+  <div class="wrap section subgrid" data-result-section hidden>
     <div class="card">
       <h2>Summary verdict</h2>
       <p id="verdictSummary"></p>
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="wrap section grid-2">
+  <div class="wrap section grid-2" data-result-section hidden>
     <div class="card">
       <h2>Case details</h2>
       <div class="pillrow" id="casePills"></div>
@@ -74,7 +74,9 @@
 
   <div class="wrap section grid-2">
     <div class="card">
+      <div class="section-badge" id="modeBadge">Live VIN workflow</div>
       <h3>1. Enter vehicle details</h3>
+      <p class="muted">Start with the VIN. Optional listing context can improve the market view after the vehicle identity is decoded.</p>
       <div class="form-group"><label for="vin"><strong>VIN</strong></label><input id="vin" autofocus placeholder="Enter VIN (e.g., 5UX23EM06P9R83357)" /></div>
       <div class="form-grid">
         <div class="form-group"><label for="listingUrl" class="muted">Listing URL</label><input id="listingUrl" placeholder="https://..." /></div>
@@ -84,22 +86,17 @@
         <div class="form-group"><label for="condition" class="muted">Condition</label><select id="condition"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div>
       </div>
       <button id="runBtn">Run VIN Check</button>
+      <p class="muted" id="vinCheckStatus">Results stay hidden until a VIN check runs.</p>
     </div>
     <div class="card">
-      <h2>Shopping context</h2>
-      <p class="muted" id="shoppingContext">Enter shopping details to enhance the market view and recommendations.</p>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label for="askingPriceInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Asking price</label>
-        <input id="askingPriceInput" type="number" placeholder="28995" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label for="mileageInput" style="display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600;">Mileage</label>
-        <input id="mileageInput" type="number" placeholder="72105" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:#0f1730; color:var(--text); font-size:14px;" />
-      </div>
+      <h2>What happens next</h2>
+      <p class="muted" id="shoppingContext">The check will decode the vehicle identity first, then use the single asking price and mileage fields from this form for market context.</p>
+      <div class="history-event"><div class="mini-head">No duplicate entry</div><strong>One asking price, one mileage value</strong><br><span class="muted">Those values drive both the buyer summary and the comparable market view.</span></div>
+      <div class="history-event"><div class="mini-head">Demo mode</div><strong>Use /live.html?demo=1 for sample data</strong><br><span class="muted">Sample-only sections are labeled and only appear in demo mode or after a real check has enough source support.</span></div>
     </div>
   </div>
 
-  <div id="specs" class="wrap section grid-2">
+  <div id="specs" class="wrap section grid-2" data-result-section hidden>
     <div class="card">
       <div class="section-badge">Factory specs</div>
       <h2>Factory specifications</h2>
@@ -122,7 +119,7 @@
     </div>
   </div>
 
-  <div id="timeline" class="wrap section history-grid">
+  <div id="timeline" class="wrap section history-grid" data-result-section data-sample-section hidden>
     <div class="card">
       <div class="section-badge">History</div>
       <h2>Ownership and registration timeline</h2>
@@ -163,7 +160,7 @@
     </div>
   </div>
 
-  <div id="market" class="wrap section">
+  <div id="market" class="wrap section" data-result-section hidden>
     <div class="card">
       <h2>Comparable market view</h2>
       <p class="muted">See whether this car is priced low, fair, or stretched relative to the market.</p>
@@ -227,7 +224,7 @@
     </div>
   </div>
 
-  <div id="safety" class="wrap section history-grid">
+  <div id="safety" class="wrap section history-grid" data-result-section data-sample-section hidden>
     <div class="card">
       <div class="section-badge">Safety</div>
       <h2>Safety snapshot</h2>
@@ -250,7 +247,7 @@
     </div>
   </div>
 
-  <div class="wrap section">
+  <div class="wrap section" data-result-section data-sample-section hidden>
     <div class="card">
       <h2>Buyer recommendation engine</h2>
       <div class="history-grid">
@@ -260,7 +257,7 @@
     </div>
   </div>
 
-  <div id="questions" class="wrap section grid-2">
+  <div id="questions" class="wrap section grid-2" data-result-section hidden>
     <div class="card">
       <h2>Questions to ask the seller next</h2>
       <ol id="sellerQuestions"></ol>
@@ -272,7 +269,7 @@
     </div>
   </div>
 
-  <div class="wrap section">
+  <div class="wrap section" data-result-section data-sample-section hidden>
     <div class="card">
       <h2>Platform notes</h2>
       <p class="muted">This customer dashboard renders structured case data, findings, evidence timelines, and source-confidence summaries. Future releases can support multi-case comparison, downloadable reports, historical images, and richer source-backed event cards.</p>
@@ -327,11 +324,28 @@
       const vinInput = document.getElementById('vin');
       const listingUrlInput = document.getElementById('listingUrl');
       const askingPriceInput = document.getElementById('askingPrice');
-      const mileageInput = document.getElementById('mileage');
+      const mileageInput = document.getElementById('claimedMileage');
       const sellerInput = document.getElementById('seller');
       const conditionInput = document.getElementById('condition');
       const runBtn = document.getElementById('runBtn');
       const vinCheckStatus = document.getElementById('vinCheckStatus');
+      const modeBadge = document.getElementById('modeBadge');
+      const shoppingContext = document.getElementById('shoppingContext');
+      const resultSections = document.querySelectorAll('[data-result-section]');
+      const sampleSections = document.querySelectorAll('[data-sample-section]');
+      const marketMileageInput = document.getElementById('marketMileage');
+      const marketConditionInput = document.getElementById('marketCondition');
+      const marketLowLabel = document.getElementById('marketLowLabel');
+      const marketHighLabel = document.getElementById('marketHighLabel');
+      const marketRangeValue = document.getElementById('marketRangeValue');
+      const negotiationRoomValue = document.getElementById('negotiationRoomValue');
+      const bestUseValue = document.getElementById('bestUseValue');
+      const marketTakeTitle = document.getElementById('marketTakeTitle');
+      const marketTakeBody = document.getElementById('marketTakeBody');
+      const marketPositionBadge = document.getElementById('marketPositionBadge');
+      const askingPriceValue = document.getElementById('askingPriceValue');
+      const sellerQuestions = document.getElementById('sellerQuestions');
+      const nextStep = document.getElementById('nextStep');
       
       // Top half elements
       const vehicleTitle = document.getElementById('vehicleTitle');
@@ -357,34 +371,98 @@
       const specFuel = document.getElementById('specFuel');
       const specEngine = document.getElementById('specEngine');
       const specMsrp = document.getElementById('specMsrp');
+      const specDetails = document.getElementById('specDetails');
+      const identityList = document.getElementById('identity');
       
       const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
-      const badgeClass = level => level === 'high' ? 'badge-ok' : level === 'medium' ? 'badge-warn' : 'badge-danger';
+      const normalizeCondition = value => String(value || 'good').toLowerCase();
+      const setResultsVisible = ({ show, sample = false } = {}) => {
+        resultSections.forEach(section => {
+          section.hidden = !show;
+        });
+        sampleSections.forEach(section => {
+          section.hidden = !(show && sample);
+        });
+      };
+      const setStatus = message => {
+        vinCheckStatus.textContent = message;
+        vinCheckStatus.className = 'muted';
+      };
+      const isValidVin = vin => /^[A-HJ-NPR-Z0-9]{17}$/i.test(vin);
+
+      function recalcMarketView(askingPrice, mileage, condition) {
+        if (!marketMileageInput) return;
+
+        const price = Number(askingPrice) || 0;
+        const miles = Number(mileage) || 72105;
+        const conditionValue = normalizeCondition(condition);
+        const baseLow = 24900;
+        const baseHigh = 31500;
+        const mileageAdjustment = (miles - 61240) * 0.15;
+        let conditionAdjustment = 0;
+        if (conditionValue === 'excellent') conditionAdjustment = 800;
+        if (conditionValue === 'fair') conditionAdjustment = -1200;
+        if (conditionValue === 'poor') conditionAdjustment = -2500;
+
+        const low = Math.max(22000, baseLow + mileageAdjustment + conditionAdjustment);
+        const high = Math.min(34000, baseHigh + mileageAdjustment + conditionAdjustment);
+        const range = high - low;
+        const mid = (low + high) / 2;
+        const position = price ? (price - mid) / (range / 2) : 0;
+        let positionBadge = 'fair';
+        let positionText = price ? 'Fair' : 'Needs price';
+        if (price && position < -0.5) { positionBadge = 'value'; positionText = 'Value buy'; }
+        if (price && position > 0.5) { positionBadge = 'high'; positionText = 'Stretch / overpay'; }
+
+        marketMileageInput.value = mileage || '';
+        marketLowLabel.textContent = fmtMoney(low);
+        marketHighLabel.textContent = fmtMoney(high);
+        marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
+        negotiationRoomValue.textContent = fmtMoney(Math.round(range * 0.15));
+        bestUseValue.textContent = price && position > 0.3 ? 'Seller leverage' : price && position < -0.3 ? 'Buyer leverage' : 'Balanced';
+        marketTakeTitle.textContent = price
+          ? position > 0.3 ? 'Slightly high for condition' : position < -0.3 ? 'Good value for condition' : 'Fair, with room to negotiate'
+          : 'Add asking price for a market take';
+        marketTakeBody.textContent = price
+          ? position > 0.3 ? 'Asking price is above this rough fair-market band. Ask for evidence or prepare a counteroffer.' : position < -0.3 ? 'Asking price is below this rough fair-market band. Verify condition before treating it as a win.' : 'Asking price sits inside the rough fair-market band. Use condition and source gaps to negotiate.'
+          : 'The VIN can decode without price context, but the market view needs asking price and mileage to become useful.';
+        marketPositionBadge.className = `price-badge ${positionBadge}`;
+        marketPositionBadge.textContent = positionText;
+        askingPriceValue.textContent = price ? fmtMoney(price) : 'Not entered';
+      }
 
       // Helper to populate top half with decoded VIN data
-      function populateTopHalf(decoded, recalls, listingUrl, askingPrice, mileage, seller, condition) {
-        const { make, model, modelYear, trim, bodyClass, driveType, fuelTypePrimary, engineCylinders, displacementL } = decoded;
-        const year = modelYear || decoded.modelYear;
+      function populateTopHalf(decoded, recalls, listingUrl, askingPrice, mileage, seller, condition, options = {}) {
+        const make = decoded.make || 'Unknown make';
+        const model = decoded.model || 'Unknown model';
+        const year = decoded.modelYear || 'Unknown year';
+        const trim = decoded.trim || 'Trim not available';
+        const bodyClass = decoded.bodyClass || 'Body style not available';
+        const driveType = decoded.driveType || 'Drive type not available';
+        const fuelTypePrimary = decoded.fuelTypePrimary || 'Fuel type not available';
+        const engineCylinders = decoded.engineCylinders || 'Unknown';
+        const displacementL = decoded.displacementL || '?';
+        const isSample = options.sample === true;
         
         // Vehicle title and meta
-        vehicleTitle.textContent = `${year} ${make} ${model} ${trim} Review`;
-        caseMeta.textContent = 'Free VIN check • Decoded from NHTSA data';
+        vehicleTitle.textContent = `${year} ${make} ${model}`;
+        caseMeta.textContent = `${isSample ? 'Sample report' : 'Live VIN check'} • Decoded from NHTSA data`;
         
         // Verdict section - generate based on data quality
         const hasHistory = false; // No history API connected yet
         const hasRecalls = (recalls && recalls.count > 0);
         const hasListing = listingUrl && listingUrl.trim() !== '';
         
-        let verdictLabel = hasListing ? 'Strong Buy' : 'Verify Further';
+        let verdictLabel = hasListing ? 'Review Ready' : 'Verify Further';
         let verdictSummaryText = '';
         let verdictRationaleText = '';
         
         if (hasListing) {
-          verdictSummaryText = `<strong>Excellent match</strong> - VIN decodes cleanly to ${year} ${make} ${model} with no discrepancies found.`;
-          verdictRationaleText = `The vehicle identity matches ${make} ${model} ${year} specifications. ${engineCylinders}-cylinder ${displacementL}L ${fuelTypePrimary} engine confirmed. ${driveType} drive system verified.`;
+          verdictSummaryText = `<strong>Identity check complete.</strong> The VIN decodes to a ${year} ${make} ${model}.`;
+          verdictRationaleText = `Use this as a buyer-confidence starting point, not a final history report. The listing context is present, but title, damage, service, and photo evidence still need source-backed confirmation.`;
         } else {
-          verdictSummaryText = `<strong>Verify Further</strong> - VIN decodes cleanly but market context missing.`;
-          verdictRationaleText = `The vehicle identity matches ${make} ${model} ${year} specifications. Enter a listing URL and asking price for market comparison and confidence scoring.`;
+          verdictSummaryText = `<strong>Identity check complete.</strong> The VIN decodes to a ${year} ${make} ${model}, but shopping context is limited.`;
+          verdictRationaleText = `Add the listing URL, asking price, and mileage to make the market view and seller questions more useful.`;
         }
         
         verdictBadge.textContent = `Verdict: ${verdictLabel}`;
@@ -452,19 +530,18 @@
         // Key findings
         findingsList.innerHTML = '';
         const findings = [
-          { type: 'ok', text: `VIN decodes to ${year} ${make} ${model} ${trim}` },
-          { type: 'ok', text: `Body class: ${bodyClass}` },
-          { type: 'ok', text: `Drive type: ${driveType}` },
-          { type: 'ok', text: `Fuel: ${fuelTypePrimary}` },
-          { type: hasRecalls ? 'warn' : 'ok', text: hasRecalls ? `${recalls.count} open recall(s) found` : 'No recalls found for this VIN' },
-          { type: 'info', text: hasListing ? 'Market context available' : 'Enter asking price and mileage for market comparison' }
+          { type: 'ok', label: 'Confirmed', text: `VIN decodes to ${year} ${make} ${model}` },
+          { type: 'ok', label: 'Specs', text: `Body: ${bodyClass}` },
+          { type: 'ok', label: 'Specs', text: `Drive: ${driveType}` },
+          { type: hasRecalls ? 'warn' : 'ok', label: 'Recalls', text: hasRecalls ? `${recalls.count} open recall(s) found` : 'No recalls found for this VIN' },
+          { type: 'info', label: 'Context', text: hasListing ? 'Listing context is available for review' : 'Add price and mileage for stronger market context' }
         ];
         
         findings.forEach(item => {
           const div = document.createElement('div');
           div.className = 'finding';
-          const icon = item.type === 'ok' ? '✅' : item.type === 'warn' ? '⚠️' : 'ℹ️';
-          div.innerHTML = `<strong>${icon}</strong> ${item.text}`;
+          const badge = item.type === 'ok' ? 'badge-ok' : item.type === 'warn' ? 'badge-warn' : '';
+          div.innerHTML = `<span class="badge ${badge}">${item.label}</span><br><span>${item.text}</span>`;
           findingsList.appendChild(div);
         });
         
@@ -476,18 +553,62 @@
         specDrive.textContent = driveType;
         specFuel.textContent = fuelTypePrimary;
         specEngine.textContent = `${engineCylinders} cyl, ${displacementL}L`;
-        specMsrp.textContent = decoded.baseMsrp || 'N/A';
+        specMsrp.textContent = decoded.baseMsrp ? fmtMoney(Number(decoded.baseMsrp)) : 'N/A';
+        specDetails.textContent = 'Factory details come from the NHTSA VIN decoder. Use provider-backed history, seller documents, and inspection evidence before making a final decision.';
+        identityList.innerHTML = '';
+        [
+          `VIN: ${decoded.vin || vinInput.value.trim()}`,
+          `Vehicle type: ${decoded.vehicleType || 'Not available'}`,
+          `Manufacturer: ${decoded.manufacturer || 'Not available'}`,
+          `Plant country: ${decoded.plantCountry || 'Not available'}`,
+          `NHTSA source: ${decoded.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
+        ].forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          identityList.appendChild(li);
+        });
+
+        shoppingContext.innerHTML = `Seller: <strong>${seller}</strong> | Asking price: <strong>${askingPrice ? fmtMoney(Number(askingPrice)) : 'not entered'}</strong> | Mileage: <strong>${mileage || 'not entered'} mi</strong>`;
+        if (sellerQuestions) {
+          sellerQuestions.innerHTML = '';
+          [
+            'Can you provide title, accident, and service documentation that matches this VIN?',
+            'Can you confirm the current mileage and share a photo of the odometer?',
+            'Are there any open recalls, warning lights, or recent repairs I should verify before scheduling an inspection?'
+          ].forEach(question => {
+            const li = document.createElement('li');
+            li.textContent = question;
+            sellerQuestions.appendChild(li);
+          });
+        }
+        if (nextStep) {
+          nextStep.textContent = hasListing
+            ? 'Use the decoded identity and seller answers to decide whether to request a pre-purchase inspection.'
+            : 'Add listing details, then compare the vehicle against price, mileage, and source gaps.';
+        }
+        recalcMarketView(askingPrice, mileage, condition);
+        setResultsVisible({ show: true, sample: isSample });
       }
 
       // Main VIN check function
       async function runVinCheck() {
-        const vin = vinInput.value.trim();
+        const vin = vinInput.value.trim().toUpperCase();
+        const params = new URLSearchParams(window.location.search);
+        const isSample = params.get('demo') === '1';
+
         if (!vin) {
-          vinCheckStatus.textContent = 'Please enter a VIN';
+          setResultsVisible({ show: false });
+          setStatus('Please enter a VIN to begin.');
           return;
         }
-        
-        vinCheckStatus.textContent = 'Running VIN check...';
+        if (!isValidVin(vin)) {
+          setResultsVisible({ show: false });
+          setStatus('VINs are 17 characters and do not use I, O, or Q. Please check the VIN and try again.');
+          return;
+        }
+
+        vinInput.value = vin;
+        setStatus(isSample ? 'Running sample VIN check...' : 'Running VIN check...');
         
         try {
           // Fetch decoded data
@@ -513,27 +634,39 @@
           const condition = conditionInput.value;
           
           // Populate top half with real data
-          populateTopHalf(decoded, recalls, listingUrl, askingPrice, mileage, seller, condition);
+          populateTopHalf(decoded, recalls, listingUrl, askingPrice, mileage, seller, condition, { sample: isSample });
           
-          vinCheckStatus.textContent = 'VIN check complete. Vehicle details populated.';
-          vinCheckStatus.className = 'muted';
+          setStatus(isSample ? 'Sample VIN check complete. Results are labeled as demo data.' : 'VIN check complete. Vehicle details populated.');
           
         } catch (err) {
-          vinCheckStatus.textContent = `Error: ${err.message}`;
-          vinCheckStatus.className = 'muted';
+          setResultsVisible({ show: false });
+          setStatus(`Error: ${err.message}`);
         }
       }
 
       // Event listeners
       runBtn.addEventListener('click', runVinCheck);
+      document.getElementById('updateMarketView')?.addEventListener('click', () => {
+        recalcMarketView(askingPriceInput.value.trim(), mileageInput.value.trim(), conditionInput.value);
+      });
+      marketMileageInput?.addEventListener('input', () => {
+        mileageInput.value = marketMileageInput.value;
+        recalcMarketView(askingPriceInput.value.trim(), mileageInput.value.trim(), conditionInput.value);
+      });
+      marketConditionInput?.addEventListener('change', () => {
+        conditionInput.value = marketConditionInput.value.charAt(0).toUpperCase() + marketConditionInput.value.slice(1);
+        recalcMarketView(askingPriceInput.value.trim(), mileageInput.value.trim(), conditionInput.value);
+      });
       
       // Demo mode or start mode with VIN
       const params = new URLSearchParams(window.location.search);
+      setResultsVisible({ show: false });
       if (params.get('demo') === '1') {
+        modeBadge.textContent = 'Sample report mode';
         vinInput.value = 'WBA8B9G59JNU12345';
         askingPriceInput.value = '28995';
         mileageInput.value = '72105';
-        vinCheckStatus.textContent = 'Demo loaded. Running the sample VIN check...';
+        setStatus('Demo loaded. Running the sample VIN check...');
         setTimeout(() => runBtn.click(), 300);
       } else if (params.get('vin')) {
         // Start mode with VIN - populate form and run check
@@ -543,304 +676,9 @@
         mileageInput.value = params.get('mileage') || '';
         sellerInput.value = params.get('seller') || 'Dealer';
         conditionInput.value = params.get('condition') || 'Good';
-        vinCheckStatus.textContent = 'VIN loaded. Running check...';
+        setStatus('VIN loaded. Running check...');
         setTimeout(() => runBtn.click(), 300);
       }
-    });
-  </script>
-      div.innerHTML = `<strong>${score.score_type.replaceAll('_', ' ')}</strong><br>${score.score_value}/${score.scale_max} • <span class="muted">${score.explanation}</span>`;
-      scoreList.appendChild(div);
-    });
-
-    const casePills = document.getElementById('casePills');
-    [
-      `Status: ${data.case.status}`,
-      `Seller: ${data.case.seller_type}`,
-      `Mileage: ${data.case.mileage_claimed.toLocaleString()} mi`,
-      `Price: ${fmtMoney(data.case.asking_price)}`
-    ].forEach(text => {
-      const span = document.createElement('span');
-      span.className = 'badge badge-ok';
-      span.textContent = text;
-      casePills.appendChild(span);
-    });
-
-    const findingsList = document.getElementById('findingsList');
-    data.findings.forEach(finding => {
-      const div = document.createElement('div');
-      div.className = 'finding';
-      div.innerHTML = `<strong>${finding.title}</strong><br><span class="muted">${finding.explanation}</span><br><span class="badge ${finding.severity === 'medium' ? 'badge-warn' : finding.severity === 'high' ? 'badge-danger' : 'badge-ok'}" style="margin-top:8px;">${finding.severity} severity</span>`;
-      findingsList.appendChild(div);
-    });
-
-    const timelineList = document.getElementById('timelineList');
-    data.evidence_timeline.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'timeline-item';
-      div.innerHTML = `<div class="timeline-date">${item.date}</div><strong>${item.title}</strong><br><span class="muted">${item.detail}</span><br><span class="badge ${badgeClass(item.confidence)}" style="margin-top:10px;">${item.confidence} confidence</span>`;
-      timelineList.appendChild(div);
-    });
-
-    const sourceSummary = document.getElementById('sourceSummary');
-    data.source_summary.forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'source-item';
-      div.innerHTML = `<strong>${src.source}</strong><br><span class="muted">Role: ${src.role}</span><br><span class="muted">${src.status}</span><br><span class="badge ${badgeClass(src.confidence)}" style="margin-top:8px;">${src.confidence} source confidence</span>`;
-      sourceSummary.appendChild(div);
-    });
-
-    const sellerQuestions = document.getElementById('sellerQuestions');
-    data.seller_questions.forEach(q => {
-      const li = document.createElement('li');
-      li.innerHTML = `${q.question_text}<br><span class="muted">Why it matters: ${q.reason}</span>`;
-      sellerQuestions.appendChild(li);
-    });
-
-    document.getElementById('nextStep').textContent = data.verdict.summary;
-
-    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
-    const askingPrice = 28995;
-    const marketMileageInput = document.getElementById('marketMileage');
-    const marketConditionInput = document.getElementById('marketCondition');
-    const marketLowLabel = document.getElementById('marketLowLabel');
-    const marketHighLabel = document.getElementById('marketHighLabel');
-    const marketRangeValue = document.getElementById('marketRangeValue');
-    const negotiationRoomValue = document.getElementById('negotiationRoomValue');
-    const bestUseValue = document.getElementById('bestUseValue');
-    const marketTakeTitle = document.getElementById('marketTakeTitle');
-    const marketTakeBody = document.getElementById('marketTakeBody');
-    const marketPositionBadge = document.getElementById('marketPositionBadge');
-
-    function recalcMarketView() {
-      const mileage = Number(marketMileageInput.value) || 72105;
-      const condition = marketConditionInput.value || 'good';
-      const baseLow = 24900;
-      const baseHigh = 31500;
-      const mileageDiff = mileage - 61240;
-      const mileageAdjustment = mileageDiff * 0.15;
-      let conditionAdjustment = 0;
-      if (condition === 'excellent') conditionAdjustment = 800;
-      if (condition === 'fair') conditionAdjustment = -1200;
-      if (condition === 'poor') conditionAdjustment = -2500;
-      const low = Math.max(22000, baseLow + mileageAdjustment + conditionAdjustment);
-      const high = Math.min(34000, baseHigh + mileageAdjustment + conditionAdjustment);
-      const range = high - low;
-      const mid = (low + high) / 2;
-      const diff = askingPrice - mid;
-      const position = diff / (range / 2);
-      let positionBadge = 'fair';
-      let positionText = 'Fair';
-      if (position < -0.5) { positionBadge = 'value'; positionText = 'Value buy'; }
-      if (position > 0.5) { positionBadge = 'high'; positionText = 'Stretch / overpay'; }
-      marketLowLabel.textContent = fmtMoney(low);
-      marketHighLabel.textContent = fmtMoney(high);
-      marketRangeValue.textContent = `${fmtMoney(low)} - ${fmtMoney(high)}`;
-      negotiationRoomValue.textContent = fmtMoney(Math.round(range * 0.15));
-      bestUseValue.textContent = position > 0.3 ? 'Seller leverage' : position < -0.3 ? 'Buyer leverage' : 'Balanced';
-      marketTakeTitle.textContent = position > 0.3 ? 'Slightly high for condition' : position < -0.3 ? 'Good value for condition' : 'Fair, with room to negotiate';
-      marketTakeBody.textContent = position > 0.3 ? 'Asking price is above fair market range. Consider counteroffer or walk away.' : position < -0.3 ? 'Asking price is below fair market range. Good opportunity if vehicle condition matches.' : 'Asking price is within fair market range. Standard negotiation may apply.';
-      marketPositionBadge.className = `price-badge ${positionBadge}`;
-      marketPositionBadge.textContent = positionText;
-    });
-
-    document.getElementById('updateMarketView').addEventListener('click', recalcMarketView);
-    marketMileageInput.addEventListener('input', recalcMarketView);
-    marketConditionInput.addEventListener('change', recalcMarketView);
-
-    recalcMarketView();
-
-    // VIN check functionality
-    const vinInput = document.getElementById('vin');
-    const listingUrlInput = document.getElementById('listingUrl');
-    const askingPriceInput = document.getElementById('askingPriceInput');
-    const mileageInput = document.getElementById('mileageInput');
-    const sellerInput = document.getElementById('seller');
-    const conditionInput = document.getElementById('condition');
-    const runBtn = document.getElementById('runBtn');
-    const vinCheckStatus = document.getElementById('vinCheckStatus');
-    const shoppingContext = document.getElementById('shoppingContext');
-
-    const specMake = document.getElementById('specMake');
-    const specModel = document.getElementById('specModel');
-    const specYear = document.getElementById('specYear');
-    const specBody = document.getElementById('specBody');
-    const specDrive = document.getElementById('specDrive');
-    const specFuel = document.getElementById('specFuel');
-    const specEngine = document.getElementById('specEngine');
-    const specMsrp = document.getElementById('specMsrp');
-    const specDetails = document.getElementById('specDetails');
-    const identityList = document.getElementById('identity');
-
-    // Top half elements
-    const vehicleTitle = document.getElementById('vehicleTitle');
-    const caseMeta = document.getElementById('caseMeta');
-    const verdictBadge = document.getElementById('verdictBadge');
-    const verdictSummary = document.getElementById('verdictSummary');
-    const verdictRationale = document.getElementById('verdictRationale');
-    const highlights = document.getElementById('highlights');
-    const overallScore = document.getElementById('overallScore');
-    const overallScoreExplanation = document.getElementById('overallScoreExplanation');
-    const scoreList = document.getElementById('scoreList');
-    const casePills = document.getElementById('casePills');
-    const concernText = document.getElementById('concernText');
-    const listingLink = document.getElementById('listingLink');
-    const findingsList = document.getElementById('findingsList');
-
-    runBtn.addEventListener('click', async () => {
-      const vin = vinInput.value.trim();
-      if (!vin) {
-        vinCheckStatus.textContent = 'Please enter a valid VIN.';
-        return;
-      });
-
-      vinCheckStatus.textContent = 'Running VIN check...';
-
-      try {
-        const [decode, recalls] = await Promise.all([
-          fetch(`/api/decode?vin=${encodeURIComponent(vin)}`).then(r => r.json()),
-          fetch(`/api/recalls?vin=${encodeURIComponent(vin)}`).then(r => r.json())
-        ]);
-
-        const d = decode.decoded;
-
-        // Populate specs
-        specMake.textContent = d.make || '--';
-        specModel.textContent = d.model || '--';
-        specYear.textContent = d.modelYear || '--';
-        specBody.textContent = d.bodyClass || '--';
-        specDrive.textContent = d.driveType || '--';
-        specFuel.textContent = d.fuelTypePrimary || '--';
-        specEngine.textContent = d.engineCylinders ? `${d.engineCylinders} cyl, ${d.displacementL || '?'}L` : '--';
-        specMsrp.textContent = d.baseMsrp ? `$${Number(d.baseMsrp).toLocaleString()}` : '--';
-
-        // Populate identity
-        identityList.innerHTML = '';
-        [
-          `Make: ${d.make || 'Not available'}`,
-          `Model: ${d.model || 'Not available'}`,
-          `Year: ${d.modelYear || 'Not available'}`,
-          `Vehicle type: ${d.vehicleType || 'Not available'}`,
-          `Body class: ${d.bodyClass || 'Not available'}`,
-          `Drive type: ${d.driveType || 'Not available'}`,
-          `Fuel: ${d.fuelTypePrimary || 'Not available'}`,
-          `Engine: ${d.engineCylinders || 'Not available'} cylinders${d.displacementL ? `, ${d.displacementL}L` : ''}`,
-          `Base MSRP: ${d.baseMsrp ? '$' + Number(d.baseMsrp).toLocaleString() : 'Not available'}`,
-          `Manufacturer: ${d.manufacturer || 'Not available'}`,
-          `Plant country: ${d.plantCountry || 'Not available'}`,
-          `NHTSA source: ${d.nhtsa?.source || 'NHTSA VPIC DecodeVinValues'}`
-        ].forEach(x => {
-          const li = document.createElement('li');
-          li.textContent = x;
-          identityList.appendChild(li);
-        });
-
-        // Populate top half with real data
-        const year = d.modelYear || '?';
-        const make = d.make || 'Unknown';
-        const model = d.model || 'Unknown';
-        const body = d.bodyClass || 'Unknown';
-        const vehicleTitleText = `${year} ${make} ${model}`;
-        vehicleTitle.textContent = vehicleTitleText;
-        caseMeta.textContent = `VIN: ${vin} | ${body}`;
-
-        // Verdict badge
-        verdictBadge.textContent = 'Verify Further';
-        verdictBadge.className = 'badge badge-warn';
-
-        // Summary verdict
-        verdictSummary.textContent = `This ${year} ${make} ${model} appears to be a solid candidate with no major red flags.`;
-        verdictRationale.textContent = `Based on the VIN decode, this vehicle matches the expected specifications. No critical issues were found in the identity check.`;
-        highlights.innerHTML = '';
-        [
-          `VIN matches ${make} ${model} ${year} specifications`,
-          `Body class: ${body}`,
-          `Drive type: ${d.driveType || 'N/A'}`,
-          `Fuel: ${d.fuelTypePrimary || 'N/A'}`
-        ].forEach(x => {
-          const li = document.createElement('li');
-          li.textContent = x;
-          highlights.appendChild(li);
-        });
-
-        // Confidence score
-        overallScore.textContent = '85%';
-        overallScoreExplanation.textContent = 'Strong VIN match with no discrepancies found';
-        scoreList.innerHTML = '';
-        [
-          { label: 'VIN Identity', score: '95%', color: '#7ee787' },
-          { label: 'Specs Match', score: '90%', color: '#7ee787' },
-          { label: 'History', score: '--', color: '#b4bfdc' },
-          { label: 'Market Context', score: 'N/A', color: '#b4bfdc' }
-        ].forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'scoreitem';
-          div.innerHTML = `<strong style="color:${item.color}">${item.score}</strong> ${item.label}`;
-          scoreList.appendChild(div);
-        });
-
-        // Case details
-        casePills.innerHTML = '';
-        [
-          `<span class="badge badge-ok">${year}</span>`,
-          `<span class="badge badge-ok">${make}</span>`,
-          `<span class="badge badge-warn">${model}</span>`,
-          `<span class="badge">${d.bodyClass || 'Unknown'}</span>`
-        ].forEach(x => {
-          const span = document.createElement('span');
-          span.innerHTML = x;
-          casePills.appendChild(span);
-        });
-        concernText.textContent = '';
-        listingLink.href = listingUrlInput.value || '#';
-        listingLink.textContent = listingUrlInput.value || 'No listing URL entered';
-
-        // Key findings
-        findingsList.innerHTML = '';
-        [
-          { type: 'ok', text: `VIN decodes to ${year} ${make} ${model}` },
-          { type: 'ok', text: `Body class matches: ${body}` },
-          { type: 'warn', text: 'History provider not connected - full ownership history unavailable' },
-          { type: 'info', text: 'Enter asking price and mileage for market comparison' }
-        ].forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'finding';
-          const icon = item.type === 'ok' ? '✅' : item.type === 'warn' ? '⚠️' : 'ℹ️';
-          div.innerHTML = `<strong>${icon}</strong> ${item.text}`;
-          findingsList.appendChild(div);
-        });
-
-        // Update shopping context
-        const price = askingPriceInput.value || 'not entered';
-        const mileage = mileageInput.value || 'not entered';
-        shoppingContext.innerHTML = `Asking price: <strong>$${price}</strong> | Mileage: <strong>${mileage} mi</strong>`;
-
-        // Update market view
-        recalcMarketView();
-
-        vinCheckStatus.textContent = 'VIN check complete. Vehicle details populated.';
-      } catch (err) {
-        vinCheckStatus.textContent = `Error: ${err.message}`;
-      });
-    });
-
-    // Demo mode or start mode with VIN
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('demo') === '1') {
-      vinInput.value = 'WBA8B9G59JNU12345';
-      askingPriceInput.value = '28995';
-      mileageInput.value = '72105';
-      vinCheckStatus.textContent = 'Demo loaded. Running the sample VIN check...';
-      setTimeout(() => runBtn.click(), 300);
-    } else if (params.get('vin')) {
-      // Start mode with VIN
-      vinInput.value = params.get('vin');
-      listingUrlInput.value = params.get('listingUrl') || '';
-      askingPriceInput.value = params.get('askingPrice') || '';
-      mileageInput.value = params.get('mileage') || '';
-      sellerInput.value = params.get('seller') || 'Dealer';
-      conditionInput.value = params.get('condition') || 'Good';
-      vinCheckStatus.textContent = 'VIN loaded. Running check...';
-      setTimeout(() => runBtn.click(), 300);
     });
   </script>
 </body>
