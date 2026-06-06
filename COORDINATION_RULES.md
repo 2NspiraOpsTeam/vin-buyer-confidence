@@ -77,7 +77,7 @@ When a task needs another person's layer, leave a comment with:
 ## Current Open Issues by Lane
 
 ### Adam (Architecture/Review)
-- Issue #24: Design source-confidence legend and evidence-card hierarchy (P0 - blocked pending implementation)
+- None currently assigned to Adam
 
 ### Cleo (Implementation/QA)
 - Issue #10: Replace emoji UI with consistent icon language
@@ -102,7 +102,6 @@ When a task needs another person's layer, leave a comment with:
 
 ## Next Steps
 
-1. Review and approve this coordination document
-2. Update team members on their lane responsibilities
-3. Brian to organize upcoming issues by lane
-4. Adam to review architecture decisions for pending implementation tickets
+1. Team members review their lane responsibilities
+2. Brian to organize upcoming issues by lane
+3. Adam to review architecture decisions for pending implementation tickets
