@@ -55,22 +55,22 @@ window.PROTOTYPE_DATA = {
     {
       priority: 1,
       question_text: 'Can you send close photos or a quick walkaround video that clearly shows the claimed options, trim details, and interior features?',
-      reason: 'Why this matters: the listing claims higher-value features that are not yet clearly supported by the current photos.'
+      reason: 'the listing claims higher-value features that are not yet clearly supported by the current photos.'
     },
     {
       priority: 2,
       question_text: 'What major maintenance has been completed in the last 20,000 miles, and do you have invoices or timestamps for that work?',
-      reason: 'Why this matters: service support is thinner than ideal for the asking price, which raises ownership-risk questions.'
+      reason: 'service support is thinner than ideal for the asking price, which raises ownership-risk questions.'
     },
     {
       priority: 3,
       question_text: 'Do you have receipts for cooling-system work, brakes, suspension, tires, or other common wear items?',
-      reason: 'Why this matters: those records would materially improve confidence in the condition story and help justify the price.'
+      reason: 'those records would materially improve confidence in the condition story and help justify the price.'
     },
     {
       priority: 4,
       question_text: 'Can you send a cold-start video and a slow exterior/interior walkaround before I decide on a PPI or travel?',
-      reason: 'Why this matters: remote condition clues can help confirm whether this car is worth the next spend.'
+      reason: 'remote condition clues can help confirm whether this car is worth the next spend.'
     }
   ],
   evidence_timeline: [
