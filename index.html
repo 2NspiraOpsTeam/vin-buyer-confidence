@@ -91,6 +91,22 @@
       font-size: 20px;
     }
     .feature-icon { font-size: 28px; margin-bottom: 10px; display:block; }
+    /* Semantic icon classes */
+    .icon-decision, .icon-intelligence, .icon-confidence, .icon-financial, .icon-functional, .icon-emotional, .icon-verify, .icon-risk, .icon-questions, .icon-identity, .icon-compare, .icon-comps {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      font-size: 20px;
+      background: linear-gradient(135deg, rgba(98,176,255,.18), rgba(126,231,135,.15));
+    }
+    .feature-icon.decision, .feature-icon.intelligence, .feature-icon.confidence, .feature-icon.financial, .feature-icon.functional, .feature-icon.emotional {
+      font-size: 28px;
+      margin-bottom: 10px;
+      display: block;
+    }
     .sample-visual {
       min-height: 220px;
       border-radius: 18px;
@@ -136,9 +152,9 @@
           <a href="/customer.html" class="btn btn-secondary">Open sample workspace</a>
         </div>
         <div class="icon-row">
-          <div class="icon-pill"><span class="icon">🔎</span><span>Verify the seller story</span></div>
-          <div class="icon-pill"><span class="icon">⚠️</span><span>Catch risk before you commit</span></div>
-          <div class="icon-pill"><span class="icon">💬</span><span>Know what to ask next</span></div>
+          <div class="icon-pill"><span class="icon icon-verify">🔍</span><span>Verify the seller story</span></div>
+          <div class="icon-pill"><span class="icon icon-risk">⚠️</span><span>Catch risk before you commit</span></div>
+          <div class="icon-pill"><span class="icon icon-questions">💬</span><span>Know what to ask next</span></div>
         </div>
         <div class="trust">
           <div class="card"><strong>Avoid expensive mistakes</strong><br><span class="muted">Catch mismatches, pricing traps, and risk signals before you commit.</span></div>
@@ -177,9 +193,9 @@
     <div class="wrap">
       <h2>Why buyers can trust this review</h2>
       <div class="grid-3">
-        <div class="card"><span class="feature-icon">🧠</span><strong>Structured decision process</strong><p class="muted">Every review moves from identity, to risk, to market context, to a next-step recommendation.</p></div>
-        <div class="card"><span class="feature-icon">🗂️</span><strong>Multi-source intelligence</strong><p class="muted">Each review organizes the sources that are already available, shows where coverage is thin, and keeps missing evidence visible instead of burying it.</p></div>
-        <div class="card"><span class="feature-icon">⚖️</span><strong>Honest confidence language</strong><p class="muted">We separate what is confirmed, what is likely, what shows mixed signals, and what still needs verification.</p></div>
+        <div class="card"><span class="feature-icon icon-decision">🧠</span><strong>Structured decision process</strong><p class="muted">Every review moves from identity, to risk, to market context, to a next-step recommendation.</p></div>
+        <div class="card"><span class="feature-icon icon-intelligence">🗂️</span><strong>Multi-source intelligence</strong><p class="muted">Each review organizes the sources that are already available, shows where coverage is thin, and keeps missing evidence visible instead of burying it.</p></div>
+        <div class="card"><span class="feature-icon icon-confidence">⚖️</span><strong>Honest confidence language</strong><p class="muted">We separate what is confirmed, what is likely, what shows mixed signals, and what still needs verification.</p></div>
       </div>
     </div>
   </section>
@@ -237,9 +253,9 @@
       <h2>The real problem</h2>
       <p class="muted">Most buyers are not looking for VIN data. They’re trying to avoid the wrong car, the wrong spec, the wrong price, or the wrong future bills. Generic decoder tools don’t answer the actual question: <strong>should I move forward with this car?</strong></p>
       <div class="grid-3">
-        <div class="card"><span class="feature-icon">💸</span><strong>Financial</strong><p class="muted">Avoid overpaying for misrepresented options, hidden risk, or an overpriced listing.</p></div>
-        <div class="card"><span class="feature-icon">🧩</span><strong>Functional</strong><p class="muted">Cross-check VIN, listing claims, photos, and available evidence for mismatches and uncertainty.</p></div>
-        <div class="card"><span class="feature-icon">😮‍💨</span><strong>Emotional</strong><p class="muted">Reduce anxiety, regret, and the feeling of getting burned on a major purchase.</p></div>
+        <div class="card"><span class="feature-icon icon-financial">💸</span><strong>Financial</strong><p class="muted">Avoid overpaying for misrepresented options, hidden risk, or an overpriced listing.</p></div>
+        <div class="card"><span class="feature-icon icon-functional">🧩</span><strong>Functional</strong><p class="muted">Cross-check VIN, listing claims, photos, and available evidence for mismatches and uncertainty.</p></div>
+        <div class="card"><span class="feature-icon icon-emotional">😮‍💨</span><strong>Emotional</strong><p class="muted">Reduce anxiety, regret, and the feeling of getting burned on a major purchase.</p></div>
       </div>
     </div>
   </section>

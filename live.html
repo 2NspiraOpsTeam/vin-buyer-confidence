@@ -48,6 +48,10 @@
     .badge-warn { background: rgba(242,204,96,.12); color: var(--warn); }
     .badge-ok { background: rgba(126,231,135,.12); color: var(--accent2); }
     .badge-danger { background: rgba(255,123,114,.12); color: var(--danger); }
+    .status-icon { display: inline-block; width: 20px; height: 20px; border-radius: 4px; margin-right: 8px; }
+    .status-icon.status-ok { background: rgba(126,231,135,.2); }
+    .status-icon.status-warn { background: rgba(242,204,96,.2); }
+    .status-icon.status-info { background: rgba(88,166,255,.2); }
     h1,h2,h3 { margin-top:0; }
     .muted { color: var(--muted); }
     ul, ol { padding-left: 18px; }
@@ -507,8 +511,8 @@
         findings.forEach(item => {
           const div = document.createElement('div');
           div.className = 'finding';
-          const icon = item.type === 'ok' ? '✅' : item.type === 'warn' ? '⚠️' : 'ℹ️';
-          div.innerHTML = `<strong>${icon}</strong> ${item.text}`;
+          const iconClass = item.type === 'ok' ? 'status-ok' : item.type === 'warn' ? 'status-warn' : 'status-info';
+          div.innerHTML = `<strong class="status-icon ${iconClass}"></strong> ${item.text}`;
           findingsList.appendChild(div);
         });
         
