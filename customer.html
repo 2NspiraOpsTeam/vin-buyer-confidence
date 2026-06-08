@@ -183,7 +183,7 @@
       <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">Menu</button>
       <div class="nav-links" id="primaryNav" data-open="false">
         <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/live">Live VIN Check</a>
+        <a class="nav-link" href="/live.html">Live VIN Check</a>
         <a class="nav-link" href="#summary">Summary</a>
         <a class="nav-link" href="#timeline">Timeline</a>
         <a class="nav-link" href="#compare">Compare</a>
@@ -317,7 +317,7 @@
     <div class="card">
       <h2>Buyer workspace actions</h2>
       <div class="action-row">
-        <a class="action-btn" href="/live">Add Another Car</a>
+        <a class="action-btn" href="/live.html">Add Another Car</a>
         <a class="action-btn" href="#compare">Compare My Cars</a>
         <a class="action-btn" href="#comps">Review Market Comps</a>
         <a class="action-btn" href="#questions">Use Seller Questions</a>
@@ -630,7 +630,6 @@
 
     document.getElementById('nextStep').textContent = data.verdict.summary;
 
-    const fmtMoney = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
     const askingPrice = 28400;
     const marketMileageInput = document.getElementById('marketMileage');
     const marketConditionInput = document.getElementById('marketCondition');
